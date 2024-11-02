@@ -1,9 +1,13 @@
 package com.xiyanchenghong.backenduser.utils;
 
+//这里用注释未尝不可，同时可能以为前后端分离可能需要重写 ٩(× ×)۶
+
 public class Result<T> {
     private String code;
     private String msg;
     private T data;
+
+    private Object token;
 
     public String getCode() {
         return code;
@@ -28,6 +32,10 @@ public class Result<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    public Object getToken() {return token;}
+
+    public void setToken(Object token) {this.token = token;}
 
     public Result() {
     }
@@ -54,6 +62,14 @@ public class Result<T> {
         Result<T> result = new Result<>(data);
         result.setCode("0");
         result.setMsg(msg);
+        return result;
+    }
+//不规范的输出
+    public static <T> Result<T> success(T data,String msg,Object token) {
+        Result<T> result = new Result<>(data);
+        result.setCode("0");
+        result.setMsg(msg);
+        result.setToken(token);
         return result;
     }
 
