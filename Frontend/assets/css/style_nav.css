@@ -1,0 +1,355 @@
+/* header area css*/
+
+.nav {
+    padding: 20px 0;
+    background-color: transparent;
+    transition: all 0.4s ease-in-out;
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.sticky {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    border-top: 0;
+    background-color: #fff !important;
+    padding: 10px 0px;
+    border-bottom: none;
+    box-shadow: 0 10px 30px -10px rgb(0 64 128 / 20%);
+} 
+
+.navbar img.logo-white {
+    width: 150px;
+}
+
+.navbar li.nav-item {
+    padding: 0 12px;
+}
+
+.navbar a.nav-link {
+    color: #212121;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.navbar a.nav-link:hover {
+    color: #0a4fb3;
+    transition: all 0.2s;
+}
+
+
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+/* banner */
+
+.banner img {
+    height: 680px;
+}
+
+.banner .img-inner {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-one {
+    background-color: #0b5ed7;
+    padding: 12px 45px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600 !important;
+    border: solid 1px #0b5ed7;
+    transition: all 0.3s;
+}
+
+.btn-one:hover {
+    border: solid 1px #0b5ed7;
+    transition: all 0.3s;
+    background-color: #0a4fb3;
+}
+
+.btn-one–outline {
+     background-color: #ffffff;
+     padding: 12px 45px;
+     border-radius: 12px;
+     color: #0b5ed7 !important;
+     font-size: 18px;
+     font-weight: 600 !important;
+     border: solid 2px #0b5ed7;
+     transition: all 0.3s;
+ }
+
+.btn-one–outline:hover {
+    border: solid 2px #0b5ed7;
+    background-color: #0b5ed7;
+    transition: all 0.3s;
+    color: #fff !important;
+}
+ 
+.n-colr {
+    color: #7270FF;
+}
+
+.bg-grey{ 
+    background-color: #f4f4f4;
+}
+
+.s-card {
+    border: solid 1px  rgba(114, 112, 255, 0.3);
+    padding: 30px;
+}
+
+.s-card .icon {
+    background-color: rgba(114, 112, 255, 0.1);
+    font-size: 32px;
+    padding: 10px 20px;
+    display: inline-block;
+    border-radius: 12px;
+    color: #7270FF; 
+}
+
+.s-card a {
+    color: #7270FF; 
+    transition: all 0.3s;
+}
+  
+.s-card a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #7270FF;
+    transition: width .3s;
+}
+
+.s-card:hover a::after {
+    width: 100%;
+    transition: width .3s; 
+}
+
+.s-card:hover {
+    box-shadow: 0 .5rem 1rem rgba(114, 112, 255, 0.15);
+    border: solid 1px  rgba(114, 112, 255, 0.1);
+}
+
+.bg-img {
+    margin-top: -120px;
+}
+
+.tesmonial-area .fa-star {
+    color: #FF910F;
+}
+
+.tesmonial-area .d-flex img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.tesmonial {
+   /* background-image: url();*/
+    background-size: cover;
+    background-position: center; 
+    padding-bottom: 150px;
+}
+
+.tes-card {
+     background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 .5rem 1rem rgba(114, 112, 255, 0.15);
+}
+
+
+.team .bg {
+    background-color: #7270FF;
+    color: #fff;
+    padding: 20px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.team img {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.team .social i { 
+     padding-right:  20px;
+}
+
+/*
+.footer form .btn {
+    margin-left: -170px;
+    z-index: 99999;
+}
+*/
+/*
+.footer .form-control {
+     background-color:  ;
+}*/
+
+.footer { 
+  /*  background-image: url(../image/waves-background.png);*/
+    padding-top: 80px;
+    padding-bottom: 50px;
+    background-color: #1e262e; 
+    background-position: bottom center;
+    background-repeat: no-repeat ;
+    background-size: 90vw;
+} 
+
+.footer .fb-bg {
+    background-color: rgba(255, 255, 255, 0.2); 
+    padding: 20px;
+    color: #fff;
+    border-radius: 12px;
+}
+
+.footer .social i{
+    border: solid 1px #fff;
+    border-radius: 50%; 
+    margin-right: 15px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px; 
+}
+
+.footer a {
+    color: #dddddd;
+    transition: all 0.3s;
+}
+
+.footer a:hover {
+    color: #0a4fb3;
+    transition: all 0.3s;
+}
+
+.rounded-4 {
+    border-radius: 12px !important;
+}
+
+.go-top.active {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    right: 3%;
+    top: 84%;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+.go-top {
+    position: fixed;
+    cursor: pointer;
+    right: 3%;
+    top: 87%;
+    background-color: #3762ae;
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 31%);
+    z-index: 4;
+    width: 45px;
+    text-align: center;
+    height: 45px;
+    line-height: 42px;
+    border-radius: 8px;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    visibility: hidden;
+    -webkit-transition: .9s;
+    transition: .9s;
+}
+
+.go-top::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: #0a4fb3;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+
+
+.go-top i {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    color: #fff;
+    -webkit-transition: .5s;
+    transition: .5s;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 1200px) and (min-width: 600px) {
+  
+.footer .social i { 
+    margin-right: 5px;
+    width: 45px;
+    height: 45px; 
+    line-height: 45px;
+}
+
+}
+
+@media screen and (max-width: 900px) {
+    
+    .navbar-toggler:focus {
+        box-shadow: none;
+    }
+    /*
+    .container {
+        overflow-x: 
+    }
+    */
+    .bg-img {
+        margin-top: auto;
+    }
+    
+    .banner { 
+        background-position: left;
+        
+    }
+    
+    .navbar-nav { 
+        background-color: rgba(0, 0, 0, 0.95);
+    }
+    .sticky .navbar-nav { 
+        background-color: #fff;
+    }
+    
+    .navbar a.nav-link {
+        color: #fff; 
+    }
+    
+    .sticky a.nav-link {
+        color: #212121; 
+    }
+}
+
+
