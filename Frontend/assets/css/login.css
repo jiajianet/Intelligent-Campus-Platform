@@ -1,5 +1,5 @@
 :root {
-    --theme-color: #0b5ed7;
+    --theme-color: #4154f1;
     --title-color: #051b35;
     --text-color: #333333;
 }
@@ -13,7 +13,7 @@ body,
 html {
     margin: 0;
     padding: 0;
-    color: #585858;
+    background-image: url("../img/hero-bg.png");
 }
 
 * {
@@ -129,9 +129,12 @@ ol {
     color: var(--theme-color);
 }
 
+.toast-set{
+    z-index: 998;
+}
+
 .form-main {
     background-size: cover;
-    background-color: #ffffff;
     background-attachment: fixed;
     min-height: 100vh;
     display: grid;
@@ -366,8 +369,8 @@ p.signup a:hover {
 
 /* Style the checkmark/indicator */
 .check-remaind .checkmark:after {
-    left: 5px;
-    top: 2px;
+    left: 6px;
+    top: 3px;
     width: 4px;
     height: 9px;
     border: solid white;
