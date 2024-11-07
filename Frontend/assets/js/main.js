@@ -291,28 +291,36 @@
   /**
    * 以下代码为项目组编写
    */
+  
   $('#submitLogin').on('click', () => {
     let userID = $("#uidInput").val();
     let passwd = $("#passwdInput").val();
+    if (userID && passwd) {
     let encryptedPasswd = CryptoJS.SHA256(passwd).toString();
     $.ajax({
       type: "POST",
-      url: "http://111.230.253.94:8081",
-      data: {
-        uno: userID,
-        password: encryptedPasswd
-      },
+      url: "http://111.230.253.94:8081/user/login?uno=" + userID + "&password=" + encryptedPasswd,
+      Cache: false,
       dataType: "JSON",
-      success: function(result) {
+      success: function (result) {
         console.log(result)
-        if(result.code == -1){
+        if (result.code == -1) {
           console.log("error")
+          $("#uidInput").val("");   //清空学号输入框
+          $("#passwdInput").val("");    //清空密码输入框
+          $("#login-error-toast-body").text("用户名或密码错误")
           $("#login-error-toast").toast('show');
-          $("#uidInput").val("");
-          $("#passwdInput").val("");
+
         }
       }
     });
+    }else{
+      $("#uidInput").val("");   //清空学号输入框
+      $("#passwdInput").val("");    //清空密码输入框
+      $("#login-error-toast-body").text("请输入用户名或密码")
+      $("#login-error-toast").toast('show');
 
+    }
   });
+
 })();

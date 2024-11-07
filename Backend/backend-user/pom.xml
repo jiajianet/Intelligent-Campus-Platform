@@ -77,13 +77,32 @@
 			<systemPath>${project.basedir}/lib/lombok-1.18.24.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson-spring-boot-starter</artifactId>
-			<version>3.23.3</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/redisson-3.23.3.jar</systemPath>
+			<version>3.38.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.114.Final</version> <!-- 请替换为最新版本 -->
+		</dependency>
+
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>kryo</artifactId>
+			<version>5.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.javakaffee</groupId>
+			<artifactId>kryo-serializers</artifactId>
+			<version>0.41</version>
+		</dependency>
 
 
 		<dependency>

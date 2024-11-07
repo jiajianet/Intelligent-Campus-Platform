@@ -61,7 +61,6 @@
       aria-atomic="true" id="login-error-toast">
       <div class="d-flex">
         <div class="toast-body" id="login-error-toast-body">
-          用户名或密码错误
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
           aria-label="Close"></button>
@@ -77,11 +76,11 @@
           <form action="#" method="post" class="signin-form">
             <div class="form-input">
               <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" id="uidInput" name="userID"
-                placeholder="请输入学号" required />
+                placeholder="请输入学号" required="required" />
             </div>
             <div class="form-input">
               <span class="fa fa-key" aria-hidden="true"></span> <input type="password" id="passwdInput"
-                name="userPassword" placeholder="请输入密码" required />
+                name="userPassword" placeholder="请输入密码" required="required" />
             </div>
             <div class="login-remember d-grid">
               <label class="check-remaind">

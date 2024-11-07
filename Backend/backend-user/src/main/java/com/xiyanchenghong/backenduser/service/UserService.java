@@ -1,5 +1,7 @@
 package com.xiyanchenghong.backenduser.service;
 import com.xiyanchenghong.backenduser.domain.User;
+import org.springframework.stereotype.Service;
+
 
 public interface UserService {
     /**

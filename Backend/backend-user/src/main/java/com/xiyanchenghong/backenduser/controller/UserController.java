@@ -6,6 +6,7 @@ import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import java.util.HashMap;
