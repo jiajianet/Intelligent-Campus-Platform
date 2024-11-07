@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 public class User {
     // 注意属性名要与数据表中的字段名一致
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//主键
     // 主键自增int(10)对应long
     private long uid;
     // 学校属性varchar对应String

@@ -17,9 +17,9 @@ public class UserConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/user/register")//添加一个拦截器来注册,拦截所有除了注册
-                .excludePathPatterns("/user/login")//登录不拦截，可以注册后直接登录
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/user/register")//添加一个拦截器来注册,拦截所有除了注册
+//                .excludePathPatterns("/user/login")//登录不拦截，可以注册后直接登录
         ;
     }
 

@@ -1,11 +1,15 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.User;
+
 import com.xiyanchenghong.backenduser.repository.UserDao;
 //import com.xiyanchenghong.backenduser.service.serviceImpl.UserService;
 import com.xiyanchenghong.backenduser.service.UserService;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserServicelmpl implements UserService {
@@ -36,6 +40,53 @@ public class UserServicelmpl implements UserService {
                 newUser.setPassword("");
             }
             return newUser;
+        }
+    }
+
+    @Service
+    public class UserService {
+
+        private final Map<String, Long> requestTimestamps = new ConcurrentHashMap<>();
+        private static final long DEBOUNCE_TIME_MS = 3000; // 3秒防抖时间
+
+        // 其他方法...
+
+        public User loginService(String uno, String password) {
+            if (isDebounced(uno)) {
+                return null; // 或者抛出一个自定义异常
+            }
+            // 登录逻辑
+            // 示例：假设成功登录返回用户对象
+            User user = new User();
+            user.setUno(uno);
+            user.setPassword(password);
+            // 其他用户信息设置
+            return user;
+        }
+
+        public User registService(User newUser) {
+            if (isDebounced(newUser.getUno())) {
+                return null; // 或者抛出一个自定义异常
+            }
+            // 注册逻辑
+            // 示例：假设成功注册返回用户对象
+            User user = new User();
+            user.setUno(newUser.getUno());
+            user.setPassword(newUser.getPassword());
+            // 其他用户信息设置
+            return user;
+        }
+
+
+
+        private boolean isDebounced(String key) {
+            long currentTime = System.currentTimeMillis();
+            Long lastRequestTime = requestTimestamps.get(key);
+            if (lastRequestTime == null || (currentTime - lastRequestTime) > DEBOUNCE_TIME_MS) {
+                requestTimestamps.put(key, currentTime);
+                return false;
+            }
+            return true;
         }
     }
 }

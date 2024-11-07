@@ -29,7 +29,7 @@ public class UserInterceptor implements HandlerInterceptor {
         String jwt = request.getHeader("token");
         if (jwt == null) {
 //            返回登录界面，这里我不知道规范是什么，于是就随便写了
-            Result notLogin = Result.error("1","NOT_LOGIN");
+            Result notLogin = Result.error("-1","NEED_TOKEN");
             //使用原始方法进行给客户端响应的数据
             //把notlogin对象转换成json字符串返回
             String jsonString = JSONObject.toJSONString(notLogin);
@@ -43,7 +43,7 @@ public class UserInterceptor implements HandlerInterceptor {
             JwtUtils.parseJwt(jwt);
         }catch (Exception e){
             //令牌有问题，返回登录界面
-            Result notLogin = Result.error("1","NOT_LOGIN");
+            Result notLogin = Result.error("-1","TOKEN_ERROR_OR_EXPIRED");
             //给客户端响应数据，转成字符串返回
             String jsonString = JSONObject.toJSONString(notLogin);
             //和前端对接代码
