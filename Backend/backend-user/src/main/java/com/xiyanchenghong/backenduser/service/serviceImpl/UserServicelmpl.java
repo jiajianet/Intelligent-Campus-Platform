@@ -2,6 +2,8 @@ package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.User;
 
+import com.xiyanchenghong.backenduser.model.BizException;
+import com.xiyanchenghong.backenduser.model.ResponseCodeEnum;
 import com.xiyanchenghong.backenduser.repository.UserDao;
 //import com.xiyanchenghong.backenduser.service.serviceImpl.UserService;
 import com.xiyanchenghong.backenduser.service.UserService;
@@ -24,6 +26,9 @@ public class UserServicelmpl implements UserService {
         if(user != null){
             user.setPassword("");
         }
+        if (uno == null || password == null) {
+            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "学号或密码不能为空");
+        }
         return user;
 
     }
@@ -38,6 +43,9 @@ public class UserServicelmpl implements UserService {
             User newUser = userDao.save(user);
             if(newUser != null){
                 newUser.setPassword("");
+            }
+            if (newUser == null || newUser.getUno() == null) {
+                throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "用户信息不完整");
             }
             return newUser;
         }

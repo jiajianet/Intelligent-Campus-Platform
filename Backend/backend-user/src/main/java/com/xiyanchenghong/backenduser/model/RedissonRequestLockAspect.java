@@ -49,7 +49,7 @@ public class RedissonRequestLockAspect {
             lock.lock(requestLock.expire(), requestLock.timeUnit());
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "系统异常");
+            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "请求过于频繁！");
         } finally {
             // 释放锁
             if (isLocked && lock.isHeldByCurrentThread()) {
