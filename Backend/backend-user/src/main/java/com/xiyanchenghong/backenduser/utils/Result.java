@@ -1,6 +1,5 @@
 package com.xiyanchenghong.backenduser.utils;
 
-//这里用注释未尝不可，同时可能以为前后端分离可能需要重写 ٩(× ×)۶
 
 public class Result<T> {
     private String code;

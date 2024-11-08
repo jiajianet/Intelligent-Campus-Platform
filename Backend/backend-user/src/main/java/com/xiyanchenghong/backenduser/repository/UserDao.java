@@ -15,4 +15,5 @@ public interface  UserDao extends JpaRepository<User, Long> {
     //通过用户名uname和密码查找用户
     User findByUnoAndPassword(String uno, String password);
 
+    User findByUname(String uname);
 }

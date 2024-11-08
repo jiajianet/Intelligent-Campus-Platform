@@ -20,6 +20,10 @@ public class User {
     private String uno;
     // 密码属性varchar对应String
     private String password;
+    private String uname;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'default_avatar.png'")
+    private String upic; // 新增字段
 
     public String getUschool() {
         return uschool;
@@ -51,5 +55,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUname() {
+        return uname;
+    }
+
+    public void setUname(String uname) {
+        this.uname = uname;
+    }
+
+    public String getUpic() {
+        return upic;
+    }
+
+    public void setUpic(String upic) {
+        this.upic = upic;
     }
 }
