@@ -25,6 +25,7 @@
   <link href="assets/css/style.css" rel="stylesheet">
   <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
   <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+  <script src="./assets/vendor/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -53,6 +54,29 @@
     </div>
   </header><!-- End Header -->
 
+  <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+    <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+      aria-atomic="true" id="error-toast">
+      <div class="d-flex">
+        <div class="toast-body" id="error-toast-body">
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+      aria-atomic="true" id="success-toast">
+      <div class="d-flex">
+        <div class="toast-body" id="success-toast-body">
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
 
   <section class="w3l-form-36">
     <div class="form-main section-gap">
@@ -61,23 +85,27 @@
           <h3 style="font-weight: bold;">用户注册</h3>
           <form action="#" method="post" class="signin-form">
             <div class="form-input">
-              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userID" placeholder="请输入学校"
+              <span class="fa fa-school" aria-hidden="true"></span> <input type="text" name="userSchool" id="userSchool" placeholder="请输入学校"
                 required />
             </div>
             <div class="form-input">
-              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userID" placeholder="请输入学号"
+              <span class="fa fa-id-card-o" aria-hidden="true"></span> <input type="text" name="userID" id="uidInput" placeholder="请输入学号"
                 required />
             </div>
             <div class="form-input">
-              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPassword"
+              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userName" id="unameInput" placeholder="请设置用户名"
+                required />
+            </div>
+            <div class="form-input">
+              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordA" id="userPasswordA"
                 placeholder="请设置密码" required />
             </div>
             <div class="form-input">
-              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPassword"
+              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordB" id="userPasswordB"
                 placeholder="请再次设置密码" required />
             </div>
             <div class="login-remember d-grid">
-              <button class="theme-button" type="button">注册</button>
+              <button class="theme-button" type="button" id="submitRegister">注册</button>
             </div>
           </form>
           <!--
@@ -115,5 +143,6 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="assets/vendor/crypto-js/crypto-js.js"></script>
 
 </html>

@@ -25,8 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
                         String token = request.getHeader("Authorization");
-                        if (token != null && token.startsWith("Bearer ")) {
-                            token = token.substring(7);
+                        if (token != null) {
                             try {
                                 Claims claims = JwtUtils.parseJwt(token);
                                 if (JwtUtils.isTokenExpired(token)) {
@@ -45,6 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
                         return true;
                     }
                 }).addPathPatterns("/**") // 拦截所有请求
-                .excludePathPatterns("/user/login", "/user/register"); // 排除登录和注册请求
+                .excludePathPatterns("/user/login", "/user/register","/user/getUserInfo"); // 排除常用用户接口
     }
 }

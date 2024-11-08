@@ -1,14 +1,14 @@
 package com.xiyanchenghong.backenduser.model;
 
 public class BizException extends RuntimeException {
-    private final ResponseCodeEnum code;
+    private final int code;
 
-    public BizException(ResponseCodeEnum code, String message) {
+    public BizException(int code, String message) {
         super(message);
         this.code = code;
     }
 
-    public ResponseCodeEnum getCode() {
+    public int getCode() {
         return code;
     }
 }

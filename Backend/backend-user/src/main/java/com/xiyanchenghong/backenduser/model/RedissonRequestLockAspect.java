@@ -1,4 +1,5 @@
 package com.xiyanchenghong.backenduser.model;
+
 import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -31,7 +32,7 @@ public class RedissonRequestLockAspect {
         Method method = methodSignature.getMethod();
         RequestLock requestLock = method.getAnnotation(RequestLock.class);
         if (requestLock == null || StringUtils.isEmpty(requestLock.prefix())) {
-            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "重复提交前缀不能为空");
+            throw new BizException(400, "重复提交前缀不能为空");
         }
         // 获取自定义key
         final String lockKey = RequestKeyGenerator.getLockKey(joinPoint);
@@ -43,13 +44,13 @@ public class RedissonRequestLockAspect {
             isLocked = lock.tryLock();
             // 没有拿到锁说明已经有了请求了
             if (!isLocked) {
-                throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "您的操作太快了,请稍后重试");
+                throw new BizException(429, "您的操作太快了,请稍后重试");
             }
             // 拿到锁后设置过期时间
             lock.lock(requestLock.expire(), requestLock.timeUnit());
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "请求过于频繁！");
+            throw new BizException(429, "请求过于频繁！");
         } finally {
             // 释放锁
             if (isLocked && lock.isHeldByCurrentThread()) {

@@ -19,7 +19,7 @@ public class UserServicelmpl implements UserService {
             user.setPassword("");
         }
         if (uno == null || password == null) {
-            throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "学号或密码不能为空");
+            throw new BizException(400, "学号或密码不能为空");
         }
         return user;
     }
@@ -37,7 +37,7 @@ public class UserServicelmpl implements UserService {
                 newUser.setPassword("");
             }
             if (newUser == null || newUser.getUno() == null) {
-                throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "用户信息不完整");
+                throw new BizException(400, "用户信息不完整");
             }
             return newUser;
         }

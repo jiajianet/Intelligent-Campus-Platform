@@ -34,7 +34,7 @@ public class UserController {
             String jwt = JwtUtils.generateJwt(claims);
             return Result.success(user, "登录成功！", jwt);
         } else {
-            return Result.error("-1", "账号或密码错误！");
+            return Result.error(-1, "账号或密码错误！");
         }
     }
 
@@ -43,7 +43,7 @@ public class UserController {
     public Result<User> registController(@RequestBody @RequestKeyParam User newUser) {
 
         if (newUser.getUname() == null || newUser.getUname().isEmpty()) {
-            return Result.error("456", "用户名不能为空！");
+            return Result.error(400, "用户名不能为空！");
         }
         User user = userService.registService(newUser);
         if (user != null) {
@@ -57,15 +57,14 @@ public class UserController {
             String jwt = JwtUtils.generateJwt(claims);
             return Result.success(user, "注册成功！", jwt);
         } else {
-            return Result.error("456", "用户名已存在！");
+            return Result.error(409, "用户名已存在！");
         }
     }
 
     @PostMapping("/getUserInfo")
+    @RequestLock(prefix = "getUserInfo:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> getUserInfo(@RequestParam("token") String token) {
-        System.out.println(token); // 打印token以进行调试
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        if (token != null) {
             try {
                 Claims claims = JwtUtils.parseJwt(token);
                 Long uid = claims.get("uid", Long.class);
@@ -73,14 +72,15 @@ public class UserController {
                 if (user != null) {
                     return Result.success(user, "查询成功！");
                 } else {
-                    return Result.error("404", "用户不存在！");
+                    return Result.error(404, "用户不存在！");
                 }
             } catch (Exception e) {
-                return Result.error("401", "无效的令牌");
+                return Result.error(403, "无效的令牌");
             }
         } else {
-            return Result.error("401", "令牌缺失");
+            return Result.error(403, "令牌缺失");
         }
     }
 }
+
 
