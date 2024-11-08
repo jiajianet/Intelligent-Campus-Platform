@@ -30,7 +30,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B clean package -Dmaven.test.skip=true --file Backend/backend-user/pom.xml
 
-    - name: Upload artifact
+    - name: Upload artifact 
       uses: actions/upload-artifact@v4
       with:
         name: backend-user-0.0.1-SNAPSHOT.jar
