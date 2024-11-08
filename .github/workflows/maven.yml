@@ -34,3 +34,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: backend-user-0.0.1-SNAPSHOT.jar
+        path: target
