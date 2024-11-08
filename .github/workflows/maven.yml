@@ -29,9 +29,10 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B clean package -Dmaven.test.skip=true --file Backend/backend-user/pom.xml
-      
+    - name: Mkdir output and copy to directory
+      run: mkdir output && cp target/*.jar output
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: backend-user-0.0.1-SNAPSHOT.jar
-        path: target
+        path: output
