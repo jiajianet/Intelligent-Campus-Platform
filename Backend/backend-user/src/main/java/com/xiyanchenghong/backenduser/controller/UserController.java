@@ -5,6 +5,8 @@ import com.xiyanchenghong.backenduser.model.RequestLock;
 import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ public class UserController {
     @PostMapping("/register")
     @RequestLock(prefix = "register:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> registController(@RequestBody @RequestKeyParam User newUser) {
+
         if (newUser.getUname() == null || newUser.getUname().isEmpty()) {
             return Result.error("456", "用户名不能为空！");
         }
@@ -58,13 +61,26 @@ public class UserController {
         }
     }
 
-    @PostMapping("/info")
-    public Result<User> getUserInfo(@RequestParam Long uid) {
-        User user = userService.getUserInfo(uid);
-        if (user != null) {
-            return Result.success(user, "查询成功！");
+    @PostMapping("/getUserInfo")
+    public Result<User> getUserInfo(@RequestParam("token") String token) {
+        System.out.println(token); // 打印token以进行调试
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            try {
+                Claims claims = JwtUtils.parseJwt(token);
+                Long uid = claims.get("uid", Long.class);
+                User user = userService.getUserInfo(uid);
+                if (user != null) {
+                    return Result.success(user, "查询成功！");
+                } else {
+                    return Result.error("404", "用户不存在！");
+                }
+            } catch (Exception e) {
+                return Result.error("401", "无效的令牌");
+            }
         } else {
-            return Result.error("404", "用户不存在！");
+            return Result.error("401", "令牌缺失");
         }
     }
 }
+

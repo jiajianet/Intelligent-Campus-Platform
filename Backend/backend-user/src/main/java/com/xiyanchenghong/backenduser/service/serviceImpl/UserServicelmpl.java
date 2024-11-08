@@ -1,17 +1,11 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
-
 import com.xiyanchenghong.backenduser.domain.User;
-
 import com.xiyanchenghong.backenduser.model.BizException;
 import com.xiyanchenghong.backenduser.model.ResponseCodeEnum;
 import com.xiyanchenghong.backenduser.repository.UserDao;
-//import com.xiyanchenghong.backenduser.service.serviceImpl.UserService;
 import com.xiyanchenghong.backenduser.service.UserService;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserServicelmpl implements UserService {
@@ -19,24 +13,25 @@ public class UserServicelmpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public User loginService(String uno, String password){
-        // 如果账号密码都对则返回登录的用户对象，若有一个错误则返回null
+    public User loginService(String uno, String password) {
         User user = userDao.findByUnoAndPassword(uno, password);
-        // 重要信息置空
-        if(user != null){
+        if (user != null) {
             user.setPassword("");
         }
         if (uno == null || password == null) {
             throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "学号或密码不能为空");
         }
         return user;
-
     }
+
     @Override
     public User registService(User user) {
         if (userDao.findByUno(user.getUno()) != null) {
             return null;
         } else {
+            if (user.getUpic() == null || user.getUpic().isEmpty()) {
+                user.setUpic("default_avatar.png"); // 设置默认头像
+            }
             User newUser = userDao.save(user);
             if (newUser != null) {
                 newUser.setPassword("");
