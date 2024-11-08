@@ -6,8 +6,7 @@ public class Result<T> {
     private String code;
     private String msg;
     private T data;
-
-    private Object token;
+    private String token; // 修改为String类型
 
     public String getCode() {
         return code;
@@ -33,9 +32,14 @@ public class Result<T> {
         this.data = data;
     }
 
-    public Object getToken() {return token;}
+    public String getToken() {
+        return token;
+    }
 
-    public void setToken(Object token) {this.token = token;}
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 
     public Result() {
     }
@@ -58,14 +62,14 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> success(T data,String msg) {
+    public static <T> Result<T> success(T data, String msg) {
         Result<T> result = new Result<>(data);
         result.setCode("0");
         result.setMsg(msg);
         return result;
     }
-//不规范的输出
-    public static <T> Result<T> success(T data,String msg,Object token) {
+
+    public static <T> Result<T> success(T data, String msg, String token) {
         Result<T> result = new Result<>(data);
         result.setCode("0");
         result.setMsg(msg);
@@ -79,6 +83,7 @@ public class Result<T> {
         result.setMsg(msg);
         return result;
     }
+
     public static <T> Result<T> errorWithDetails(String code, String msg, T data) {
         Result<T> result = new Result<>();
         result.setCode(code);

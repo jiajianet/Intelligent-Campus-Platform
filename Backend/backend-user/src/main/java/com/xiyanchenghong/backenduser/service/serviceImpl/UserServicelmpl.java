@@ -51,6 +51,24 @@ public class UserServicelmpl implements UserService {
         }
     }
 
+//    @Override
+//    public User getUserService(User user){
+//        //用户id相同
+//        if(userDao.findByUno(user.getUno())!= null){
+//
+//        }else {
+//            //返回创建好的用户对象(带uid)
+//            User newUser = userDao.save(user);
+//            if(newUser != null){
+//                newUser.setPassword("");
+//            }
+//            if (newUser == null || newUser.getUno() == null) {
+//                throw new BizException(ResponseCodeEnum.BIZ_CHECK_FAIL, "用户信息不完整");
+//            }
+//            return newUser;
+//        }
+//    }
+
     @Service
     public class UserService {
 
