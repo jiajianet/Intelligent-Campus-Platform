@@ -58,30 +58,34 @@ public class UserController {
 
     @PostMapping("/register")
     @RequestLock(prefix = "register:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<User> registController(@RequestBody @RequestKeyParam User newUser, @RequestParam("captchaVerification") String captchaVerification) {
+    public Result<User> registController(@RequestBody @RequestKeyParam User newUser,@RequestParam("captchaVerification") String captchaVerification) {
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
         ResponseModel response = captchaService.verification(captchaVO);
+        System.out.println(response.isSuccess());
         if (!response.isSuccess()) {
             return Result.error(400, "验证码校验失败！");
         }
         if (newUser.getUname() == null || newUser.getUname().isEmpty()) {
             return Result.error(400, "用户名不能为空！");
         }
-        User user = userService.registService(newUser);
-        if (user != null) {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("uno", user.getUno());
-            claims.put("uschool", user.getUschool());
-            claims.put("uid", user.getUid());
-            claims.put("uname", user.getUname()); // 新增字段
-            claims.put("upic", user.getUpic());
+        if (response.isSuccess() == true) {
+            User user = userService.registService(newUser);
+            if (user != null) {
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("uno", user.getUno());
+                claims.put("uschool", user.getUschool());
+                claims.put("uid", user.getUid());
+                claims.put("uname", user.getUname()); // 新增字段
+                claims.put("upic", user.getUpic());
 
-            String jwt = JwtUtils.generateJwt(claims);
-            return Result.success(user, "注册成功！", jwt);
-        } else {
-            return Result.error(409, "用户名已存在！");
+                String jwt = JwtUtils.generateJwt(claims);
+                return Result.success(user, "注册成功！", jwt);
+            } else {
+                return Result.error(409, "用户名已存在！");
+            }
         }
+        return Result.error(-2, ""+response);
     }
 
     @PostMapping("/getUserInfo")

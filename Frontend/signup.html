@@ -12,7 +12,9 @@
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +23,8 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <!-- Template Main CSS File -->
+  <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+  <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
   <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
   <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
@@ -85,24 +88,24 @@
           <h3 style="font-weight: bold;">用户注册</h3>
           <form action="#" method="post" class="signin-form">
             <div class="form-input">
-              <span class="fa fa-school" aria-hidden="true"></span> <input type="text" name="userSchool" id="userSchool" placeholder="请输入学校"
-                required />
+              <span class="fa fa-school" aria-hidden="true"></span> <input type="text" name="userSchool" id="userSchool"
+                placeholder="请输入学校" required />
             </div>
             <div class="form-input">
-              <span class="fa fa-id-card-o" aria-hidden="true"></span> <input type="text" name="userID" id="uidInput" placeholder="请输入学号"
-                required />
+              <span class="fa fa-id-card-o" aria-hidden="true"></span> <input type="text" name="userID" id="uidInput"
+                placeholder="请输入学号" required />
             </div>
             <div class="form-input">
-              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userName" id="unameInput" placeholder="请设置用户名"
-                required />
+              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userName" id="unameInput"
+                placeholder="请设置用户名" required />
             </div>
             <div class="form-input">
-              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordA" id="userPasswordA"
-                placeholder="请设置密码" required />
+              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordA"
+                id="userPasswordA" placeholder="请设置密码" required />
             </div>
             <div class="form-input">
-              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordB" id="userPasswordB"
-                placeholder="请再次设置密码" required />
+              <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordB"
+                id="userPasswordB" placeholder="请再次设置密码" required />
             </div>
             <div class="login-remember d-grid">
               <button class="theme-button" type="button" id="submitRegister">注册</button>
@@ -129,20 +132,31 @@
         </div>
       </div>
     </div>
+    <div id="mpanel1" style="margin-top:50px;"></div>
   </section>
 </body>
+<script>
+  (function () {
+    if (!window.Promise) {
+      document.writeln('<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js"><' + '/' + 'script>');
+    }
+  })();
+</script>
+<!-- Vendor JS Files -->
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/php-email-form/validate.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="assets/vendor/purecounter/purecounter.js"></script>
+<script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="assets/vendor/crypto-js/crypto-js.js"></script>
+<script src="assets/vendor/captcha/js/ase.js"></script>
+<script src="assets/vendor/captcha/js/verify.js" ></script>
 
-  <!-- Vendor JS Files -->
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/purecounter/purecounter.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<!-- Template Main JS File -->
+<script src="assets/js/main.js"></script>
+<script src="assets/js/register.js"></script>
 
-  <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
-  <script src="assets/vendor/crypto-js/crypto-js.js"></script>
 
 </html>
