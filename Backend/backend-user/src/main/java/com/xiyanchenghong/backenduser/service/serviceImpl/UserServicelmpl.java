@@ -1,7 +1,6 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.model.BizException;
-import com.xiyanchenghong.backenduser.model.ResponseCodeEnum;
 import com.xiyanchenghong.backenduser.repository.UserDao;
 import com.xiyanchenghong.backenduser.service.UserService;
 import org.springframework.stereotype.Service;
