@@ -3,7 +3,7 @@ import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import com.xiyanchenghong.backenduser.model.*;
-import com.xiyanchenghong.backenduser.domain.User;
+import com.xiyanchenghong.backenduser.domain.*;
 import com.xiyanchenghong.backenduser.model.RequestLock;
 import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
@@ -14,9 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+import com.xiyanchenghong.backenduser.repository.SchoolRepository;
 
 @RestController
 @RequestMapping("/user")
@@ -25,6 +26,9 @@ public class UserController {
     private UserService userService;
     @Autowired
     private CaptchaService captchaService;
+    @Autowired
+    private SchoolRepository schoolRepository;
+
     @PostMapping("/login")
     @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password,@RequestParam("captchaVerification") String captchaVerification) {
@@ -99,6 +103,12 @@ public class UserController {
         } else {
             return Result.error(403, "令牌缺失");
         }
+    }
+
+    @PostMapping("/schools")
+    @RequestLock(prefix = "schools:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    public List<School> getSchools(@RequestParam String school) {
+        return schoolRepository.findByNameContaining(school);
     }
 }
 
