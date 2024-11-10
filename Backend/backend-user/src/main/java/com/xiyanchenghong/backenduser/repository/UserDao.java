@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.Mapping;
 
+import java.util.List;
+
 @Repository
 public interface  UserDao extends JpaRepository<User, Long> {
 
@@ -16,4 +18,7 @@ public interface  UserDao extends JpaRepository<User, Long> {
     User findByUnoAndPassword(String uno, String password);
 
     User findByUname(String uname);
+
+    // 通过邮箱查找用户
+    List<User> findByEmail(String email);
 }
