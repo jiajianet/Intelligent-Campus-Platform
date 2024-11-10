@@ -3,7 +3,7 @@ import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import com.xiyanchenghong.backenduser.model.*;
-import com.xiyanchenghong.backenduser.domain.User;
+import com.xiyanchenghong.backenduser.domain.*;
 import com.xiyanchenghong.backenduser.model.RequestLock;
 import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
@@ -14,20 +14,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xiyanchenghong.backenduser.repository.SchoolRepository;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
-    @Resource
+    @Autowired
     private CaptchaService captchaService;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    @Autowired
+    private SchoolRepository schoolRepository;
+
     @PostMapping("/login")
     @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password,@RequestParam("captchaVerification") String captchaVerification) {
@@ -57,10 +58,11 @@ public class UserController {
 
     @PostMapping("/register")
     @RequestLock(prefix = "register:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<User> registController(@RequestBody @RequestKeyParam User newUser, @RequestParam("captchaVerification") String captchaVerification) {
+    public Result<User> registController(@RequestBody @RequestKeyParam User newUser,@RequestParam("captchaVerification") String captchaVerification) {
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
         ResponseModel response = captchaService.verification(captchaVO);
+        System.out.println(response.isSuccess());
         if (!response.isSuccess()) {
             return Result.error(400, "验证码校验失败！");
         }
@@ -83,8 +85,9 @@ public class UserController {
                 return Result.error(409, "用户名已存在！");
             }
         }
-        return  Result.error(-2, ""+response);
+        return Result.error(-2, ""+response);
     }
+
     @PostMapping("/getUserInfo")
     @RequestLock(prefix = "getUserInfo:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> getUserInfo(@RequestParam("token") String token) {
@@ -106,43 +109,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/forgotPassword")
-    public String forgotPassword(@RequestParam("email") String userEmail) {
-        logger.info("Password reset requested for email: {}", userEmail);
-        User user = userService.findUserByEmail(userEmail);
-        if (user == null) {
-            return "User not found";
-        }
-        String token = UUID.randomUUID().toString();
-        userService.createPasswordResetTokenForUser(user, token);
-        userService.sendPasswordResetEmail(user, token);
-        logger.info("Password reset email sent to: {}", userEmail);
-        return "Password reset email sent";
-    }
-
-    @GetMapping("/resetPassword")
-    public String showResetPasswordPage(@RequestParam("token") String token) {
-        String result = userService.validatePasswordResetToken(token);
-        if (result != null) {
-            return "Invalid token";
-        }
-        return "Reset password page";
-    }
-
-    @PostMapping("/resetPassword")
-    public String resetPassword(@RequestParam("token") String token,
-                                @RequestParam("password") String newPassword) {
-        String result = userService.validatePasswordResetToken(token);
-        if (result != null) {
-            return "Invalid token";
-        }
-        User user = userService.findUserByPasswordResetToken(token);
-        if (user != null) {
-            userService.changeUserPassword(user, newPassword);
-            return "Password reset successful";
-        } else {
-            return "Invalid token";
-        }
+    @PostMapping("/schools")
+    @RequestLock(prefix = "schools:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    public List<School> getSchools(@RequestParam String school) {
+        return schoolRepository.findByNameContaining(school);
     }
 }
 
