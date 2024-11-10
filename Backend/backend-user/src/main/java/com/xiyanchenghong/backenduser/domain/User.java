@@ -1,10 +1,5 @@
 package com.xiyanchenghong.backenduser.domain;
-//domain中的User.java
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.Table;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.*;
 @Table(name = "user")
 @Entity
@@ -21,6 +16,8 @@ public class User {
     // 密码属性varchar对应String
     private String password;
     private String uname;
+    private String email;
+
 
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'default_avatar.png'")
     private String upic; // 新增字段
@@ -72,4 +69,13 @@ public class User {
     public void setUpic(String upic) {
         this.upic = upic;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }
