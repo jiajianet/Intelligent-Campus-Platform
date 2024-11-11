@@ -83,8 +83,8 @@ public class UserServicelmpl implements UserService {
     @Override
     public void sendPasswordResetEmail(User user, String token) {
         String url = "http://127.0.0.1:8081/user/resetPassword?token=" + token;
-        String subject = "Reset Password";
-        String text = "To reset your password, click the link below:\n" + url;
+        String subject = "【智慧校园服务平台】密码重置";
+        String text = "您正在进行密码重置操作，请点击下面的链接进行重置:\n" + url +"\n若非本人申请，请忽略这封电子邮件并检查账号最近登录和操作行为是否有问题";
         emailService.sendEmail(user.getEmail(), subject, text);
     }
 
