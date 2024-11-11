@@ -111,17 +111,24 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public String forgotPassword(@RequestParam("email") String userEmail) {
+    @RequestLock(prefix = "forgotPassword:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    public Result<String> forgotPassword(@RequestParam("email") String userEmail, @RequestParam("captchaVerification") String captchaVerification) {
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(captchaVerification);
+        ResponseModel response = captchaService.verification(captchaVO);
+        if (!response.isSuccess()) {
+            return Result.error(400, "验证码校验失败！");
+        }
         logger.info("Password reset requested for email: {}", userEmail);
         User user = userService.findUserByEmail(userEmail);
         if (user == null) {
-            return "User not found";
+            return Result.error(404, "User not found");
         }
         String token = UUID.randomUUID().toString();
         userService.createPasswordResetTokenForUser(user, token);
         userService.sendPasswordResetEmail(user, token);
         logger.info("Password reset email sent to: {}", userEmail);
-        return "Password reset email sent";
+        return Result.success("Password reset email sent");
     }
 
     @GetMapping("/resetPassword")
