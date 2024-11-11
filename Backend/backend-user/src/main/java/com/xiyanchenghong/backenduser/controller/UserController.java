@@ -2,18 +2,20 @@ package com.xiyanchenghong.backenduser.controller;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
+import com.xiyanchenghong.backenduser.domain.School;
 import com.xiyanchenghong.backenduser.model.*;
 import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.model.RequestLock;
+import com.xiyanchenghong.backenduser.repository.SchoolRepository;
 import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +30,8 @@ public class UserController {
     @Resource
     private CaptchaService captchaService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    @Autowired
+    private SchoolRepository schoolRepository;
     @PostMapping("/login")
     @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password,@RequestParam("captchaVerification") String captchaVerification) {
@@ -143,6 +147,11 @@ public class UserController {
         } else {
             return "Invalid token";
         }
+    }
+
+    @PostMapping("/schools")
+    public List<School> getSchools(@RequestParam String school) {
+        return schoolRepository.findByNameContaining(school);
     }
 }
 
