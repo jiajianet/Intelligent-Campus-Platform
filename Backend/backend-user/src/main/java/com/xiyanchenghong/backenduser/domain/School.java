@@ -1,6 +1,6 @@
 package com.xiyanchenghong.backenduser.domain;
+
 import jakarta.persistence.*;
-//连接school表格
 
 @Table(name = "school")
 @Entity
@@ -8,6 +8,7 @@ public class School {
 
     @Column(unique = true)
     private String name;
+
     @Id
     private Long id;
 
@@ -34,4 +35,3 @@ public class School {
         return id;
     }
 }
-

@@ -1,6 +1,8 @@
 package com.xiyanchenghong.backenduser.service;
 import com.xiyanchenghong.backenduser.domain.User;
 
+import java.util.List;
+
 
 public interface UserService {
     /**
@@ -19,4 +21,13 @@ public interface UserService {
     User registService(User user);
 
     User getUserInfo(Long uid); // 新增方法
+    User findUserByEmail(String email);
+    void createPasswordResetTokenForUser(User user, String token);
+    void sendPasswordResetEmail(User user, String token);
+    String validatePasswordResetToken(String token);
+    void changeUserPassword(User user, String newPassword);
+    User findUserByPasswordResetToken(String token);
+
+
+
 }
