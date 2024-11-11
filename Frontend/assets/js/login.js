@@ -40,7 +40,7 @@ checkLogin();
 
 // // 初始化验证码  弹出式
 $('#mpanel2').slideVerify({
-  baseUrl: 'http://111.230.253.94:8081',  //服务器请求地址, 默认地址为安吉服务器;
+  baseUrl: 'http://127.0.0.1:8081',  //服务器请求地址, 默认地址为安吉服务器;
   mode: 'pop',     //展示模式
   containerId: 'submitLogin',//pop模式 必填 被点击之后出现行为验证码的元素id
   imgSize: {       //图片的大小对象,有默认值{ width: '310px',height: '155px'},可省略
@@ -78,7 +78,7 @@ $('#mpanel2').slideVerify({
       params["password"] = encryptedPasswd;
       $.ajax({
         type: "POST",
-        url: "http://111.230.253.94:8081/user/login",
+        url: "http://127.0.0.1:8081/user/login",
         Cache: false,
         data: params,
         dataType: "JSON",
