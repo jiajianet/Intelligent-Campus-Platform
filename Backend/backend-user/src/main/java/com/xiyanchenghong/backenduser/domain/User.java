@@ -1,34 +1,27 @@
 package com.xiyanchenghong.backenduser.domain;
 
 import jakarta.persistence.*;
+
 @Table(name = "user")
 @Entity
 public class User {
     // 注意属性名要与数据表中的字段名一致
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//主键
-    // 主键自增int(10)对应long
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键
     private long uid;
-    // 学校属性varchar对应String
+
     private String uschool;
-    // 用户名属性varchar对应String
     private String uno;
-    // 密码属性varchar对应String
     private String password;
     private String uname;
     private String email;
 
-
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'default_avatar.png'")
     private String upic; // 新增字段
 
-    public String getUschool() {
-        return uschool;
-    }
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean emailverified;
 
-    public void setUschool(String uschool) {
-        this.uschool = uschool;
-    }
 
     public long getUid() {
         return uid;
@@ -36,6 +29,14 @@ public class User {
 
     public void setUid(long uid) {
         this.uid = uid;
+    }
+
+    public String getUschool() {
+        return uschool;
+    }
+
+    public void setUschool(String uschool) {
+        this.uschool = uschool;
     }
 
     public String getUno() {
@@ -62,14 +63,6 @@ public class User {
         this.uname = uname;
     }
 
-    public String getUpic() {
-        return upic;
-    }
-
-    public void setUpic(String upic) {
-        this.upic = upic;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -78,4 +71,19 @@ public class User {
         this.email = email;
     }
 
+    public String getUpic() {
+        return upic;
+    }
+
+    public void setUpic(String upic) {
+        this.upic = upic;
+    }
+
+    public boolean isEmailVerified() {
+        return emailverified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailverified = emailVerified;
+    }
 }

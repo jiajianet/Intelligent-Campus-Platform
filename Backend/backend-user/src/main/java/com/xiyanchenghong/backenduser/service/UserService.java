@@ -28,6 +28,21 @@ public interface UserService {
     void changeUserPassword(User user, String newPassword);
     User findUserByPasswordResetToken(String token);
 
+    void deleteAccountByUno(String uno);
 
+    //注册用户所用邮箱进行验证
+    void createEmailVerificationTokenForUser(User user, String token);
+    void sendEmailVerificationEmail(User user, String token);
+    String validateEmailVerificationToken(String token);
 
+    //发送验证邮件的方法
+    void sendEmailVerificationEmail(String email, String captchaVerification);
+    void storeCaptchaVerification(String email, String captchaVerification);
+    boolean verifyCaptcha(String email, String captchaVerification);
+
+    boolean checkEmailExistsForRegistration(String email);
+    User findUserByEmailForPasswordReset(String email);
+
+    public User findUserByUnoAndEmail(String uno, String email);
+    public void sendDeleteAccountEmail(User user, String captchaVerification);
 }

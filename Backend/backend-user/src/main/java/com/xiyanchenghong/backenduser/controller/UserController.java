@@ -2,7 +2,9 @@ package com.xiyanchenghong.backenduser.controller;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
+import com.xiyanchenghong.backenduser.domain.CompleteRegistrationRequest;
 import com.xiyanchenghong.backenduser.domain.School;
+import com.xiyanchenghong.backenduser.domain.UserRegistrationRequest;
 import com.xiyanchenghong.backenduser.model.*;
 import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.model.RequestLock;
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -32,16 +35,17 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private SchoolRepository schoolRepository;
+
     @PostMapping("/login")
     @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password,@RequestParam("captchaVerification") String captchaVerification) {
+    public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password, @RequestParam("captchaVerification") String captchaVerification) {
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
         ResponseModel response = captchaService.verification(captchaVO);
         if (!response.isSuccess()) {
             return Result.error(400, "验证码校验失败！");
         }
-        if (response.isSuccess() == true){
+        if (response.isSuccess() == true) {
             User user = userService.loginService(uno, password);
             if (user != null) {
                 Map<String, Object> claims = new HashMap<>();
@@ -56,39 +60,70 @@ public class UserController {
                 return Result.error(-1, "账号或密码错误！");
             }
         }
-        return Result.error(-2, ""+response);
+        return Result.error(-2, "" + response);
     }
+
 
     @PostMapping("/register")
     @RequestLock(prefix = "register:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<User> registController(@RequestBody @RequestKeyParam User newUser, @RequestParam("captchaVerification") String captchaVerification) {
-        CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaVerification(captchaVerification);
-        ResponseModel response = captchaService.verification(captchaVO);
-        if (!response.isSuccess()) {
-            return Result.error(400, "验证码校验失败！");
-        }
-        if (newUser.getUname() == null || newUser.getUname().isEmpty()) {
+    public Result<String> initiateRegistration(@RequestBody UserRegistrationRequest request) {
+
+        if (request.getUname() == null || request.getUname().isEmpty()) {
             return Result.error(400, "用户名不能为空！");
         }
-        if (response.isSuccess() == true) {
-            User user = userService.registService(newUser);
-            if (user != null) {
-                Map<String, Object> claims = new HashMap<>();
-                claims.put("uno", user.getUno());
-                claims.put("uschool", user.getUschool());
-                claims.put("uid", user.getUid());
-                claims.put("uname", user.getUname()); // 新增字段
-                claims.put("upic", user.getUpic());
-
-                String jwt = JwtUtils.generateJwt(claims);
-                return Result.success(user, "注册成功！", jwt);
-            } else {
-                return Result.error(409, "用户名已存在！");
-            }
+        if (userService.checkEmailExistsForRegistration(request.getEmail())) {
+            return Result.error(409, "邮箱已存在！");
         }
-        return  Result.error(-2, ""+response);
+
+        // 生成验证码
+        String EmailcaptchaVerification = generateCaptcha();
+        // 发送验证邮件
+        userService.sendEmailVerificationEmail(request.getEmail(), EmailcaptchaVerification);
+
+        // 将验证码存储在缓存或数据库中，关联到用户的 email
+        userService.storeCaptchaVerification(request.getEmail(), EmailcaptchaVerification);
+
+        return Result.success("验证码已发送到您的邮箱，请查收！");
     }
+
+    @PostMapping("/completeRegistration")
+    public Result<User> completeRegistration(@RequestBody CompleteRegistrationRequest request) {
+        if (!userService.verifyCaptcha(request.getEmail(), request.getCaptchaVerification())) {
+            return Result.error(400, "验证码校验失败！");
+        }
+
+        User user = new User();
+        user.setUno(request.getUno());
+        user.setUschool(request.getUschool());
+        user.setPassword(request.getPassword());
+        user.setUname(request.getUname());
+        user.setEmail(request.getEmail());
+        user.setEmailVerified(true); // 设置邮箱已验证
+        User newUser = userService.registService(user);
+        if (newUser != null) {
+            // 生成 JWT token
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("uno", newUser.getUno());
+            claims.put("uschool", newUser.getUschool());
+            claims.put("uid", newUser.getUid());
+            claims.put("uname", newUser.getUname());
+            claims.put("upic", newUser.getUpic());
+            String jwt = JwtUtils.generateJwt(claims);
+
+            return Result.success(newUser, "注册成功！", jwt);
+        } else {
+            return Result.error(409, "用户名已存在！");
+        }
+    }
+
+
+    private String generateCaptcha() {
+        // 生成6位随机验证码
+        return String.valueOf((int)((Math.random() * 9 + 1) * 100000));
+    }
+
+
+
     @PostMapping("/getUserInfo")
     @RequestLock(prefix = "getUserInfo:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> getUserInfo(@RequestParam("token") String token) {
@@ -110,56 +145,105 @@ public class UserController {
         }
     }
 
+
     @PostMapping("/forgotPassword")
     @RequestLock(prefix = "forgotPassword:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<String> forgotPassword(@RequestParam("email") String userEmail, @RequestParam("captchaVerification") String captchaVerification) {
-        CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaVerification(captchaVerification);
-        ResponseModel response = captchaService.verification(captchaVO);
-        if (!response.isSuccess()) {
+    public Result<String> forgotPassword(@RequestParam("email") String userEmail) {
+//        CaptchaVO captchaVO = new CaptchaVO();
+//        captchaVO.setCaptchaVerification(captchaVerification);
+//        ResponseModel response = captchaService.verification(captchaVO);
+//        if (!response.isSuccess()) {
+//            return Result.error(400, "验证码校验失败！");
+//        }
+
+        User user = userService.findUserByEmailForPasswordReset(userEmail);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+
+        // 生成6位随机验证码
+        String EmailcaptchaVerification = generateCaptcha();
+        // 发送验证码邮件
+        userService.sendPasswordResetEmail(user, EmailcaptchaVerification);
+
+        // 将验证码存储在数据库中，关联到用户的 email
+        userService.storeCaptchaVerification(userEmail, EmailcaptchaVerification);
+
+//        logger.info("Password reset email sent to: {}", userEmail);
+        return Result.success("验证码已发送到您的邮箱，请查收！");
+    }
+
+    @PostMapping("/resetPasswordWithCaptcha")
+    public Result<String> resetPasswordWithCaptcha(@RequestParam("email") String email,
+                                                   @RequestParam("EmailcaptchaVerification") String EmailcaptchaVerification,
+                                                   @RequestParam("newPassword") String newPassword) {
+        if (!userService.verifyCaptcha(email, EmailcaptchaVerification)) {
             return Result.error(400, "验证码校验失败！");
         }
-        logger.info("Password reset requested for email: {}", userEmail);
-        User user = userService.findUserByEmail(userEmail);
+
+        User user = userService.findUserByEmail(email);
         if (user == null) {
-            return Result.error(404, "User not found");
+            return Result.error(404, "用户不存在");
         }
-        String token = UUID.randomUUID().toString();
-        userService.createPasswordResetTokenForUser(user, token);
-        userService.sendPasswordResetEmail(user, token);
-        logger.info("Password reset email sent to: {}", userEmail);
-        return Result.success("Password reset email sent");
+
+        userService.changeUserPassword(user, newPassword);
+        return Result.success("密码重置成功");
     }
 
-    @GetMapping("/resetPassword")
-    public String showResetPasswordPage(@RequestParam("token") String token) {
-        String result = userService.validatePasswordResetToken(token);
-        if (result != null) {
-            return "Invalid token";
-        }
-        return "Reset password page";
-    }
-
-    @PostMapping("/resetPassword")
-    public String resetPassword(@RequestParam("token") String token,
-                                @RequestParam("password") String newPassword) {
-        String result = userService.validatePasswordResetToken(token);
-        if (result != null) {
-            return "Invalid token";
-        }
-        User user = userService.findUserByPasswordResetToken(token);
-        if (user != null) {
-            userService.changeUserPassword(user, newPassword);
-            return "Password reset successful";
-        } else {
-            return "Invalid token";
-        }
-    }
 
     @PostMapping("/schools")
     public List<School> getSchools(@RequestParam String school) {
         return schoolRepository.findByNameContaining(school);
     }
+
+
+    @DeleteMapping("/deleteAccount")
+    @RequestLock(prefix = "deleteAccount:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    public Result<String> initiateDeleteAccount(@RequestParam("uno") String uno, @RequestParam("email") String email) {
+        User user = userService.findUserByUnoAndEmail(uno, email);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+
+        // 生成6位随机验证码
+        String EmailcaptchaVerification = generateCaptcha();
+        // 发送验证码邮件
+        userService.sendDeleteAccountEmail(user, EmailcaptchaVerification);
+
+        // 将验证码存储在数据库中，关联到用户的 email
+        userService.storeCaptchaVerification(email, EmailcaptchaVerification);
+
+        logger.info("Delete account email sent to: {}", email);
+        return Result.success("验证码已发送到您的邮箱，请查收！");
+    }
+
+    @PostMapping("/completeDeleteAccount")
+    public Result<String> completeDeleteAccount(@RequestParam("uno") String uno,
+                                                @RequestParam("email") String email,
+                                                @RequestParam("EmailcaptchaVerification") String EmailcaptchaVerification) {
+        if (!userService.verifyCaptcha(email, EmailcaptchaVerification)) {
+            return Result.error(400, "验证码校验失败！");
+        }
+
+        User user = userService.findUserByUnoAndEmail(uno, email);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+
+        userService.deleteAccountByUno(uno);
+        return Result.success("账户注销成功");
+    }
+
+
+    @PostMapping("/verifyEmail")
+    public String verifyEmail(@RequestParam("token") String token) {
+        String result = userService.validateEmailVerificationToken(token);
+        if (result != null) {
+            return "无效的令牌";
+        }
+        return "邮箱验证成功";
+    }
 }
+
 
 
