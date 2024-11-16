@@ -211,5 +211,10 @@ public class UserServicelmpl implements UserService {
     public User findUserByUnoAndEmail(String uno, String email) {
         return userDao.findByUnoAndEmail(uno, email);
     }
+
+    @Override
+    public void updateUser(User user) {
+        userDao.save(user);
+    }
 }
 

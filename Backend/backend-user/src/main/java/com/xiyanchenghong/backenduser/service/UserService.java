@@ -45,4 +45,7 @@ public interface UserService {
 
     public User findUserByUnoAndEmail(String uno, String email);
     public void sendDeleteAccountEmail(User user, String captchaVerification);
+
+    void updateUser(User user);
+
 }

@@ -13,9 +13,17 @@ import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
 import io.jsonwebtoken.Claims;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +43,10 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private SchoolRepository schoolRepository;
-
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private RedissonClient redissonClient;
     @PostMapping("/login")
     @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password, @RequestParam("captchaVerification") String captchaVerification) {
@@ -242,6 +253,93 @@ public class UserController {
             return "无效的令牌";
         }
         return "邮箱验证成功";
+    }
+
+
+    @PostMapping("/saveUserSchedule")
+    public Result<String> saveUserSchedule(@RequestParam("token") String token, @RequestBody String scheduleJson) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = jwtUtils.parseJwt(token);
+            if (jwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取用户信息
+        Long uid = claims.get("uid", Long.class);
+        User user = userService.getUserInfo(uid);
+        if (user == null) {
+            return Result.error(404, "User not found");
+        }
+
+        // 保存JSON文件
+        String fileName = "schedule_" + uid + ".json";
+        String filePath = System.getProperty("user.dir") + "/schedules/" + fileName; // 使用外部目录
+        try {
+            Files.createDirectories(Paths.get(System.getProperty("user.dir") + "/schedules/")); // 确保目录存在
+            Files.write(Paths.get(filePath), scheduleJson.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            logger.error("Error saving schedule file", e);
+            return Result.error(500, "Error saving schedule file");
+        }
+
+        // 更新数据库中的文件路径
+        user.setSchedfile(filePath);
+        userService.updateUser(user);
+
+        return Result.success("Schedule saved successfully");
+    }
+
+
+    @PostMapping("/getUserScheduleList")
+    @RequestLock(prefix = "getUserScheduleList:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    public Result<String> getUserScheduleList(@RequestParam("token") String token) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = jwtUtils.parseJwt(token);
+            if (jwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 防抖功能
+        boolean isLocked = false;
+        RLock lock = redissonClient.getLock("getUserScheduleList:" + claims.get("uid"));
+        try {
+            isLocked = lock.tryLock();
+            if (!isLocked) {
+                return Result.error(403, "Too many requests");
+            }
+
+            // 获取用户的课程表文件路径
+            Long uid = claims.get("uid", Long.class);
+            User user = userService.getUserInfo(uid);
+            if (user == null || user.getSchedfile() == null) {
+                return Result.error(404, "Schedule file not found");
+            }
+
+            // 读取JSON文件内容
+            String schedfilePath = user.getSchedfile();
+            String jsonContent = new String(Files.readAllBytes(Paths.get(schedfilePath)), StandardCharsets.UTF_8);
+
+            // 返回JSON数据
+            return Result.success(jsonContent, "Schedule retrieved successfully");
+
+        } catch (IOException e) {
+            logger.error("Error reading schedule file", e);
+            return Result.error(500, "Error reading schedule file");
+        } finally {
+            if (isLocked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
     }
 }
 

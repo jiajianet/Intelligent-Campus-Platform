@@ -11,7 +11,7 @@
  Target Server Version : 80039
  File Encoding         : 65001
 
- Date: 12/11/2024 23:23:17
+ Date: 16/11/2024 21:12:02
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE `password_reset_token`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `password_reset_token_ibfk_1`(`user_id`) USING BTREE,
   CONSTRAINT `password_reset_token_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`uid`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of password_reset_token
@@ -12282,14 +12282,10 @@ CREATE TABLE `user`  (
   PRIMARY KEY (`uid`) USING BTREE,
   UNIQUE INDEX `uno`(`uno`) USING BTREE,
   UNIQUE INDEX `unique_email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('广州软件学院;', 14, '2340709132', '123456', '小李', 'default_avatar.png', '1074711418@qq.com', 0);
-INSERT INTO `user` VALUES ('广州软件学院;', 15, '2340709134', '123456', '小王', 'default_avatar.png', '1074711411@qq.com', 0);
-INSERT INTO `user` VALUES ('广州软件学院', 16, '2340709137', '123456', '小刘', 'default_avatar.png', '1074711412@qq.com', 0);
-INSERT INTO `user` VALUES ('广州软件学院', 18, '2340709133', '123456', '小杨', 'default_avatar.png', '1074711419@qq.com', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

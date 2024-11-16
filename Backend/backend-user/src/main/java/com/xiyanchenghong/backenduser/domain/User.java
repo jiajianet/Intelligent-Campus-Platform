@@ -22,6 +22,8 @@ public class User {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean emailverified;
 
+    @Column(name = "schedfile")
+    private String schedfile;
 
     public long getUid() {
         return uid;
@@ -85,5 +87,13 @@ public class User {
 
     public void setEmailVerified(boolean emailVerified) {
         this.emailverified = emailVerified;
+    }
+
+    public String getSchedfile() {
+        return schedfile;
+    }
+
+    public void setSchedfile(String schedfile) {
+        this.schedfile = schedfile;
     }
 }

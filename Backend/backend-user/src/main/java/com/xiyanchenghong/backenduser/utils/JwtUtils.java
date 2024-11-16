@@ -3,10 +3,12 @@ package com.xiyanchenghong.backenduser.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
 
+@Component
 public class JwtUtils {
 
     private static final String SECRET_KEY = "s3cr3tK3y1234567890abcdefgHIJKLmnopqrsTUVWXyz"; // 替换为你的密钥
