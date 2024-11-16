@@ -63,7 +63,7 @@ public class UserController {
                 claims.put("uno", user.getUno());
                 claims.put("uschool", user.getUschool());
                 claims.put("uid", user.getUid());
-                claims.put("uname", user.getUname()); // 新增字段
+                claims.put("uname", user.getUname());
                 claims.put("upic", user.getUpic());
                 String jwt = JwtUtils.generateJwt(claims);
                 return Result.success(user, "登录成功！", jwt);
