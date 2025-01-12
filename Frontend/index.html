@@ -26,7 +26,7 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
-
+  <script src="./assets/vendor/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -36,19 +36,26 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="fs-4 text">智慧校园服务平台</span>
+        <img src="assets/img/logo.png" alt="" id="HeaderLogo">
+        <span class="fs-4 text" id="HeaderTitle">智慧校园服务平台</span>
       </a>
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#hero">首页</a></li>
-          <li><a class="nav-link scrollto" href="#about">地图</a></li>
-          <li><a class="nav-link scrollto" href="#services">商城</a></li>
-          <li><a class="nav-link scrollto" href="#portfolio">课堂</a></li>
-          <li><a class="nav-link scrollto" href="#team">论坛</a></li>
-          <li><a class="login-btn scrollto" href="./login.html">登录</a></li>
-          <li><a class="register-btn scrollto" href="./signup.html">注册</a></li>
+          <li><a class="nav-link scrollto active" href="#" id="navHome">首页</a></li>
+          <li><a class="nav-link scrollto" href="./timetable/index.html" id="navTimetable">课程表</a></li>
+          <li><a class="nav-link scrollto" href="http://111.230.253.94/waimai/#/msite" id="navMall">外卖</a></li>
+          <li><a class="nav-link scrollto" href="#map" id="navMap">地图</a></li>
+          <li><a class="nav-link scrollto" href="#course" id="navCourse">课堂</a></li>
+          <li><a class="nav-link scrollto" href="#forum" id="navForum">论坛</a></li>
+          <div id="userArea" style="display: flex;margin-left: 5%;justify-content: center;align-items: center;width: auto">
+            <li><a class="login-btn scrollto" href="./login.html">登录</a></li>
+            <li><a class="register-btn scrollto" href="./signup.html">注册</a></li>
+
+          </div>
+
+          <!--<img src="/assets/img/avatar.png" alt="用户头像" class="nav-user" id="userAvatar">
+          <span style="margin-left: 2%" id="userName">用户用户用户用户用户用户用户用户用户用户</span>-->
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
@@ -57,10 +64,32 @@
   </header><!-- End Header -->
 
   <div class="banner-section">
-    <img src="./assets/img/banner.png" width="200%">
+    <img src="./assets/img/banner.png" width="100%">
   </div>
-  
 
+  <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+    <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+         aria-atomic="true" id="error-toast">
+      <div class="d-flex">
+        <div class="toast-body" id="error-toast-body">
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+         aria-atomic="true" id="success-toast">
+      <div class="d-flex">
+        <div class="toast-body" id="success-toast-body">
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
 
 
   <main id="main">
@@ -72,16 +101,17 @@
 
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="content">
-              <h3>立即登录或注册</h3>
-              <h2>登录或注册后可使用课程表功能</h2>
-              <p>
+              <h3 id="timetableTitle">立即登录或注册</h3>
+              <h2 id="timetableText">登录或注册后可使用课程表功能</h2>
+              <p id="timetableTips">
                 使用课程表功能导入您的内网系统课程表查看课程
               </p>
               <div class="text-center text-lg-start">
-                <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
-                  <span>登录</span>
+                <a href="login.html" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center" id="timetableBtn">
+                  <span id="timetableBtnText">登录</span>
                   <i class="bi bi-arrow-right"></i>
                 </a>
+                <span href="./timetable_import.html" id="reimportBtn" style="margin-left: 3%;color: #4154f1;cursor:pointer;display: none">重新导入</span>
               </div>
             </div>
           </div>
@@ -107,25 +137,26 @@
 
           <div class="col-lg-4">
             <div class="box" data-aos="fade-up" data-aos-delay="200">
-              <img src="assets/img/values-1.png" class="img-fluid" alt="">
-              <h3>信息流标题1</h3>
-              <p>信息流内容1内容内容内容内容内容内容1</p>
+              <img src="assets/img/values-1.jpg" class="img-fluid" alt="">
+              <h3>学工简讯
+              </h3>
+              <p>丝木棉资助育人工作室召开2024秋季学期学生资助工作座谈交流会</p>
             </div>
           </div>
 
           <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="box" data-aos="fade-up" data-aos-delay="400">
               <img src="assets/img/values-2.png" class="img-fluid" alt="">
-              <h3>信息流标题2</h3>
-              <p>信息流内容1内容内容内容内容内容内容2</p>
+              <h3>学工简讯</h3>
+              <p>3项校运会记录被刷新！精彩！！！11月23日，广州软件学院第十六届田径运动会圆满闭幕。</p>
             </div>
           </div>
 
           <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="box" data-aos="fade-up" data-aos-delay="600">
-              <img src="assets/img/values-3.png" class="img-fluid" alt="">
-              <h3>信息流标题3</h3>
-              <p>信息流内容1内容内容内容内容内容内容3</p>
+              <img src="assets/img/values-3.jpg" class="img-fluid" alt="">
+              <h3>学工动态</h3>
+              <p>素拓“趣”哪儿？带你“嗨”翻全场11月26日</p>
             </div>
           </div>
 
@@ -144,20 +175,21 @@
         <div class="row gy-4">
           <div class="col-lg-5 col-md-12 footer-info">
             <a href="index.html" class="logo d-flex align-items-center">
-              <img src="assets/img/logo.png" alt="">
+              <img src="assets/img/logo_dark.png" alt="">
               <span>智慧校园服务平台</span>
             </a>
-            <p>这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字这里写一段文字</p>
+            <p>智慧校园服务平台是由犀焰澄泓团队开发，致力于为全国全校师生提供统一协调的学习、教学和生活体验。</p>
           </div>
 
           <div class="col-lg-2 col-6 footer-links">
             <h4>快速访问</h4>
             <ul>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">首页</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">地图</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">商城</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">课堂</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">论坛</a></li>
+              <li><a class="nav-link scrollto active" href="#" id="navHomeQA">首页</a></li>
+              <li><a class="nav-link scrollto" href="./timetable/index.html" id="navTimetableQA">课程表</a></li>
+              <li><a class="nav-link scrollto" href="http://111.230.253.94/waimai/#/msite" id="navMallQA">外卖</a></li>
+              <li><a class="nav-link scrollto" href="#map" id="navMapQA">地图</a></li>
+              <li><a class="nav-link scrollto" href="#course" id="navCourseQA">课堂</a></li>
+              <li><a class="nav-link scrollto" href="#forum" id="navForumQA">论坛</a></li>
             </ul>
           </div>
         </div>
@@ -183,7 +215,6 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/verifyLogin.js"></script>
 </body>
 
 </html>

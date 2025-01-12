@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>用户登录——智慧校园服务平台</title>
+  <title>用户注册——智慧校园服务平台</title>
   <link rel="stylesheet" href="assets/css/login.css" type="text/css" media="all" /><!-- Style-CSS -->
   <link href="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css" rel="stylesheet">
   <!-- Favicons -->
@@ -23,14 +23,12 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-validator/css/bootstrapValidator.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
   <!-- Template Main CSS File -->
   <link href="assets/css/nav_form.css" rel="stylesheet">
   <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
   <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
   <script src="./assets/vendor/jquery/jquery.min.js"></script>
-  <script src="./assets/vendor/bootstrap-validator/js/bootstrapValidator.min.js"></script>
 </head>
 
 <body>
@@ -50,8 +48,8 @@
           <li><a class="nav-link scrollto" href="#services">商城</a></li>
           <li><a class="nav-link scrollto" href="#portfolio">课堂</a></li>
           <li><a class="nav-link scrollto" href="#team">论坛</a></li>
-          <li><a class="login-btn scrollto" href="#">登录</a></li>
-          <li><a class="register-btn scrollto" href="./signup.html">注册</a></li>
+          <li><a class="login-btn scrollto" href="./login.html">登录</a></li>
+          <li><a class="register-btn scrollto" href="#">注册</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
@@ -83,68 +81,60 @@
     </div>
   </div>
 
-
-
   <section class="w3l-form-36">
     <div class="form-main section-gap">
       <div class="wrapper">
         <div class="form-inner-cont">
-          <h3 style="font-weight: bold;">用户登录</h3>
-          <form action="#" method="post" class="signin-form" id="loginForm">
-            <div class="form-group">
-              <div class="form-input form-control">
-                <span class="fa fa-user-o" aria-hidden="true"></span>
-                <div class="col-lg-12">
-                  <input type="text" id="uidInput" name="userID"
-                         placeholder="请输入学号"
-                         data-bv-message="学号无效"
-                         required
-                         data-bv-notempty-message="学号不能为空"
-                         pattern="[0-9]+"
-                         data-bv-regexp-message="学号只能包含数字" />
-                </div>
-              </div>
+          <h3 style="font-weight: bold;">修改用户信息</h3>
+          <form action="#" method="post" class="signin-form">
+            <div class="form-input">
+              <span class="fa fa-school" aria-hidden="true"></span> <input type="text" name="userSchool" id="userSchool"
+                placeholder="请输入学校" required />
+            </div>
+            <div class="form-input">
+              <span class="fa fa-id-card-o" aria-hidden="true"></span> <input type="text" name="userID" id="uidInput"
+                placeholder="请输入学号" required />
+            </div>
+            <div class="form-input">
+              <span class="fa fa-user-o" aria-hidden="true"></span> <input type="text" name="userName" id="unameInput"
+                placeholder="请设置用户名" required />
+            </div>
 
-            </div>
-            <div class="form-group">
-              <div class="form-input form-control">
-                <span class="fa fa-key" aria-hidden="true"></span>
-              <div class="col-lg-12">
-                <input type="password" id="passwdInput" name="userPassword"
-                       placeholder="请输入密码"
-                       required
-                       data-bv-notempty-message="密码不能为空" />
-              </div>
-              </div>
-            </div>
+
             <div class="login-remember d-grid">
-              <label class="check-remaind">
-                <input type="checkbox">
-                <span class="checkmark"></span>
-                <p class="remember">记住登录状态</p>
-              </label>
-              <button class="theme-button" type="button" id="submitLogin">登录</button>
-            </div>
-            <div class="new-signup">
-              <a href="./reset.html" class="signuplink">忘记密码？</a>
+
+              <button class="theme-button" type="button" id="submitRegister">提交更改</button>
             </div>
           </form>
-          <p class="signup">还没有账户？<a href="signup.html" class="signuplink">立即注册</a></p>
+          <!--
+        <div class="social-icons">
+          <p class="continue"><span>Or</span></p>
+          <div class="social-login">
+            <a href="#facebook">
+              <div class="facebook">
+                <span class="fa fa-facebook" aria-hidden="true"></span>
+
+              </div>
+            </a>
+            <a href="#google">
+              <div class="google">
+                <span class="fa fa-google-plus" aria-hidden="true"></span>
+              </div>
+            </a>
+          </div>
+        </div>-->
         </div>
       </div>
     </div>
-    <div id="mpanel2" style="margin-top:50px;"></div>
   </section>
 </body>
-
 <script>
   (function () {
     if (!window.Promise) {
-    document.writeln('<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js"><' + '/' + 'script>');
+      document.writeln('<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js"><' + '/' + 'script>');
     }
   })();
 </script>
-
 <!-- Vendor JS Files -->
 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 <script src="assets/vendor/aos/aos.js"></script>
@@ -154,12 +144,11 @@
 <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
 <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
 <script src="assets/vendor/crypto-js/crypto-js.js"></script>
-<script src="assets/vendor/captcha/js/ase.js"></script>
-<script src="assets/vendor/captcha/js/verify.js" ></script>
 
 <!-- Template Main JS File -->
-<script type="text/javascript" src="./assets/js/redirect_jump.js"></script>
-<script src="assets/js/login.js"></script>
+<script src="assets/js/redirect_jump.js"></script>
+<script src="assets/js/interval_verify.js"></script>
+<script src="assets/js/change_user_info.js"></script>
 
 
 </html>

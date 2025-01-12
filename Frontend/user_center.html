@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生档案</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("./assets/img/hero-bg.png");
+        }
+
+        /* Add new navigation styles */
+        .nav-header {
+            /* position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            margin-bottom: 20px; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 30px;
+        }
+
+        .nav-logo span {
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .nav-user {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .container {
+            position: relative;
+            /* margin-top: 80px; */
+            /* 或者可以选择 margin-top: 20px; */
+            max-width: 1000px;
+            margin: 80px auto 20px;
+            /* Adjusted margin */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .tabs {
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .tab-link {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #666;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tab-link.active {
+            color: #4154f1;
+            font-weight: bold;
+        }
+
+        .tab-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1a73e8;
+        }
+
+        .content {
+            display: flex;
+            gap: 20px;
+        }
+
+        .left-column,
+        .right-column {
+            flex: 1;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .info-value {
+            padding: 8px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .button {
+            background-color: #4154f1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .account-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .account-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-info {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .section-description {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 20px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script src="./assets/vendor/jquery/jquery.min.js"></script>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/crypto-js/crypto-js.js"></script>
+    <script src="assets/vendor/captcha/js/ase.js"></script>
+    <script src="assets/vendor/captcha/js/verify.js" ></script>
+    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+</head>
+
+<body>
+    <!-- Add navigation header -->
+    <div class="nav-header">
+        <a href="#" class="nav-logo">
+            <img src="/assets/img/logo_dark.png" alt="智慧校园服务平台">
+             <span id="titleText">智慧校园服务平台</span>
+        </a>
+        <img src="/assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
+    </div>
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="error-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="error-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="success-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="success-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Rest of your existing HTML content remains unchanged -->
+    <div class="container">
+        <div class="tabs">
+            <span class="tab-link active" data-tab="basic-info">基本信息</span>
+            <span class="tab-link" data-tab="account-management">账号管理</span>
+        </div>
+
+        <main id="basic-info" class="tab-content active">
+            <div class="content">
+                <section class="left-column" style="padding: 20px 20px 20px 20px;">
+                    <h2>基本信息</h2>
+                    <div class="info-group" style="display: flex;align-items: center">
+                        <!-- 添加头像 -->
+                        <img src="/assets/img/avatar.png" alt="头像" class="avatar" id="profileImage">
+                        <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">编辑头像</button>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*"
+                            onchange="previewImage(event)">
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >姓名</div>
+                        <div class="info-value" id="userName">
+
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >Email</div>
+                        <div class="info-value">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="userEmail" placeholder="暂未绑定邮箱">
+                                <button class="btn btn-primary" style="background-color: #4154f1" id="changeEmailBtn">更改邮箱</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="email-verify-code" class="col-form-label">已向要修改的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
+                                            <input type="text" class="form-control" id="email-verify-code">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="right-column">
+                    <h2>认证信息</h2>
+                    <div class="info-group">
+                        <div class="info-label" >学号</div>
+                        <div class="info-value" id="userId"></div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >学校</div>
+                        <div class="info-value" id="userSchool"></div>
+                    </div>
+
+                    <!-- <div class="info-group">
+                        <div class="info-label" id="userDepartment">学院</div>
+                        <div class="info-value">计算机系</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" id="userEnrollmentYear">入学年份</div>
+                        <div class="info-value">2023</div>
+                    </div> -->
+                </section>
+            </div>
+        </main>
+
+        <main id="account-management" class="tab-content">
+            <div class="account-section">
+                <div class="section-info">
+                    <div class="section-title" >修改密码</div>
+                    <div class="section-description">设置复杂密码更能保护您的账号安全</div>
+                </div>
+                <button class="btn btn-primary" style="background-color: #4154f1" id="changePasswordBtn">修改</button>
+            </div>
+            <div class="account-section">
+                <div class="section-info">
+                    <div class="section-title">修改认证信息</div>
+                    <div class="section-description">认证信息与您的成绩相关，请谨慎修改</div>
+                </div>
+                <button class="btn btn-primary" style="background-color: #4154f1" id="changeUserInfoBtn" >修改</button>
+            </div>
+
+            <div class="account-section">
+                <div class="section-info">
+                    <div class="section-title">账号注销</div>
+                    <div class="section-description">为保证您的账号安全，需要满足相应的条件，才能提交注销申请</div>
+                </div>
+                <button class="btn btn-danger" id="deleteProfile">注销</button>
+            </div>
+            <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteProfileModalTitle">更改邮件</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="email-verify-code" class="col-form-label">注意！您正在尝试注销账号！注销账号会删除账号内的全部数据！<br/>已向该账号绑定的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
+                                    <input type="text" class="form-control" id="email-verify-code-delete">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkDelete">删除账号</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div id="mpanel1" style="margin-top:50px;"></div>
+    </div>
+</body>
+<script src="./assets/js/redirect_jump.js"></script>
+<script src="./assets/js/interval_verify.js"></script>
+<script type="text/javascript" src="./assets/js/user_center.js"></script>
+</html>

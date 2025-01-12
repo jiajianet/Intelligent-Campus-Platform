@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #333;
+            background: url("./assets/img/hero-bg.png");
+        }
+        .container {
+            max-width: 800px;
+            /* width: 100%; */
+            margin: 0 auto;
+            /* 居中 */
+        }
+        .upload-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* 内容居中 */
+            min-width: 400px;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #4154f1;
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .upload-button {
+            background-color: #4154f1;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        /* Add new navigation styles */
+        .nav-header {
+            /* position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            margin-bottom: 20px; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 30px;
+        }
+
+        .nav-logo span {
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .nav-user {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .card-wrapper{
+            /* line-height: 1.6; */
+            display: flex;
+            /* 使用flex布局 */
+            justify-content: center;
+            /* 水平居中 */
+            align-items: center;
+            /* 垂直居中 */
+            height: 60vh;
+            /* 使body占满整个视口高度 */
+        }
+        .title{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 5%;
+        }
+    </style>
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="./assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/crypto-js/crypto-js.js"></script>
+    <script src="assets/vendor/captcha/js/ase.js"></script>
+    <script src="assets/vendor/captcha/js/verify.js" ></script>
+    <script src="./assets/js/redirect_jump.js"></script>
+    <script src="./assets/js/timetable_import.js"></script>
+</head>
+
+<body>
+
+    <div class="nav-header">
+        <a href="#" class="nav-logo">
+            <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
+            <span href="./index.html">智慧校园服务平台</span>
+        </a>
+        <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="profileImage">
+    </div>
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="error-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="error-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="success-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="success-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="title"><h1>导入课程表</h1></div>
+
+    <div class="container card-wrapper">
+        <div class="upload-card">
+            <div class="upload-area" role="button" tabindex="0">
+                <input type="file" id="file-upload" accept=".html" style="display: none;">
+                <button class="upload-button">上传文件</button>
+                <p>请上传您的课程表</p>
+
+            </div>
+            <p style="font-size: 0.875rem; color: #666; margin-top: 15%" >不会上传？<a href="./timetable/timetable_tutorial/timetable_tutorial.htm">点我查看教程</a></p>
+        </div>
+
+        <!-- <div class="output">z这里是文本</div>
+        <div class="output">z这里是文本</div>
+        <div class="output">z这里是文本</div>
+        <div class="output">z这里是文本</div> -->
+    </div>
+
+<!-- Add navigation header -->
+
+</body>
+
+
+</html>

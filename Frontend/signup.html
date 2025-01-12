@@ -25,7 +25,7 @@
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
   <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/nav_form.css" rel="stylesheet">
   <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
   <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
   <script src="./assets/vendor/jquery/jquery.min.js"></script>
@@ -37,8 +37,8 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="fs-4 text">智慧校园服务平台</span>
+        <img src="assets/img/logo_dark.png" alt="">
+        <span class="fs-4 text" href="./index.html">智慧校园服务平台</span>
       </a>
 
       <nav id="navbar" class="navbar">
@@ -107,7 +107,18 @@
               <span class="fa fa-key" aria-hidden="true"></span> <input type="password" name="userPasswordB"
                 id="userPasswordB" placeholder="请再次设置密码" required />
             </div>
+            <div class="form-input">
+              <span class="fa fa-envelope" aria-hidden="true"></span> <input type="text" name="email" id="inputEmail" placeholder="请输入邮箱" required />
+            </div>
+            <div class="form-input" style="display:flex!important;">
+              <span class="fa fa-shield-halved" aria-hidden="true"></span> <input type="text" name="email" id="inputCode" placeholder="请输入验证码" style="margin: 0 0 0 12px" required />
+              <div class="email-code-btn" >
+                <button class="theme-button" type="button" id="sendEmail" style="border: none;background: none;color:#4154f1">发送验证码</button>
+              </div>
+            </div>
+
             <div class="login-remember d-grid">
+
               <button class="theme-button" type="button" id="submitRegister">注册</button>
             </div>
           </form>
@@ -155,7 +166,8 @@
 <script src="assets/vendor/captcha/js/verify.js" ></script>
 
 <!-- Template Main JS File -->
-<script src="assets/js/main.js"></script>
+<script src="assets/js/redirect_jump.js"></script>
+<script src="assets/js/interval_verify.js"></script>
 <script src="assets/js/register.js"></script>
 
 

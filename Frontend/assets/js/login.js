@@ -34,13 +34,30 @@ function successToast(message, mode) {
 function checkLogin() {
   let login_token = localStorage.getItem("intelli_campus_login_token");
   console.log(login_token)
+  $.ajax({
+    url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+    method: "GET", // 请求类型
+    dataType: "json", // 返回的数据类型
+    success: function (data) {
+      if (data.code == 0) {
+        // 将后端返回的数据填充到页面中
+        successToast("您已登录，正在跳转",1)
+        redirect()
+      }else{
+
+      }
+
+    },
+    error: function () {
+    }
+  });
 }
 
 checkLogin();
 
 // // 初始化验证码  弹出式
 $('#mpanel2').slideVerify({
-  baseUrl: 'http://127.0.0.1:8081',  //服务器请求地址, 默认地址为安吉服务器;
+  baseUrl: 'http://111.230.253.94:8081',  //服务器请求地址;
   mode: 'pop',     //展示模式
   containerId: 'submitLogin',//pop模式 必填 被点击之后出现行为验证码的元素id
   imgSize: {       //图片的大小对象,有默认值{ width: '310px',height: '155px'},可省略
@@ -55,13 +72,11 @@ $('#mpanel2').slideVerify({
     // var flag = true;
     // //实现: 参数合法性的判断逻辑, 返回一个boolean值
     // return flag
-    let userID = $("#uidInput").val();
-    let passwd = $("#passwdInput").val();
-    if (!userID && !passwd) {
-      errorToast("请输入用户名或密码", 2)
-      return false
-    } else {
+    $("#loginForm").bootstrapValidator('validate');//提交验证
+    if ($("#loginForm").data('bootstrapValidator').isValid()) {//获取验证结果，如果成功，执行下面代码
       return true
+    }else{
+      return false;
     }
   },
   ready: function () { },  //加载完毕的回调
@@ -78,7 +93,7 @@ $('#mpanel2').slideVerify({
       params["password"] = encryptedPasswd;
       $.ajax({
         type: "POST",
-        url: "http://127.0.0.1:8081/user/login",
+        url: "http://111.230.253.94:8081/user/login",
         Cache: false,
         data: params,
         dataType: "JSON",
@@ -89,6 +104,7 @@ $('#mpanel2').slideVerify({
           } else if (result.code == 0) {
             localStorage.setItem("intelli_campus_login_token", result.token);
             successToast("登录成功，正在跳转...")
+            redirect()
           }
         }
       });
@@ -98,3 +114,43 @@ $('#mpanel2').slideVerify({
   },
   error: function () { }        //失败的回调
 });
+$(function () {
+  $("#loginForm").bootstrapValidator({
+    live: 'enabled',//验证时机，enabled是内容有变化就验证（默认），disabled和submitted是提交再验证
+    excluded: [':disabled', ':hidden', ':not(:visible)'],//排除无需验证的控件，比如被禁用的或者被隐藏的
+    submitButtons: '#btn-test',//指定提交按钮，如果验证失败则变成disabled，但我没试成功，反而加了这句话非submit按钮也会提交到action指定页面
+    message: '验证失败',//好像从来没出现过
+    feedbackIcons: {//根据验证结果显示的各种图标
+      valid: 'glyphicon glyphicon-ok',
+      invalid: 'glyphicon glyphicon-remove',
+      validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+      userID: {
+        validators: {
+          notEmpty: {//检测非空,radio也可用
+            message: '不能为空'
+          },
+          stringLength: {//检测长度
+            min: 6,
+            max: 30,
+            message: '长度必须在6-30之间'
+          }
+        }
+      },
+      userPassword: {
+        validators: {
+          notEmpty: {//检测非空,radio也可用
+            message: '不能为空'
+          },
+          stringLength: {//检测长度
+            min: 6,
+            max: 30,
+            message: '长度必须在6-30之间'
+          }
+        }
+      }
+    }
+  });
+
+  });

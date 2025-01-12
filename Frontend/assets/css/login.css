@@ -183,8 +183,8 @@ ol {
 
 .form-input {
     margin-top: 20px;
-    background: rgba(31, 35, 35, 0.03);
-    display: grid;
+    background: rgba(31, 35, 35, 0.03) !important;
+    display: grid!important;
     grid-template-columns: .1fr 1fr;
     align-items: center;
     padding-left: 15px;
@@ -389,3 +389,13 @@ p.signup a:hover {
 }
 
 /*--//responsive--*/
+.has-error .form-control{
+    border-color: red;
+}
+
+.has-success .form-control{
+    border-color: rgb(19,135,82);
+}
+.help-block{
+    color: red;
+}

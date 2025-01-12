@@ -79,13 +79,42 @@
   /**
    * Toggle .header-scrolled class to #header when page is scrolled
    */
-  let selectHeader = select('#header')
-  if (selectHeader) {
+  let selectHeader = select('#header'),selectHeaderTitle = select('#HeaderTitle'),selectHeaderImg = select('#HeaderLogo')
+  let selectNavHomeText = select('#navHome'),selectNavTimetableText = select('#navTimetable'),selectNavMapText = select('#navMap'),selectNavMallText = select('#navMall'),selectNavCourseText = select('#navCourse'),selectNavForumText = select('#navForum')
+  if (selectHeader && selectHeaderTitle) {
     const headerScrolled = () => {
       if (window.scrollY > 100) {
+        try {
+          let userNameSelect = select('#userName')
+          userNameSelect.classList.add('nav-text-scrolled')
+        }catch (e){
+
+        }
         selectHeader.classList.add('header-scrolled')
+        selectNavHomeText.classList.add('nav-text-scrolled')
+        selectNavMapText.classList.add('nav-text-scrolled')
+        selectNavMallText.classList.add('nav-text-scrolled')
+        selectNavCourseText.classList.add('nav-text-scrolled')
+        selectNavForumText.classList.add('nav-text-scrolled')
+        selectHeaderTitle.classList.add('color-change-scrolled')
+        selectNavTimetableText.classList.add('nav-text-scrolled')
+        selectHeaderImg.src = "./assets/img/logo_dark.png"
       } else {
+        try {
+          let userNameSelect = select('#userName')
+          userNameSelect.classList.remove('nav-text-scrolled')
+        }catch (e){
+
+        }
         selectHeader.classList.remove('header-scrolled')
+        selectHeaderTitle.classList.remove('color-change-scrolled')
+        selectHeaderImg.src = "./assets/img/logo.png"
+        selectNavHomeText.classList.remove('nav-text-scrolled')
+        selectNavMapText.classList.remove('nav-text-scrolled')
+        selectNavMallText.classList.remove('nav-text-scrolled')
+        selectNavCourseText.classList.remove('nav-text-scrolled')
+        selectNavForumText.classList.remove('nav-text-scrolled')
+        selectNavTimetableText.classList.remove('nav-text-scrolled')
       }
     }
     window.addEventListener('load', headerScrolled)
@@ -275,17 +304,119 @@
   /**
    * Animation on scroll
    */
-  function aos_init() {
-    AOS.init({
-      duration: 1000,
-      easing: "ease-in-out",
-      once: true,
-      mirror: false
-    });
-  }
-  window.addEventListener('load', () => {
-    aos_init();
-  });
 
 
 })();
+
+function aos_init() {
+  AOS.init({
+    duration: 1000,
+    easing: "ease-in-out",
+    once: true,
+    mirror: false
+  });
+}
+window.addEventListener('load', () => {
+  aos_init();
+});
+
+function errorToast(message, mode) {
+  $("#error-toast-body").text(message)
+  $("#error-toast").toast('show');
+
+}
+
+function successToast(message) {
+  $("#success-toast-body").text(message)
+  $("#success-toast").toast('show');
+}
+
+function logout(){
+  localStorage.removeItem("intelli_campus_login_token");
+  $.ajax({
+    url: "http://111.230.253.94:8081/user/logout?token="+login_token, // 后端 API 地址
+    method: "POST", // 请求类型
+    dataType: "json", // 返回的数据类型
+    success: function (data) {
+      window.location.href = 'http://111.230.253.94';
+    },
+    error: function (e) {
+      console.log(e)
+    }
+  });
+}
+
+let login_token = localStorage.getItem("intelli_campus_login_token");
+console.log(login_token)
+$.ajax({
+  url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+  method: "GET", // 请求类型
+  dataType: "json", // 返回的数据类型
+  success: function (data) {
+    // 将后端返回的数据填充到页面中
+    console.log(data);
+    if (data.code == 0){
+      document.getElementById("userArea").innerHTML = `
+                    <div class="dropdown" style="width: 200px">
+                            <img src="./assets/img/avatar.png" alt="用户头像" style="width: 36px;height: 36px;border-radius: 50%;cursor: pointer;margin-left: 5%" id="userAvatar">
+                            <span style="margin-left: 10%;width: 100px;color: white" id="userName"></span>
+                        <div class="dropdown-content">
+                        <div><a href="./user_center.html" id="userCenter"style="font-weight: normal;">用户中心</a></div>
+                            <div><a href="#" id="logout" style="font-weight: normal;color: red" onclick="logout()">退出登录</a></div>
+                        </div>
+                    </div>
+`;
+      $("#userAvatar").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64);
+      $("#userName").text(data.data.uname);
+      document.getElementById("userAvatar").addEventListener('click', () => {
+        ////显示完整ID
+        window.location.href = "./user_center.html"
+      })
+      $.ajax({
+        url: "http://111.230.253.94:8081/user/getUserScheduleList?token="+login_token, // 后端 API 地址
+        method: "GET", // 请求类型
+        dataType: "json", // 返回的数据类型
+        success: function (data) {
+          // 将后端返回的数据填充到页面中
+          console.log(data);
+          if (data.code == 0) {
+
+            $("#timetableTitle").text("您已导入课程表");
+            $("#timetableText").text("立即查看课程表");
+            $("#timetableTips").text("使用课程表功能更直观地查看您在内网系统的课程");
+            $("#timetableBtnText").text("查看");
+            $("#timetableBtn").attr('href','./timetable/index.html')
+            document.getElementById("reimportBtn").style.display = "inline";
+          }else if(data.code == 429){
+            errorToast("刷新过于频繁，请稍后再试")
+          }else if (data.code == 404) {
+            $("#timetableTitle").text("您还未导入课程表");
+            $("#timetableText").text("立即导入课程表");
+            $("#timetableTips").text("使用课程表功能更直观地查看您在内网系统的课程");
+            $("#timetableBtnText").text("导入");
+            $("#timetableBtn").attr('href','./timetable_import.html')
+          }
+
+        },
+        error: function (e) {
+          if (e.status == 403) {
+            errorToast("刷新过于频繁，请稍后再试")
+          }
+
+        }
+      });
+    }else if(data.code == 429){
+      errorToast("刷新过于频繁，请稍后再试")
+    }
+
+  },
+  error: function (e) {
+    if (e.status == 403) {
+      errorToast("刷新过于频繁，请稍后再试")
+    }
+
+  }
+});
+$('#reimportBtn').click(function () {
+  window.location.href = "http://111.230.253.94/timetable_import.html"
+})

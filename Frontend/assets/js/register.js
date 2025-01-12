@@ -5,6 +5,7 @@ function errorToast(message, mode) {
         $("#userSchool").val("");   //清空学校输入框
         $("#uidInput").val("");   //清空学号输入框
         $("#unameInput").val("");   //清空用户名输入框
+        $("#uemailInput").val("");   //清空电子邮件输入框
         $("#userPasswordA").val("");   //清空密码输入框A
         $("#userPasswordB").val("");    //清空密码输入框B
     } else {
@@ -21,10 +22,12 @@ function successToast(message, mode) {
         $("#userSchool").val("");   //清空学校输入框
         $("#uidInput").val("");   //清空学号输入框
         $("#unameInput").val("");   //清空用户名输入框
+        $("#uemailInput").val("");   //清空电子邮件输入框
         $("#userPasswordA").val("");   //清空密码输入框A
         $("#userPasswordB").val("");    //清空密码输入框B
+        $("#userPasswordA").val("");   //清空验证码输入框
 
-    } else {
+    }else if (mode == 2) {
         $("#uidInput").val("");   //清空学号输入框
         $("#passwdInput").val("");    //清空密码输入框
     }
@@ -32,12 +35,95 @@ function successToast(message, mode) {
     $("#success-toast").toast('show');
 }
 
+function checkLogin() {
+    let login_token = localStorage.getItem("intelli_campus_login_token");
+    console.log(login_token)
+    $.ajax({
+        url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+        method: "GET", // 请求类型
+        dataType: "json", // 返回的数据类型
+        success: function (data) {
+            if (data.code == 0) {
+                // 将后端返回的数据填充到页面中
+                successToast("您已登录，正在跳转",1)
+                redirect()
+            }else{
+
+            }
+
+        },
+        error: function () {
+        }
+    });
+}
+checkLogin();
+
+$('#submitRegister').click(function () {
+    let userSchool = $("#userSchool").val();
+    let userID = $("#uidInput").val();
+    let userName = $("#unameInput").val();
+    let userEmail = $("#inputEmail").val();
+    let passwdA = $("#userPasswordA").val();
+    let passwdB = $("#userPasswordB").val();
+    let emailCode = $("#inputCode").val();
+    //console.log(passwdA)
+    //console.log(userSchool)
+    if (userID && passwdA && passwdB && userSchool && userName && emailCode) {
+        if (passwdA == passwdB) {
+
+            let encryptedPasswd = CryptoJS.SHA256(passwdB).toString();
+            let postParam = {
+                "uschool": userSchool,
+                "uno": userID,
+                "password": encryptedPasswd,
+                "uname": userName,
+                "email":userEmail,
+                "captchaVerification":emailCode
+            }
+            //console.log(encryptedPasswd)
+            $.ajax({
+                type: "POST",
+                url: "http://111.230.253.94:8081/user/completeRegistration",
+                Cache: false,
+                data: JSON.stringify(postParam),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (result) {
+                    console.log(result)
+                    if (result.code == -1) {
+                        errorToast("注册失败", 1)
+                    } else if (result.code == 456) {
+                        errorToast("用户已存在", 1)
+                    } else if (result.code == 0) {
+                        localStorage.setItem("intelli_campus_login_token", result.token);
+                        successToast("注册成功，正在跳转...",1)
+                        redirect()
+                    } else if (result.code == 400) {
+                        errorToast("安全验证失败，请重试", 1)
+                    } else {
+                        errorToast("未知错误，请重试", 1)
+                    }
+                }
+            });
+        } else {
+            $("#userPasswordA").val("");   //清空密码输入框A
+            $("#userPasswordB").val("");    //清空密码输入框B
+            $("#error-toast-body").text("两次输入密码不一致，请重新输入")
+            $("#error-toast").toast('show');
+        }
+    } else {
+        $("#uidInput").val("");   //清空学号输入框
+        $("#passwdInput").val("");    //清空密码输入框
+        $("#error-toast-body").text("请输入对应信息完成注册")
+        $("#error-toast").toast('show');
+    }
+})
 
 // // 初始化验证码  弹出式
 $('#mpanel1').slideVerify({
     baseUrl: 'http://111.230.253.94:8081',  //服务器请求地址, 默认地址为安吉服务器;
     mode: 'pop',     //展示模式
-    containerId: 'submitRegister',//pop模式 必填 被点击之后出现行为验证码的元素id
+    containerId: 'sendEmail',//pop模式 必填 被点击之后出现行为验证码的元素id
     imgSize: {       //图片的大小对象,有默认值{ width: '310px',height: '155px'},可省略
         width: '400px',
         height: '200px',
@@ -55,12 +141,13 @@ $('#mpanel1').slideVerify({
         let userName = $("#unameInput").val();
         let passwdA = $("#userPasswordA").val();
         let passwdB = $("#userPasswordB").val();
-        console.log(passwdA)
-        console.log(userSchool)
-        if (userID && passwdA && passwdB && userSchool && userName && passwdA == passwdB) {
+        let userEmail = $("#inputEmail").val();
+        // console.log(passwdA)
+        // console.log(userSchool)
+        if (userID && passwdA && passwdB && userSchool && userName && passwdA == passwdB && userEmail) {
             return true
         } else {
-            errorToast("请输入用户名或密码", 2)
+            errorToast("请输入完整的信息", 2)
             return false
         }
     },
@@ -74,81 +161,44 @@ $('#mpanel1').slideVerify({
         let userName = $("#unameInput").val();
         let passwdA = $("#userPasswordA").val();
         let passwdB = $("#userPasswordB").val();
-        //console.log(passwdA)
-        //console.log(userSchool)
-        if (userID && passwdA && passwdB && userSchool && userName) {
-            if (passwdA == passwdB) {
+        let userEmail = $("#inputEmail").val();
+        if (passwdA == passwdB) {
 
-                let encryptedPasswd = CryptoJS.SHA256(passwdB).toString();
-                let postParam = {
-                    "uschool": userSchool,
-                    "uno": userID,
-                    "password": encryptedPasswd,
-                    "upic": "",
-                    "uname": userName
-                }
-                //console.log(encryptedPasswd)
-                $.ajax({
-                    type: "POST",
-                    url: "http://111.230.253.94:8081/user/register?captchaVerification=" + params.captchaVerification.replace("+", "%2B"),
-                    Cache: false,
-                    data: JSON.stringify(postParam),
-                    dataType: "JSON",
-                    contentType: "application/json",
-                    success: function (result) {
-                        console.log(result)
-                        if (result.code == -1) {
-                            errorToast("注册失败", 1)
-                        } else if (result.code == 456) {
-                            errorToast("用户已存在", 1)
-                        } else if (result.code == 0) {
-                            localStorage.setItem("intelli_campus_login_token", result.token);
-                            successToast("注册成功，正在跳转...")
-                        } else if (result.code == 400) {
-                            errorToast("安全验证失败，请重试", 1)
-                        } else {
-                            errorToast("未知错误，请重试", 1)
-                        }
-                    }
-                });
-            } else {
-                $("#userPasswordA").val("");   //清空密码输入框A
-                $("#userPasswordB").val("");    //清空密码输入框B
-                $("#error-toast-body").text("两次输入密码不一致，请重新输入")
-                $("#error-toast").toast('show');
+            let encryptedPasswd = CryptoJS.SHA256(passwdB).toString();
+            let postParam = {
+                "uschool": userSchool,
+                "uno": userID,
+                "password": encryptedPasswd,
+                "uname": userName,
+                "email": userEmail,
             }
-        } else {
-            $("#uidInput").val("");   //清空学号输入框
-            $("#passwdInput").val("");    //清空密码输入框
-            $("#error-toast-body").text("请输入对应信息完成注册")
-            $("#error-toast").toast('show');
+            $.ajax({
+                type: "POST",
+                url: "http://111.230.253.94:8081/user/register?captchaVerification=" + params.captchaVerification.replace(/\+/g, "%2B"),
+                Cache: false,
+                data: JSON.stringify(postParam),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (result) {
+                    console.log(result)
+                    if (result.code == -1) {
+                        errorToast("注册失败", 1)
+                    } else if (result.code == 456) {
+                        errorToast("用户已存在", 1)
+                    } else if (result.code == 0) {
+                        successToast("验证码已发送，请注意查收", 0)
+                        startVerifyInterval("sendEmail","发送验证码","#4154f1")
+                    } else if (result.code == 400) {
+                        errorToast("安全验证失败，请重试", 1)
+                    } else {
+                        errorToast("未知错误，请重试", 1)
+                    }
+                }
+            });
+        }else {
+            errorToast("两次密码输入不一致", 1)
         }
-        // let userID = $("#uidInput").val();
-        // let passwd = $("#passwdInput").val();
-        //
-        // if (userID && passwd) {
-        //     let encryptedPasswd = CryptoJS.SHA256(passwd).toString();
-        //     params["uno"] = userID;
-        //     params["password"] = encryptedPasswd;
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "http://111.230.253.94:8081/user/login",
-        //         Cache: false,
-        //         data: params,
-        //         dataType: "JSON",
-        //         success: function (result) {
-        //             //console.log(result)
-        //             if (result.code == -1) {
-        //                 errorToast("用户名或密码错误", 2)
-        //             } else if (result.code == 0) {
-        //                 localStorage.setItem("intelli_campus_login_token", result.token);
-        //                 successToast("登录成功，正在跳转...")
-        //             }
-        //         }
-        //     });
-        // } else {
-        //     errorToast("请输入用户名或密码", 2)
-        // }
     },
     error: function () { }        //失败的回调
 });
+
