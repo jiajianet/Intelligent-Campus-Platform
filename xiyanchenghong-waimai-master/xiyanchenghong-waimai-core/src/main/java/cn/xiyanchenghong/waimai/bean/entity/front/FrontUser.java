@@ -1,0 +1,21 @@
+package cn.xiyanchenghong.waimai.bean.entity.front;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+
+@Data
+@Document(collection = "users")
+public class FrontUser extends BaseMongoEntity{
+    @Id
+    private String _id;
+    private String username;
+    private String password;
+    private Long user_id;
+    /**
+     * 小程序openid
+     */
+    private String miniappOpenid;
+
+}
