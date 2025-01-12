@@ -43,7 +43,7 @@ public class UserServicelmpl implements UserService {
             return null;
         } else {
             if (user.getUpic() == null || user.getUpic().isEmpty()) {
-                user.setUpic("default_avatar.png"); // 设置默认头像
+                user.setUpic("/www/jars/avatars/default_avatar.png"); // 设置默认头像
             }
             User newUser = userDao.save(user);
             if (newUser != null) {
@@ -216,5 +216,6 @@ public class UserServicelmpl implements UserService {
     public void updateUser(User user) {
         userDao.save(user);
     }
+
 }
 

@@ -44,6 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
                         return true;
                     }
                 }).addPathPatterns("/**") // 拦截所有请求
-                .excludePathPatterns("/user/login", "/user/register","/user/getUserInfo","/captcha/get","/captcha/check","/user/forgotPassword","/user/resetPassword","/user/schools","/user/verifyEmail","/user/deleteAccount","/deleteAccount","/user/completeRegistration","/user/resetPasswordWithCaptcha","/user/completeDeleteAccount","/user/getUserScheduleList","/user/saveUserSchedule"); // 排除常用用户接口
+                .excludePathPatterns("/user/login", "/user/register","/user/getUserInfo","/captcha/get","/captcha/check","/user/forgotPassword","/user/resetPassword","/user/schools","/user/verifyEmail","/user/deleteAccount","/user/completeRegistration","/user/resetPasswordWithCaptcha","/user/completeDeleteAccount","/user/getUserScheduleList","/user/saveUserSchedule","/user/uploadAvatar","/user/logout","/user/updateEmail","/user/verifyEmailUpdate","/user/updateUserInfo"); // 排除常用用户接口
     }
 }

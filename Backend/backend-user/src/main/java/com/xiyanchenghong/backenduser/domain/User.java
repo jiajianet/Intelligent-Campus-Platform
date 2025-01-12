@@ -16,7 +16,7 @@ public class User {
     private String uname;
     private String email;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'default_avatar.png'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '/www/jars/avatars/default_avatar.png'")
     private String upic; // 新增字段
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

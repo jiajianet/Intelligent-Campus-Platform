@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,6 +30,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Base64;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 
 @RestController
@@ -48,7 +51,6 @@ public class UserController {
     @Autowired
     private RedissonClient redissonClient;
     @PostMapping("/login")
-    @RequestLock(prefix = "login:", expire = 5, timeUnit = TimeUnit.SECONDS)
     public Result<User> loginController(@RequestKeyParam @RequestParam String uno, @RequestKeyParam @RequestParam String password, @RequestParam("captchaVerification") String captchaVerification) {
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
@@ -76,8 +78,14 @@ public class UserController {
 
 
     @PostMapping("/register")
-    @RequestLock(prefix = "register:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<String> initiateRegistration(@RequestBody UserRegistrationRequest request) {
+    public Result<String> initiateRegistration(@RequestBody UserRegistrationRequest request, @RequestParam("captchaVerification") String captchaVerification) {
+        // 验证滑块验证码
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(captchaVerification);
+        ResponseModel response = captchaService.verification(captchaVO);
+        if (!response.isSuccess()) {
+            return Result.error(400, "验证码校验失败！");
+        }
 
         if (request.getUname() == null || request.getUname().isEmpty()) {
             return Result.error(400, "用户名不能为空！");
@@ -95,6 +103,22 @@ public class UserController {
         userService.storeCaptchaVerification(request.getEmail(), EmailcaptchaVerification);
 
         return Result.success("验证码已发送到您的邮箱，请查收！");
+    }
+
+
+    @PostMapping("/logout")
+    public Result<String> logout(@RequestParam("token") String token) {
+        try {
+            Claims claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+            // 将 token 加入黑名单
+            JwtUtils.invalidateToken(token);
+            return Result.success("Logout successful");
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
     }
 
     @PostMapping("/completeRegistration")
@@ -127,7 +151,6 @@ public class UserController {
         }
     }
 
-
     private String generateCaptcha() {
         // 生成6位随机验证码
         return String.valueOf((int)((Math.random() * 9 + 1) * 100000));
@@ -135,16 +158,39 @@ public class UserController {
 
 
 
-    @PostMapping("/getUserInfo")
-    @RequestLock(prefix = "getUserInfo:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<User> getUserInfo(@RequestParam("token") String token) {
+    @GetMapping("/getUserInfo")
+    @RequestLock(prefix = "getUserInfo:", expire = 1, timeUnit = TimeUnit.SECONDS)
+    public Result<Map<String, Object>> getUserInfo(@RequestParam("token") String token) {
         if (token != null) {
             try {
                 Claims claims = JwtUtils.parseJwt(token);
+                if (JwtUtils.isTokenExpired(token)) {
+                    return Result.error(403, "Token expired");
+                }
                 Long uid = claims.get("uid", Long.class);
                 User user = userService.getUserInfo(uid);
                 if (user != null) {
-                    return Result.success(user, "查询成功！");
+                    Map<String, Object> userInfo = new HashMap<>();
+                    userInfo.put("uid", user.getUid());
+                    userInfo.put("uschool", user.getUschool());
+                    userInfo.put("uno", user.getUno());
+                    userInfo.put("uname", user.getUname());
+                    userInfo.put("email", user.getEmail());
+                    userInfo.put("emailverified", user.isEmailVerified());
+
+                    // 读取头像文件并转换为base64编码
+                    String avatarBase64 = "";
+                    if (user.getUpic() != null) {
+                        try {
+                            byte[] imageBytes = Files.readAllBytes(Paths.get(user.getUpic()));
+                            avatarBase64 = Base64.getEncoder().encodeToString(imageBytes);
+                        } catch (IOException e) {
+                            logger.error("Error reading avatar file", e);
+                        }
+                    }
+                    userInfo.put("avatarBase64", avatarBase64);
+
+                    return Result.success(userInfo, "查询成功！");
                 } else {
                     return Result.error(404, "用户不存在！");
                 }
@@ -158,14 +204,14 @@ public class UserController {
 
 
     @PostMapping("/forgotPassword")
-    @RequestLock(prefix = "forgotPassword:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<String> forgotPassword(@RequestParam("email") String userEmail) {
-//        CaptchaVO captchaVO = new CaptchaVO();
-//        captchaVO.setCaptchaVerification(captchaVerification);
-//        ResponseModel response = captchaService.verification(captchaVO);
-//        if (!response.isSuccess()) {
-//            return Result.error(400, "验证码校验失败！");
-//        }
+    public Result<String> forgotPassword(@RequestParam("email") String userEmail, @RequestParam("captchaVerification") String captchaVerification) {
+        // 验证滑块验证码
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(captchaVerification);
+        ResponseModel response = captchaService.verification(captchaVO);
+        if (!response.isSuccess()) {
+            return Result.error(400, "验证码校验失败！");
+        }
 
         User user = userService.findUserByEmailForPasswordReset(userEmail);
         if (user == null) {
@@ -180,7 +226,6 @@ public class UserController {
         // 将验证码存储在数据库中，关联到用户的 email
         userService.storeCaptchaVerification(userEmail, EmailcaptchaVerification);
 
-//        logger.info("Password reset email sent to: {}", userEmail);
         return Result.success("验证码已发送到您的邮箱，请查收！");
     }
 
@@ -209,8 +254,16 @@ public class UserController {
 
 
     @DeleteMapping("/deleteAccount")
-    @RequestLock(prefix = "deleteAccount:", expire = 5, timeUnit = TimeUnit.SECONDS)
-    public Result<String> initiateDeleteAccount(@RequestParam("uno") String uno, @RequestParam("email") String email) {
+    public Result<String> initiateDeleteAccount(@RequestParam("uno") String uno, @RequestParam("email") String email, @RequestParam("captchaVerification") String captchaVerification) {
+
+        // 验证滑块验证码
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(captchaVerification);
+        ResponseModel response = captchaService.verification(captchaVO);
+        if (!response.isSuccess()) {
+            return Result.error(400, "验证码校验失败！");
+        }
+
         User user = userService.findUserByUnoAndEmail(uno, email);
         if (user == null) {
             return Result.error(404, "用户不存在");
@@ -248,11 +301,19 @@ public class UserController {
 
     @PostMapping("/verifyEmail")
     public String verifyEmail(@RequestParam("token") String token) {
-        String result = userService.validateEmailVerificationToken(token);
-        if (result != null) {
+        try {
+            Claims claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return "Token expired";
+            }
+            String result = userService.validateEmailVerificationToken(token);
+            if (result != null) {
+                return "无效的令牌";
+            }
+            return "邮箱验证成功";
+        } catch (Exception e) {
             return "无效的令牌";
         }
-        return "邮箱验证成功";
     }
 
 
@@ -261,8 +322,8 @@ public class UserController {
         // 验证Token
         Claims claims;
         try {
-            claims = jwtUtils.parseJwt(token);
-            if (jwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -295,14 +356,13 @@ public class UserController {
     }
 
 
-    @PostMapping("/getUserScheduleList")
-    @RequestLock(prefix = "getUserScheduleList:", expire = 5, timeUnit = TimeUnit.SECONDS)
+    @GetMapping("/getUserScheduleList")
     public Result<String> getUserScheduleList(@RequestParam("token") String token) {
         // 验证Token
         Claims claims;
         try {
-            claims = jwtUtils.parseJwt(token);
-            if (jwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -334,14 +394,161 @@ public class UserController {
 
         } catch (IOException e) {
             logger.error("Error reading schedule file", e);
-            return Result.error(500, "Error reading schedule file");
+            return Result.error(-1, "Error reading schedule file");
         } finally {
             if (isLocked && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
     }
+
+    @PostMapping("/uploadAvatar")
+    public Result<String> uploadAvatar(@RequestParam("token") String token, @RequestBody String base64Avatar) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取用户信息
+        Long uid = claims.get("uid", Long.class);
+        User user = userService.getUserInfo(uid);
+        if (user == null) {
+            return Result.error(404, "User not found");
+        }
+
+        // 保存头像文件
+        String fileName = "avatar_" + uid + ".png";
+        String filePath = System.getProperty("user.dir") + "/avatars/" + fileName; // 使用外部目录
+        try {
+            Files.createDirectories(Paths.get(System.getProperty("user.dir") + "/avatars/")); // 确保目录存在
+            byte[] imageBytes = Base64.getDecoder().decode(base64Avatar);
+            Files.write(Paths.get(filePath), imageBytes, StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            logger.error("Error saving avatar file", e);
+            return Result.error(500, "Error saving avatar file");
+        }
+
+        // 更新数据库中的头像路径
+        user.setUpic(filePath);
+        userService.updateUser(user);
+
+        return Result.success("Avatar uploaded successfully");
+    }
+
+    @PostMapping("/updateEmail")
+    public Result<String> updateEmail(@RequestParam("token") String token, @RequestParam("newEmail") String newEmail) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取用户信息
+        Long uid = claims.get("uid", Long.class);
+        User user = userService.getUserInfo(uid);
+        if (user == null) {
+            return Result.error(404, "User not found");
+        }
+
+        // 检查新邮箱是否已存在
+        if (userService.checkEmailExistsForRegistration(newEmail)) {
+            return Result.error(409, "Email already exists");
+        }
+
+        // 生成验证码
+        String emailCaptcha = generateCaptcha();
+        // 发送验证码邮件
+        userService.sendEmailVerificationEmail(newEmail, emailCaptcha);
+        // 将验证码存储在 Redis 中，关联到用户的邮箱
+        userService.storeCaptchaVerification(newEmail, emailCaptcha);
+
+        return Result.success("验证码已发送到您的新邮箱，请查收！");
+    }
+
+    @PostMapping("/verifyEmailUpdate")
+    public Result<String> verifyEmailUpdate(@RequestParam("token") String token, @RequestParam("newEmail") String newEmail, @RequestParam("emailCaptcha") String emailCaptcha) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取用户信息
+        Long uid = claims.get("uid", Long.class);
+        User user = userService.getUserInfo(uid);
+        if (user == null) {
+            return Result.error(404, "User not found");
+        }
+
+        // 验证验证码
+        if (!userService.verifyCaptcha(newEmail, emailCaptcha)) {
+            return Result.error(400, "验证码校验失败！");
+        }
+
+        // 更新邮箱
+        user.setEmail(newEmail);
+        user.setEmailVerified(false); // 需要重新验证新邮箱
+        userService.updateUser(user);
+
+        return Result.success("Email updated successfully");
+    }
+
+    @PostMapping("/updateUserInfo")
+    public Result<String> updateUserInfo(@RequestParam("token") String token, @RequestBody Map<String, String> userInfo) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = JwtUtils.parseJwt(token);
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取用户信息
+        Long uid = claims.get("uid", Long.class);
+        User user = userService.getUserInfo(uid);
+        if (user == null) {
+            return Result.error(404, "User not found");
+        }
+
+        // 更新用户信息
+        if (userInfo.containsKey("uschool")) {
+            user.setUschool(userInfo.get("uschool"));
+        }
+        if (userInfo.containsKey("uno")) {
+            user.setUno(userInfo.get("uno"));
+        }
+        if (userInfo.containsKey("uname")) {
+            user.setUname(userInfo.get("uname"));
+        }
+        userService.updateUser(user);
+
+        return Result.success("User information updated successfully");
+    }
 }
+
+
+
+
+
 
 
 
