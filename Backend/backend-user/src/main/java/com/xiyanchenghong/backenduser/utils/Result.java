@@ -1,11 +1,10 @@
 package com.xiyanchenghong.backenduser.utils;
 
-
 public class Result<T> {
     private String code;
     private String msg;
     private T data;
-    private String token; // 修改为String类型
+    private String token;
 
     public String getCode() {
         return code;
@@ -39,7 +38,6 @@ public class Result<T> {
         this.token = token;
     }
 
-
     public Result() {
     }
 
@@ -50,14 +48,14 @@ public class Result<T> {
     public static Result success() {
         Result result = new Result<>();
         result.setCode("0");
-        result.setMsg("成功");
+        result.setMsg("Success");
         return result;
     }
 
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>(data);
         result.setCode("0");
-        result.setMsg("成功");
+        result.setMsg("Success");
         return result;
     }
 
@@ -78,7 +76,7 @@ public class Result<T> {
 
     public static Result error(int code, String msg) {
         Result result = new Result();
-        result.setCode(""+code);
+        result.setCode(String.valueOf(code));
         result.setMsg(msg);
         return result;
     }

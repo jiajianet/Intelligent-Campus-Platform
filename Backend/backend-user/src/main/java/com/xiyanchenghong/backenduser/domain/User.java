@@ -2,6 +2,8 @@ package com.xiyanchenghong.backenduser.domain;
 
 import jakarta.persistence.*;
 
+import javax.management.relation.Role;
+
 @Table(name = "user")
 @Entity
 public class User {
@@ -25,6 +27,7 @@ public class User {
     @Column(name = "schedfile")
     private String schedfile;
 
+    private Role role;
     public long getUid() {
         return uid;
     }
@@ -95,5 +98,17 @@ public class User {
 
     public void setSchedfile(String schedfile) {
         this.schedfile = schedfile;
+    }
+
+    public enum Role {
+        TEACHER,
+        STUDENT
+    }
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

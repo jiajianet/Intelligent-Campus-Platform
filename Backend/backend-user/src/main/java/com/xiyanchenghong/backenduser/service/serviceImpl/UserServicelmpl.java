@@ -1,4 +1,5 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
+
 import com.xiyanchenghong.backenduser.domain.EmailVerificationToken;
 import com.xiyanchenghong.backenduser.domain.EmailVerificationTokenRepository;
 import com.xiyanchenghong.backenduser.domain.User;
@@ -61,6 +62,12 @@ public class UserServicelmpl implements UserService {
         return userDao.findById(uid).orElse(null);
     }
 
+    // 实现 getUserById 方法
+    @Override
+    public User getUserById(Long userId) {
+        return userDao.findById(userId).orElse(null);
+    }
+
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
 
@@ -71,7 +78,6 @@ public class UserServicelmpl implements UserService {
     public User findUserByEmail(String email) {
         List<User> users = userDao.findByEmail(email);
         if (users.size() != 1) {
-            System.out.println(users.size());
             throw new IncorrectResultSizeDataAccessException(1, users.size());
         }
         return users.get(0);
@@ -95,7 +101,6 @@ public class UserServicelmpl implements UserService {
         return users.get(0);
     }
 
-
     @Override
     public void createPasswordResetTokenForUser(User user, String token) {
         PasswordResetToken myToken = new PasswordResetToken();
@@ -108,9 +113,8 @@ public class UserServicelmpl implements UserService {
 
     @Override
     public void sendPasswordResetEmail(User user, String token) {
-//        String url = "http://127.0.0.1:8081/user/resetPassword?token=" + token;
         String subject = "【智慧校园服务平台】密码重置";
-        String text = "您正在进行密码重置操作，你的验证码是:" + token +"\n若非本人申请，请忽略这封电子邮件并检查账号最近登录和操作行为是否有问题";
+        String text = "您正在进行密码重置操作，你的验证码是:" + token + "\n若非本人申请，请忽略这封电子邮件并检查账号最近登录和操作行为是否有问题";
         emailService.sendEmail(user.getEmail(), subject, text);
     }
 
@@ -139,7 +143,7 @@ public class UserServicelmpl implements UserService {
     public void deleteAccountByUno(String uno) {
         User user = userDao.findByUno(uno);
         if (user != null) {
-            userDao.delete(user);//级联删除数据库外键约束相关记录
+            userDao.delete(user); //级联删除数据库外键约束相关记录
         }
     }
 
@@ -176,8 +180,8 @@ public class UserServicelmpl implements UserService {
         return null;
     }
 
-
     private Map<String, String> captchaStore = new HashMap<>();
+
     @Override
     public void sendEmailVerificationEmail(String email, String captchaVerification) {
         String subject = "【智慧校园服务平台】邮箱验证";
@@ -216,6 +220,4 @@ public class UserServicelmpl implements UserService {
     public void updateUser(User user) {
         userDao.save(user);
     }
-
 }
-

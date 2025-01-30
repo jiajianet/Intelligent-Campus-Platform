@@ -48,4 +48,6 @@ public interface UserService {
 
     void updateUser(User user);
 
+    // 新增方法
+    User getUserById(Long userId);
 }
