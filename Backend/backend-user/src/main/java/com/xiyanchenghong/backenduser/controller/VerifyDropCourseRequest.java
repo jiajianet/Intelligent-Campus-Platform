@@ -1,15 +1,14 @@
 package com.xiyanchenghong.backenduser.controller;
 
 public class VerifyDropCourseRequest {
-    private Integer courseId;
+    private Long courseId;
     private String verificationCode;
 
-    // Getters and Setters
-    public Integer getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(Integer courseId) {
+    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 

@@ -26,12 +26,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getCourseById(Integer courseId) {
+    public Course getCourseById(Long courseId) {
         return courseRepository.findById(courseId).orElse(null);
     }
 
     @Override
-    public boolean joinCourse(Long userId, Integer courseId) {
+    public boolean joinCourse(Long userId, Long courseId) {
         try {
             CourseStudent courseStudent = new CourseStudent();
             courseStudent.setStudentId(userId);
@@ -46,7 +46,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean dropCourse(Long userId, Integer courseId) {
+    public boolean dropCourse(Long userId, Long courseId) {
         try {
             CourseStudent courseStudent = courseStudentRepository.findByStudentIdAndCourseId(userId, courseId);
             if (courseStudent != null) {
@@ -59,5 +59,4 @@ public class CourseServiceImpl implements CourseService {
             return false;
         }
     }
-
 }

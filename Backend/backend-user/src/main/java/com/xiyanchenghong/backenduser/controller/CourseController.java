@@ -1,12 +1,12 @@
 package com.xiyanchenghong.backenduser.controller;
 
 import com.xiyanchenghong.backenduser.domain.Course;
-import com.xiyanchenghong.backenduser.utils.Result;
 import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.service.CourseService;
-import com.xiyanchenghong.backenduser.service.serviceImpl.EmailService;
 import com.xiyanchenghong.backenduser.service.UserService;
+import com.xiyanchenghong.backenduser.service.serviceImpl.EmailService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
+import com.xiyanchenghong.backenduser.utils.Result;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,7 @@ public class CourseController {
     }
 
     @GetMapping("/getCourseInfo")
-    public Result<Course> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Integer courseId) {
+    public Result<Course> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
         try {
             // 验证token
             Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
