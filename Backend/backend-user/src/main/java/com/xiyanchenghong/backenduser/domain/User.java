@@ -27,7 +27,16 @@ public class User {
     @Column(name = "schedfile")
     private String schedfile;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.role == null) {
+            this.role = Role.STUDENT;
+        }
+    }
+
     public long getUid() {
         return uid;
     }
@@ -101,8 +110,8 @@ public class User {
     }
 
     public enum Role {
-        TEACHER,
-        STUDENT
+        STUDENT,
+        TEACHER
     }
     public Role getRole() {
         return role;
