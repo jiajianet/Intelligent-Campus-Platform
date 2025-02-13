@@ -94,7 +94,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/teacher/deleteExam/{examId}",
                         "/teacher/modifyExam/{examId}",
                         "/teacher/beginSignIn",
-                        "/teacher/endSignIn"
+                        "/teacher/endSignIn",
+                        "/school/getSchoolAddress"
                 ); // 排除常用用户接口
     }
 }
