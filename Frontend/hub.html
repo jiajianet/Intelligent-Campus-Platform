@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="assets/img/logo_dark_32.png" rel="icon">
+    <link href="assets/img/logo_dark_32.png" rel="apple-touch-icon">
+    <title>我的课堂_智慧校园服务平台</title>
+    <script src="./assets/js/redirect_jump.js"></script>
+    <script src="./assets/vendor/jquery/jquery.min.js"></script>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+</head>
+<body>
+<script type="text/javascript">
+  window.onload = function () {
+      const login_token = localStorage.getItem("intelli_campus_login_token");
+      $.ajax({
+          url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+          method: "GET", // 请求类型
+          dataType: "json", // 返回的数据类型
+          success: function (data) {
+              if (data.code == 0) {
+                  if (data.data.role === "STUDENT") window.location.href = "http://111.230.253.94/student_hub.html"
+                  if (data.data.role === "TEACHER") window.location.href = "http://111.230.253.94/teacher_hub.html"
+              }else{
+                  errorToast("信息验证失败")
+                  setRedirect("http://111.230.253.94/login.html")
+              }
+          },
+          error: function () {
+              errorToast("信息验证失败")
+              setRedirect("http://111.230.253.94/login.html")
+          }
+      });
+  }
+</script>
+</body>
+</html>

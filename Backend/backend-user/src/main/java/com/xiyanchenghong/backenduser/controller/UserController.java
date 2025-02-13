@@ -177,7 +177,7 @@ public class UserController {
                     userInfo.put("uname", user.getUname());
                     userInfo.put("email", user.getEmail());
                     userInfo.put("emailverified", user.isEmailVerified());
-
+                    userInfo.put("role", user.getRole());
                     // 读取头像文件并转换为base64编码
                     String avatarBase64 = "";
                     if (user.getUpic() != null) {

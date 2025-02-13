@@ -361,7 +361,8 @@ $.ajax({
                             <img src="./assets/img/avatar.png" alt="用户头像" style="width: 36px;height: 36px;border-radius: 50%;cursor: pointer;margin-left: 5%" id="userAvatar">
                             <span style="margin-left: 10%;width: 100px;color: white" id="userName"></span>
                         <div class="dropdown-content">
-                        <div><a href="./user_center.html" id="userCenter"style="font-weight: normal;">用户中心</a></div>
+                        <div><a href="./hub.html" id="userHub"style="font-weight: normal;">我的学习</a></div>
+                        <div><a href="./user_center.html" id="userCenter"style="font-weight: normal;">我的账号</a></div>
                             <div><a href="#" id="logout" style="font-weight: normal;color: red" onclick="logout()">退出登录</a></div>
                         </div>
                     </div>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>校园地图_智慧校园服务平台</title>
+  <!-- Favicons -->
+  <link href="assets/img/logo_dark_32.png" rel="icon">
+  <link href="assets/img/logo_dark_32.png" rel="apple-touch-icon">
+</head>
+<script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=ZLHBZ-5H4CL-ZJBPE-MPTF6-K577H-UFB6R"></script>
+<style type="text/css">
+  html, body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+  }
+  /* Add new navigation styles */
+  .nav-header {
+    /* position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    margin-bottom: 20px; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo img {
+    height: 30px;
+  }
+
+  .nav-logo span {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .nav-user {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  #container {
+    width: 100%;
+  }
+</style>
+
+<body onload="initMap()">
+<div class="nav-header">
+  <a href="#" class="nav-logo">
+    <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
+    <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
+  </a>
+  <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
+</div>
+<div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+  <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+       aria-atomic="true" id="error-toast">
+    <div class="d-flex">
+      <div class="toast-body" id="error-toast-body">
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+  <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+       aria-atomic="true" id="success-toast">
+    <div class="d-flex">
+      <div class="toast-body" id="success-toast-body">
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<script type="text/javascript">
+  function initMap() {
+    var center = new TMap.LatLng(23.450633,113.494900);
+    // 初始化地图
+    var map = new TMap.Map("container", {
+      rotation: -10, // 设置地图旋转角度
+      pitch: 45, // 设置俯仰角度（0~45）
+      zoom: 18, // 设置地图缩放级别
+      center: center // 设置地图中心点坐标
+    });
+  }
+</script>
+</body>
+<script src="./assets/vendor/jquery/jquery.min.js"></script>
+<link href="./assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="./assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="./assets/vendor/aos/aos.css" rel="stylesheet">
+<link href="./assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="./assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+<link href="./assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+<!-- Template Main CSS File -->
+<link href="./assets/css/style.css" rel="stylesheet">
+<script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+<script src="./assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="./assets/vendor/aos/aos.js"></script>
+<script src="./assets/vendor/php-email-form/validate.js"></script>
+<script src="./assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="./assets/vendor/purecounter/purecounter.js"></script>
+<script src="./assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="./assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="./assets/vendor/crypto-js/crypto-js.js"></script>
+<script src="./assets/vendor/captcha/js/ase.js"></script>
+<script src="./assets/vendor/captcha/js/verify.js" ></script>
+<script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+<script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+</html>
+

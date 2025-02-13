@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生首页_智慧校园服务平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("./assets/img/hero-bg.png");
+        }
+
+        /* Add new navigation styles */
+        .nav-header {
+            /* position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            margin-bottom: 20px; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 30px;
+        }
+
+        .nav-logo span {
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .nav-user {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .course_classroom {
+            background-color: #1c1c1c;
+            position: absolute;
+            width: 100%;
+            height: 92%;
+        }
+
+        .classroom_container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            width: 100%;
+            height: 94%;
+        }
+        .course_header{
+            background-color: #090909;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding-left: 16px;
+            height: 6%;
+
+        }
+        .course-title{
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .course_teacher{
+            margin-left: auto;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left_stream{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 75%;
+            height: 100%;
+            flex-direction: column;
+        }
+        .right_function{
+
+                width: 25%;
+                background-color: #f4f4f4;
+                height: 100%;
+        }
+        .stream_not_available{
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                margin-top: auto;
+        }
+        .course_footer {
+            background-color: #090909;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding-left: 16px;
+            height: 36px;
+            width: 100%;
+            margin-top: auto;
+            justify-content: center;
+        }
+        .course_tool_stud {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            width: 20%;
+        }
+        .single_tool {
+            display: flex;
+            margin: 0 auto 0 auto;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+        .tabs {
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .tab-link {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #666;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tab-link.active {
+            color: #4154f1;
+            font-weight: bold;
+        }
+
+        .tab-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1a73e8;
+        }
+        .content {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+        .bubble_message_content {
+            background-color: #737373;
+            border-radius: 16px;
+            padding: 2px 2px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .bubble_message_text{
+            font-size: 14px;
+        }
+        .message_time{
+            color: #333333;
+        }
+    </style>
+    <script src="./assets/vendor/jquery/jquery.min.js"></script>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/crypto-js/crypto-js.js"></script>
+    <script src="assets/vendor/captcha/js/ase.js"></script>
+    <script src="assets/vendor/captcha/js/verify.js" ></script>
+    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+</head>
+
+<body>
+    <!-- Add navigation header -->
+    <div class="nav-header">
+        <a href="#" class="nav-logo">
+            <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
+             <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
+        </a>
+        <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
+    </div>
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="error-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="error-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+             aria-atomic="true" id="success-toast">
+            <div class="d-flex">
+                <div class="toast-body" id="success-toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="course_classroom">
+        <div class="course_header">
+            <div class="course-title">
+                <span>测试课堂1</span>
+                <div class="course_teacher">
+                    <img src="./assets/img/user.svg" width="32">
+                    <span style="margin-left: 5px">测试教师1</span>
+                </div>
+            </div>
+        </div>
+        <div class="classroom_container">
+            <div class="left_stream">
+                <div class="stream_not_available">
+                    <img class="" src="./assets/img/camera-video-off.svg" alt="教师暂未开启直播" width="128">
+                    <span class="tip">教师暂未开启直播</span>
+                </div>
+                <div class="course_footer">
+                    <div class="course_tool_stud">
+                        <div class="single_tool">
+                            <img src="./assets/img/hand-right-outline.svg" alt="举手" width="20">
+                            <span style="margin-left: 3px">举手</span>
+                        </div>
+                    </div>
+                    <div class="course_tool_stud">
+                        <div class="single_tool">
+                            <img src="./assets/img/question.svg" alt="提问" width="20">
+                            <span style="margin-left: 3px">提问</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right_function">
+                    <div class="tabs">
+                        <span class="tab-link active" data-tab="course-info">动态</span>
+                        <span class="tab-link" data-tab="account-management">互动</span>
+                    </div>
+                <main id="course-info" class="tab-content active">
+                    <div class="content">
+                        <div class="bubble_message">
+                            <div class="message_time">
+                                <span>2025/02/09 0:29:10</span>
+                            </div>
+                            <div class="bubble_message_content">
+                                <span class="bubble_message_text">学生1 进入了课堂</span>
+                            </div>
+                        </div>
+                        <div class="bubble_message">
+                            <div class="message_time">
+                                <span>2025/02/09 0:32:17</span>
+                            </div>
+                            <div class="bubble_message_content">
+                                <span class="bubble_message_text">学生2 进入了课堂</span>
+                            </div>
+                        </div>
+                        <div class="bubble_message">
+                            <div class="message_time">
+                                <span>2025/02/09 0:43:35</span>
+                            </div>
+                            <div class="bubble_message_content">
+                                <span class="bubble_message_text">学生2 离开了课堂</span>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./assets/js/redirect_jump.js"></script>
+<script src="./assets/js/interval_verify.js"></script>
+<!--<script type="text/javascript" src="./assets/js/user_center.js"></script>-->
+</html>
