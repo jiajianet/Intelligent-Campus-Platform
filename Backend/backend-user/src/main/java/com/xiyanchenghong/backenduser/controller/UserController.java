@@ -159,7 +159,6 @@ public class UserController {
 
 
     @GetMapping("/getUserInfo")
-    @RequestLock(prefix = "getUserInfo:", expire = 1, timeUnit = TimeUnit.SECONDS)
     public Result<Map<String, Object>> getUserInfo(@RequestParam("token") String token) {
         if (token != null) {
             try {
