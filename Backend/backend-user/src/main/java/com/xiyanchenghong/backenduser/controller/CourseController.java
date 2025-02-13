@@ -160,6 +160,47 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/createCourse")
+    public Result<Course> createCourse(@RequestHeader("Authorization") String token, @RequestBody Course course) {
+        try {
+            // 验证token
+            Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+
+            // 创建课程
+            Course createdCourse = courseService.createCourse(course);
+            return Result.success(createdCourse);
+
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+    }
+
+    @DeleteMapping("/deleteCourse")
+    public Result<String> deleteCourse(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
+        try {
+            // 验证token
+            Claims claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token)) {
+                return Result.error(403, "Token expired");
+            }
+
+            // 删除课程
+            boolean success = courseService.deleteCourse(courseId);
+            if (success) {
+                return Result.success("Course deleted successfully");
+            } else {
+                return Result.error(404, "Course not found");
+            }
+
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+    }
+
+
     private String generateCaptcha() {
         // 生成6位随机验证码
         return String.valueOf((int)((Math.random() * 9 + 1) * 100000));

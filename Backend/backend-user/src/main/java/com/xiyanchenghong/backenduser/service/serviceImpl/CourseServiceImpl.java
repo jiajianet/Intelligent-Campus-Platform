@@ -59,4 +59,20 @@ public class CourseServiceImpl implements CourseService {
             return false;
         }
     }
+
+    @Override
+    public Course createCourse(Course course) {
+        return courseRepository.save(course);
+    }
+
+    @Override
+    public boolean deleteCourse(Long courseId) {
+        try {
+            courseRepository.deleteById(courseId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

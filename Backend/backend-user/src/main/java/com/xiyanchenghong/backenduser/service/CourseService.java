@@ -8,4 +8,6 @@ public interface CourseService {
     boolean joinCourse(Long userId, Long courseId);
     Course getCourseById(Long courseId);
     boolean dropCourse(Long userId, Long courseId);
+    Course createCourse(Course course);
+    boolean deleteCourse(Long courseId);
 }
