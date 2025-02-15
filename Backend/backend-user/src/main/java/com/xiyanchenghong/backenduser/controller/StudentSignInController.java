@@ -25,7 +25,7 @@ public class StudentSignInController {
         try {
             // 验证 token
             Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
-            if (JwtUtils.isTokenExpired(token)) {
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
 
