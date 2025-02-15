@@ -75,4 +75,9 @@ public class CourseServiceImpl implements CourseService {
             return false;
         }
     }
+
+    @Override
+    public void updateCourse(Course course) {
+        courseRepository.save(course);
+    }
 }

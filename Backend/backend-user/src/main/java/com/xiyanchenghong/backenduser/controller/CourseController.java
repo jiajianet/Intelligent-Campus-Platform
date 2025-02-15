@@ -11,6 +11,12 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -45,18 +51,36 @@ public class CourseController {
     }
 
     @GetMapping("/getCourseInfo")
-    public Result<Course> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
+    public Result<CourseInfoResponse> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
         try {
             // 验证token
-            Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
+            Claims claims = JwtUtils.parseJwt(token.substring(7));
             if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
 
+            // 获取用户ID
+            Long userId = Long.valueOf(claims.getSubject());
+
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
             if (course != null) {
-                return Result.success(course);
+                // 验证请求者是否为课程的教师
+                if (!course.getTeacherId().equals(userId)) {
+                    return Result.error(403, "访问被拒绝");
+                }
+
+                String coverImageBase64 = null;
+                if (course.getCoverImagePath() != null) {
+                    try {
+                        byte[] imageBytes = Files.readAllBytes(Paths.get(course.getCoverImagePath()));
+                        coverImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+                    } catch (IOException e) {
+                        return Result.error(500, "读取封面图片文件时出错！");
+                    }
+                }
+                CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64);
+                return Result.success(response);
             } else {
                 return Result.error(404, "Course not found");
             }
@@ -201,9 +225,67 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/uploadCourseCover")
+    public Result<String> uploadCourseCover(@RequestHeader("Authorization") String token, @RequestParam("courseId") Long courseId, @RequestBody String base64Cover) {
+        // 验证Token
+        Claims claims;
+        try {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
+                return Result.error(403, "Token expired");
+            }
+        } catch (Exception e) {
+            return Result.error(403, "Invalid token");
+        }
+
+        // 获取课程信息
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return Result.error(404, "Course not found");
+        }
+
+        // 保存封面文件
+        String fileName = "course_cover_" + courseId + ".png";
+        String filePath = System.getProperty("user.dir") + "/course_covers/" + fileName; // 使用外部目录
+        try {
+            Files.createDirectories(Paths.get(System.getProperty("user.dir") + "/course_covers/")); // 确保目录存在
+            byte[] imageBytes = Base64.getDecoder().decode(base64Cover);
+            Files.write(Paths.get(filePath), imageBytes, StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            return Result.error(500, "保存课程封面文件时出错");
+        }
+
+        // 更新数据库中的封面路径
+        course.setCoverImagePath(filePath);
+        courseService.updateCourse(course);
+
+        return Result.success("课程封面已经上传成功！");
+    }
 
     private String generateCaptcha() {
         // 生成6位随机验证码
         return String.valueOf((int)((Math.random() * 9 + 1) * 100000));
+    }
+
+    private static class CourseInfoResponse {
+        private Long courseId;
+        private String courseName;
+        private String courseDescription;
+        private Long teacherId;
+        private String coverImageBase64;
+        private Date startDate;
+        private Date endDate;
+        private int progress;
+
+        public CourseInfoResponse(Course course, String coverImageBase64) {
+            this.courseId = course.getCourseId();
+            this.courseName = course.getCourseName();
+            this.courseDescription = course.getCourseDescription();
+            this.teacherId = course.getTeacherId();
+            this.startDate = course.getStartDate();
+            this.endDate = course.getEndDate();
+            this.progress = course.getProgress();
+            this.coverImageBase64 = coverImageBase64;
+        }
     }
 }

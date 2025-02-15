@@ -13,7 +13,8 @@ public class Course {
     private Long teacherId;
     private Date startDate;
     private Date endDate;
-    private int progress;  // 新添加的字段
+    private int progress;
+    private String coverImagePath;
 
     // Getters and Setters
 
@@ -71,5 +72,13 @@ public class Course {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
     }
 }

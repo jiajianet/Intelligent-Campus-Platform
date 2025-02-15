@@ -10,4 +10,5 @@ public interface CourseService {
     boolean dropCourse(Long userId, Long courseId);
     Course createCourse(Course course);
     boolean deleteCourse(Long courseId);
+    void updateCourse(Course course);
 }
