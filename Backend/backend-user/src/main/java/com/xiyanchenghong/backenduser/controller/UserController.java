@@ -107,10 +107,10 @@ public class UserController {
 
 
     @PostMapping("/logout")
-    public Result<String> logout(@RequestParam("token") String token) {
+    public Result<String> logout(@RequestHeader("Authorization") String token) {
         try {
-            Claims claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            Claims claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
             // 将 token 加入黑名单
@@ -159,11 +159,11 @@ public class UserController {
 
 
     @GetMapping("/getUserInfo")
-    public Result<Map<String, Object>> getUserInfo(@RequestParam("token") String token) {
+    public Result<Map<String, Object>> getUserInfo(@RequestHeader("Authorization") String token) {
         if (token != null) {
             try {
-                Claims claims = JwtUtils.parseJwt(token);
-                if (JwtUtils.isTokenExpired(token)) {
+                Claims claims = JwtUtils.parseJwt(token.substring(7));
+                if (JwtUtils.isTokenExpired(token.substring(7))) {
                     return Result.error(403, "Token expired");
                 }
                 Long uid = claims.get("uid", Long.class);
@@ -299,10 +299,10 @@ public class UserController {
 
 
     @PostMapping("/verifyEmail")
-    public String verifyEmail(@RequestParam("token") String token) {
+    public String verifyEmail(@RequestHeader("Authorization") String token) {
         try {
-            Claims claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            Claims claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return "Token expired";
             }
             String result = userService.validateEmailVerificationToken(token);
@@ -317,12 +317,12 @@ public class UserController {
 
 
     @PostMapping("/saveUserSchedule")
-    public Result<String> saveUserSchedule(@RequestParam("token") String token, @RequestBody String scheduleJson) {
+    public Result<String> saveUserSchedule(@RequestHeader("Authorization") String token, @RequestBody String scheduleJson) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -356,12 +356,12 @@ public class UserController {
 
 
     @GetMapping("/getUserScheduleList")
-    public Result<String> getUserScheduleList(@RequestParam("token") String token) {
+    public Result<String> getUserScheduleList(@RequestHeader("Authorization") String token) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -402,12 +402,12 @@ public class UserController {
     }
 
     @PostMapping("/uploadAvatar")
-    public Result<String> uploadAvatar(@RequestParam("token") String token, @RequestBody String base64Avatar) {
+    public Result<String> uploadAvatar(@RequestHeader("Authorization") String token, @RequestBody String base64Avatar) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -441,12 +441,12 @@ public class UserController {
     }
 
     @PostMapping("/updateEmail")
-    public Result<String> updateEmail(@RequestParam("token") String token, @RequestParam("newEmail") String newEmail) {
+    public Result<String> updateEmail(@RequestHeader("Authorization") String token, @RequestParam("newEmail") String newEmail) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -476,12 +476,12 @@ public class UserController {
     }
 
     @PostMapping("/verifyEmailUpdate")
-    public Result<String> verifyEmailUpdate(@RequestParam("token") String token, @RequestParam("newEmail") String newEmail, @RequestParam("emailCaptcha") String emailCaptcha) {
+    public Result<String> verifyEmailUpdate(@RequestHeader("Authorization") String token, @RequestParam("newEmail") String newEmail, @RequestParam("emailCaptcha") String emailCaptcha) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
@@ -509,12 +509,12 @@ public class UserController {
     }
 
     @PostMapping("/updateUserInfo")
-    public Result<String> updateUserInfo(@RequestParam("token") String token, @RequestBody Map<String, String> userInfo) {
+    public Result<String> updateUserInfo(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> userInfo) {
         // 验证Token
         Claims claims;
         try {
-            claims = JwtUtils.parseJwt(token);
-            if (JwtUtils.isTokenExpired(token)) {
+            claims = JwtUtils.parseJwt(token.substring(7));
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {

@@ -27,7 +27,7 @@ public class TeacherExamController {
         try {
             // 验证 token
             Claims claims = JwtUtils.parseJwt(token.substring(7));
-            if (JwtUtils.isTokenExpired(token)) {
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Result.error(403, "Token expired"));
             }
 
@@ -56,7 +56,7 @@ public class TeacherExamController {
         try {
             // 验证 token
             Claims claims = JwtUtils.parseJwt(token.substring(7));
-            if (JwtUtils.isTokenExpired(token)) {
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Result.error(403, "Token expired"));
             }
 
@@ -85,7 +85,7 @@ public class TeacherExamController {
         try {
             // 验证 token
             Claims claims = JwtUtils.parseJwt(token.substring(7));
-            if (JwtUtils.isTokenExpired(token)) {
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Result.error(403, "Token expired"));
             }
 
