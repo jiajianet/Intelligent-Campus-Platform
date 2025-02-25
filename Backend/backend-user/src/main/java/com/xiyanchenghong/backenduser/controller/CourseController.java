@@ -8,6 +8,8 @@ import com.xiyanchenghong.backenduser.service.serviceImpl.EmailService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
 import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/course")
 public class CourseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     @Autowired
     private CourseService courseService;
@@ -46,6 +50,7 @@ public class CourseController {
             return Result.success(courseList);
 
         } catch (Exception e) {
+            logger.error("Token validation error", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -54,13 +59,20 @@ public class CourseController {
     public Result<CourseInfoResponse> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
         try {
             // 验证token
-            Claims claims = JwtUtils.parseJwt(token.substring(7));
+            Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
             if (JwtUtils.isTokenExpired(token.substring(7))) {
                 return Result.error(403, "Token expired");
             }
 
             // 获取用户ID
-            Long userId = Long.valueOf(claims.getSubject());
+            String userIdStr = claims.getSubject();
+            Long userId = null;
+            try {
+                userId = Long.valueOf(userIdStr);
+            } catch (NumberFormatException e) {
+                logger.error("Unable to convert userId to Long: " + userIdStr, e);
+                return Result.error(403, "Invalid token");
+            }
 
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
@@ -86,6 +98,7 @@ public class CourseController {
             }
 
         } catch (Exception e) {
+            logger.error("Error retrieving course info", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -111,6 +124,7 @@ public class CourseController {
             }
 
         } catch (Exception e) {
+            logger.error("Error joining course", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -144,6 +158,7 @@ public class CourseController {
             return Result.success("验证码已发送到您的邮箱，请查收");
 
         } catch (Exception e) {
+            logger.error("Error dropping course", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -180,6 +195,7 @@ public class CourseController {
             }
 
         } catch (Exception e) {
+            logger.error("Error verifying drop course", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -198,7 +214,7 @@ public class CourseController {
             return Result.success(createdCourse);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error creating course", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -221,6 +237,7 @@ public class CourseController {
             }
 
         } catch (Exception e) {
+            logger.error("Error deleting course", e);
             return Result.error(403, "Invalid token");
         }
     }
@@ -235,6 +252,7 @@ public class CourseController {
                 return Result.error(403, "Token expired");
             }
         } catch (Exception e) {
+            logger.error("Token validation error", e);
             return Result.error(403, "Invalid token");
         }
 
@@ -252,6 +270,7 @@ public class CourseController {
             byte[] imageBytes = Base64.getDecoder().decode(base64Cover);
             Files.write(Paths.get(filePath), imageBytes, StandardOpenOption.CREATE);
         } catch (IOException e) {
+            logger.error("Error saving course cover file", e);
             return Result.error(500, "保存课程封面文件时出错");
         }
 

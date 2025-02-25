@@ -13,7 +13,6 @@ public class ExamSubmission {
     private String submissionData;
     private Date submissionDate;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
