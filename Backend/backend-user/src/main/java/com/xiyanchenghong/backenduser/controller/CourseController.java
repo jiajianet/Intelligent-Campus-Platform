@@ -65,19 +65,7 @@ public class CourseController {
             }
 
             // 获取用户ID
-            String userIdStr = claims.getSubject();
-            if (userIdStr == null) {
-                logger.error("Token does not contain subject (userId)");
-                return Result.error(403, "Invalid token");
-            }
-
-            Long userId;
-            try {
-                userId = Long.valueOf(userIdStr);
-            } catch (NumberFormatException e) {
-                logger.error("Unable to convert userId to Long: " + userIdStr, e);
-                return Result.error(403, "Invalid token");
-            }
+            Long userId = Long.valueOf(claims.getSubject());
 
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
@@ -312,5 +300,6 @@ public class CourseController {
             this.coverImageBase64 = coverImageBase64;
         }
 
+        // Getters and Setters
     }
 }
