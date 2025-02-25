@@ -66,7 +66,12 @@ public class CourseController {
 
             // 获取用户ID
             String userIdStr = claims.getSubject();
-            Long userId = null;
+            if (userIdStr == null) {
+                logger.error("Token does not contain subject (userId)");
+                return Result.error(403, "Invalid token");
+            }
+
+            Long userId;
             try {
                 userId = Long.valueOf(userIdStr);
             } catch (NumberFormatException e) {
@@ -79,7 +84,7 @@ public class CourseController {
             if (course != null) {
                 // 验证请求者是否为课程的教师
                 if (!course.getTeacherId().equals(userId)) {
-                    return Result.error(403, "访问被拒绝");
+                    return Result.error(403, "Access denied");
                 }
 
                 String coverImageBase64 = null;
@@ -88,7 +93,7 @@ public class CourseController {
                         byte[] imageBytes = Files.readAllBytes(Paths.get(course.getCoverImagePath()));
                         coverImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
                     } catch (IOException e) {
-                        return Result.error(500, "读取封面图片文件时出错！");
+                        return Result.error(500, "Error reading cover image file");
                     }
                 }
                 CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64);
@@ -142,7 +147,7 @@ public class CourseController {
             Long userId = Long.valueOf(claims.getSubject());
             User user = userService.getUserById(userId);
             if (user == null) {
-                return Result.error(404, "用户不存在");
+                return Result.error(404, "User not found");
             }
             String email = user.getEmail();
 
@@ -150,12 +155,12 @@ public class CourseController {
             String verificationCode = generateCaptcha();
 
             // 发送验证码到用户邮箱
-            emailService.sendEmail(email, "课程退选验证码", "您的验证码是：" + verificationCode);
+            emailService.sendEmail(email, "Course Drop Verification Code", "Your verification code is: " + verificationCode);
 
             // 将验证码存储在数据库中
             userService.storeCaptchaVerification(email, verificationCode);
 
-            return Result.success("验证码已发送到您的邮箱，请查收");
+            return Result.success("Verification code has been sent to your email");
 
         } catch (Exception e) {
             logger.error("Error dropping course", e);
@@ -176,22 +181,22 @@ public class CourseController {
             Long userId = Long.valueOf(claims.getSubject());
             User user = userService.getUserById(userId);
             if (user == null) {
-                return Result.error(404, "用户不存在");
+                return Result.error(404, "User not found");
             }
             String email = user.getEmail();
 
             // 验证验证码
             boolean isCodeValid = userService.verifyCaptcha(email, verifyDropCourseRequest.getVerificationCode());
             if (!isCodeValid) {
-                return Result.error(400, "验证码校验失败");
+                return Result.error(400, "Verification code validation failed");
             }
 
             // 删除选课信息
             boolean success = courseService.dropCourse(userId, verifyDropCourseRequest.getCourseId());
             if (success) {
-                return Result.success("课程退选成功");
+                return Result.success("Course dropped successfully");
             } else {
-                return Result.error(500, "课程退选失败");
+                return Result.error(500, "Failed to drop course");
             }
 
         } catch (Exception e) {
@@ -271,14 +276,14 @@ public class CourseController {
             Files.write(Paths.get(filePath), imageBytes, StandardOpenOption.CREATE);
         } catch (IOException e) {
             logger.error("Error saving course cover file", e);
-            return Result.error(500, "保存课程封面文件时出错");
+            return Result.error(500, "Error saving course cover file");
         }
 
         // 更新数据库中的封面路径
         course.setCoverImagePath(filePath);
         courseService.updateCourse(course);
 
-        return Result.success("课程封面已经上传成功！");
+        return Result.success("Course cover uploaded successfully");
     }
 
     private String generateCaptcha() {
@@ -306,5 +311,6 @@ public class CourseController {
             this.progress = course.getProgress();
             this.coverImageBase64 = coverImageBase64;
         }
+
     }
 }

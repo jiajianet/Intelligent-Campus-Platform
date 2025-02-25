@@ -14,7 +14,7 @@ public class Course {
     private Date startDate;
     private Date endDate;
     private int progress;
-    private String coverImagePath;
+    private String coverImagePath; // 新添加的字段
 
     // Getters and Setters
 
