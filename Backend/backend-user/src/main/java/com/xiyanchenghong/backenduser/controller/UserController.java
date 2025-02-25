@@ -67,7 +67,7 @@ public class UserController {
                 claims.put("uid", user.getUid());
                 claims.put("uname", user.getUname());
                 claims.put("upic", user.getUpic());
-                String jwt = JwtUtils.generateJwt(claims);
+                String jwt = JwtUtils.generateJwt(claims,user.getUid());
                 return Result.success(user, "登录成功！", jwt);
             } else {
                 return Result.error(-1, "账号或密码错误！");
@@ -143,7 +143,7 @@ public class UserController {
             claims.put("uid", newUser.getUid());
             claims.put("uname", newUser.getUname());
             claims.put("upic", newUser.getUpic());
-            String jwt = JwtUtils.generateJwt(claims);
+            String jwt = JwtUtils.generateJwt(claims,newUser.getUid());
 
             return Result.success(newUser, "注册成功！", jwt);
         } else {
@@ -194,6 +194,7 @@ public class UserController {
                     return Result.error(404, "用户不存在！");
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return Result.error(403, "无效的令牌");
             }
         } else {

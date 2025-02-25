@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 @Component
 public class JwtUtils {
     private static final String SECRET_KEY = "s3cr3tK3y1234567890abcdefgHIJKLmnopqrsTUVWXyz"; // 替换为你的密钥
@@ -18,7 +19,8 @@ public class JwtUtils {
     @Autowired
     private static StringRedisTemplate stringRedisTemplate;
 
-    public static String generateJwt(Map<String, Object> claims) {
+    public static String generateJwt(Map<String, Object> claims, Long userId) {
+        claims.put("userId", userId);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
@@ -51,9 +53,14 @@ public class JwtUtils {
         // 检查 token 是否在黑名单中
         return Boolean.TRUE.equals(stringRedisTemplate.hasKey(token));
     }
+
+    public static Long getUserIdFromToken(String token) {
+        Claims claims = parseJwt(token);
+        return claims.get("userId", Long.class);
+    }
+
     @Autowired
     public void setStringRedisTemplate(StringRedisTemplate stringRedisTemplate) {
         JwtUtils.stringRedisTemplate = stringRedisTemplate;
     }
 }
-

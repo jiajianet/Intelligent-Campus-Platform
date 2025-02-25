@@ -65,8 +65,8 @@ public class CourseController {
             }
 
             // 获取用户ID
-            Long userId = Long.valueOf(claims.getSubject());
-
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            System.out.println(userId);
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
             if (course != null) {
