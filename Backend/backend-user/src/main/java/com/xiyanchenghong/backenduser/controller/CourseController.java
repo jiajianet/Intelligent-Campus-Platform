@@ -66,7 +66,10 @@ public class CourseController {
 
             // 获取用户ID
             Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
-            System.out.println(userId);
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
             if (course != null) {
@@ -106,7 +109,10 @@ public class CourseController {
             }
 
             // 获取用户ID
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
 
             // 添加选课信息
             boolean success = courseService.joinCourse(userId, joinCourseRequest.getCourseId());
@@ -132,7 +138,11 @@ public class CourseController {
             }
 
             // 获取用户ID和邮箱
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
             User user = userService.getUserById(userId);
             if (user == null) {
                 return Result.error(404, "User not found");
@@ -166,7 +176,11 @@ public class CourseController {
             }
 
             // 获取用户ID和邮箱
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
             User user = userService.getUserById(userId);
             if (user == null) {
                 return Result.error(404, "User not found");
@@ -276,10 +290,10 @@ public class CourseController {
 
     private String generateCaptcha() {
         // 生成6位随机验证码
-        return String.valueOf((int)((Math.random() * 9 + 1) * 100000));
+        return String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
     }
 
-    private static class CourseInfoResponse {
+    public static class CourseInfoResponse {
         private Long courseId;
         private String courseName;
         private String courseDescription;
@@ -301,5 +315,68 @@ public class CourseController {
         }
 
         // Getters and Setters
+        public Long getCourseId() {
+            return courseId;
+        }
+
+        public void setCourseId(Long courseId) {
+            this.courseId = courseId;
+        }
+
+        public String getCourseName() {
+            return courseName;
+        }
+
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+
+        public String getCourseDescription() {
+            return courseDescription;
+        }
+
+        public void setCourseDescription(String courseDescription) {
+            this.courseDescription = courseDescription;
+        }
+
+        public Long getTeacherId() {
+            return teacherId;
+        }
+
+        public void setTeacherId(Long teacherId) {
+            this.teacherId = teacherId;
+        }
+
+        public String getCoverImageBase64() {
+            return coverImageBase64;
+        }
+
+        public void setCoverImageBase64(String coverImageBase64) {
+            this.coverImageBase64 = coverImageBase64;
+        }
+
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
+        }
+
+        public Date getEndDate() {
+            return endDate;
+        }
+
+        public void setEndDate(Date endDate) {
+            this.endDate = endDate;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
     }
 }

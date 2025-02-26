@@ -72,6 +72,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/course/verifyDropCourse",
                         "/course/deleteCourse",
                         "/course/createCourse",
+                        "/course/uploadCourseCover",
                         "/classroom/getClassroomInfo",
                         "/classroom/beginClassroom",
                         "/classroom/endClassroom",
