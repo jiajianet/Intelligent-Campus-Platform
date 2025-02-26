@@ -20,6 +20,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/course")
@@ -37,7 +38,7 @@ public class CourseController {
     private EmailService emailService;
 
     @GetMapping("/getCourseList")
-    public Result<List<Course>> getCourseList(@RequestHeader("Authorization") String token) {
+    public Result<List<CourseInfoResponse>> getCourseList(@RequestHeader("Authorization") String token) {
         try {
             // 验证token
             Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
@@ -47,7 +48,22 @@ public class CourseController {
 
             // 获取课程列表
             List<Course> courseList = courseService.getAllCourses();
-            return Result.success(courseList);
+
+            // 将课程列表转换为CourseInfoResponse列表，并读取封面图片为Base64格式
+            List<CourseInfoResponse> courseInfoResponses = courseList.stream().map(course -> {
+                String coverImageBase64 = null;
+                if (course.getCoverImagePath() != null) {
+                    try {
+                        byte[] imageBytes = Files.readAllBytes(Paths.get(course.getCoverImagePath()));
+                        coverImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+                    } catch (IOException e) {
+                        logger.error("Error reading cover image file for course: " + course.getCourseId(), e);
+                    }
+                }
+                return new CourseInfoResponse(course, coverImageBase64);
+            }).collect(Collectors.toList());
+
+            return Result.success(courseInfoResponses);
 
         } catch (Exception e) {
             logger.error("Token validation error", e);
