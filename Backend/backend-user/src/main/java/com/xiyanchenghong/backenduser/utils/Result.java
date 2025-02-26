@@ -1,5 +1,9 @@
 package com.xiyanchenghong.backenduser.utils;
 
+import com.xiyanchenghong.backenduser.domain.Article;
+
+import java.util.List;
+
 public class Result<T> {
     private String code;
     private String msg;
@@ -87,5 +91,132 @@ public class Result<T> {
         result.setMsg(msg);
         result.setData(data);
         return result;
+    }
+
+    public static class Data {
+        // For single article response
+        private String id;
+        private String title;
+        private Long channelId;
+        private String content;
+        private Cover cover;
+        private String pubDate;
+
+        // For article list response
+        private List<Article> results;
+        private int totalCount;
+        private int totalPages;
+        private int page;
+        private int perPage;
+
+        // Getters and Setters
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public Long getChannelId() {
+            return channelId;
+        }
+
+        public void setChannelId(Long channelId) {
+            this.channelId = channelId;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public Cover getCover() {
+            return cover;
+        }
+
+        public void setCover(Cover cover) {
+            this.cover = cover;
+        }
+
+        public String getPubDate() {
+            return pubDate;
+        }
+
+        public void setPubDate(String pubDate) {
+            this.pubDate = pubDate;
+        }
+
+        public List<Article> getResults() {
+            return results;
+        }
+
+        public void setResults(List<Article> results) {
+            this.results = results;
+        }
+
+        public int getTotalCount() {
+            return totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
+        }
+
+        public int getTotalPages() {
+            return totalPages;
+        }
+
+        public void setTotalPages(int totalPages) {
+            this.totalPages = totalPages;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        public int getPerPage() {
+            return perPage;
+        }
+
+        public void setPerPage(int perPage) {
+            this.perPage = perPage;
+        }
+
+        public static class Cover {
+            private Integer type;
+            private String image;
+
+            public Integer getType() {
+                return type;
+            }
+
+            public void setType(Integer type) {
+                this.type = type;
+            }
+
+            public String getImage() {
+                return image;
+            }
+
+            public void setImage(String image) {
+                this.image = image;
+            }
+        }
     }
 }

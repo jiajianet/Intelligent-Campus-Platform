@@ -1,0 +1,69 @@
+.ant-layout {
+  height: 100%;
+}
+
+.header {
+  padding: 0;
+  background-color: white;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: url('~@/assets/images/logo.png') no-repeat center / 160px auto;
+
+}
+
+.layout-content {
+  overflow-y: auto;
+  scrollbar-width: none; // 兼容 Firefox
+  -ms-overflow-style: none; // 兼容 IE/Edge
+
+  &::-webkit-scrollbar {
+    display: none; // 兼容 Chrome/Safari/Webkit
+  }
+
+  background: #fff;
+  border-radius: 4px;
+}
+
+.user-info {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-right: 20px;
+  color: black;
+
+  .user-name {
+    margin-right: 20px;
+    color: black;
+  }
+
+  .user-logout {
+    display: inline-block;
+    cursor: pointer;
+  }
+}
+
+.layout-content {
+  background: #fff;
+  border-radius: 4px;
+}
+
+.ant-layout-header {
+  padding: 0 !important;
+
+}
+
+.ant-menu-dark .ant-menu-item-selected,
+.ant-menu-dark>.ant-menu .ant-menu-item-selected {
+  background-color: #4154f1;
+}
+
+.ant-btn-variant-solid {
+  background-color: #4154f1;
+
+  &:hover {
+    background-color: #6371f2;
+  }
+}

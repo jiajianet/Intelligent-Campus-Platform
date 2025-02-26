@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -48,6 +49,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/login",
                         "/user/register",
                         "/user/getUserInfo",
+                        "/user/channels",
+                        "/user/articles",
+                        "/user/articles/{id}",
+                        "/user/upload",
+                        "/user/images/{imageName}",
                         "/captcha/get",
                         "/captcha/check",
                         "/user/forgotPassword",
@@ -98,5 +104,12 @@ public class WebConfig implements WebMvcConfigurer {
                         "/teacher/endSignIn",
                         "/school/getSchoolAddress"
                 ); // 排除常用用户接口
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 映射 /images/** 到本地的 uploads 目录
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:uploads/"); // 确保图片目录能通过 HTTP 访问
     }
 }
