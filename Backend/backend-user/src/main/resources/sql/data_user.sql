@@ -11,7 +11,7 @@
  Target Server Version : 80039
  File Encoding         : 65001
 
- Date: 03/12/2024 17:48:23
+ Date: 27/02/2025 09:36:34
 */
 
 SET NAMES utf8mb4;
@@ -22,17 +22,217 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `article`;
 CREATE TABLE `article`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `id` bigint(0) NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(0) NULL DEFAULT NULL,
+  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `type` int(0) NULL DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `comment_count` int(0) NULL DEFAULT 0,
+  `like_count` int(0) NULL DEFAULT 0,
+  `read_count` int(0) NULL DEFAULT 0,
+  `status` int(0) NOT NULL DEFAULT 0,
+  `pub_date` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `FK_channel_id`(`channel_id`) USING BTREE,
+  CONSTRAINT `FK_channel_id` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 124 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of article
+-- ----------------------------
+INSERT INTO `article` VALUES (119, 6, '<p>我爱你中国</p>', 'http://localhost:8081/user/images/b6d697df_屏幕截图_2025-02-23_191241.png', 1, '这是测试文本', 0, 0, 0, 0, '2025-02-24 13:46:04');
+INSERT INTO `article` VALUES (120, 5, '<p>测试</p>', 'http://localhost:8081/user/images/262b2814_屏幕截图_2025-02-22_110739.png', 1, '从v额是', 0, 0, 0, 0, '2025-02-25 03:11:34');
+INSERT INTO `article` VALUES (121, 1, '<p>测试</p>', NULL, 0, '测试', 0, 0, 0, 0, '2025-02-25 03:12:18');
+INSERT INTO `article` VALUES (122, 6, '<p>我爱你</p>', NULL, 0, '爱你', 0, 0, 0, 0, '2025-02-25 17:07:47');
+INSERT INTO `article` VALUES (123, 2, '<p>cecececececeec</p>', NULL, 0, '爱你', 0, 0, 0, 0, '2025-02-26 10:58:07');
+
+-- ----------------------------
+-- Table structure for assignment
+-- ----------------------------
+DROP TABLE IF EXISTS `assignment`;
+CREATE TABLE `assignment`  (
+  `assignment_id` int(0) NOT NULL AUTO_INCREMENT,
+  `teacher_id` int(0) NOT NULL,
+  `classroom_id` int(0) NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `due_date` datetime(0) NOT NULL,
+  PRIMARY KEY (`assignment_id`) USING BTREE,
+  INDEX `teacher_id`(`teacher_id`) USING BTREE,
+  INDEX `classroom_id`(`classroom_id`) USING BTREE,
+  CONSTRAINT `assignment_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `assignment_ibfk_2` FOREIGN KEY (`classroom_id`) REFERENCES `classroom` (`classroom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of assignment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for assignment_submission
+-- ----------------------------
+DROP TABLE IF EXISTS `assignment_submission`;
+CREATE TABLE `assignment_submission`  (
+  `submission_id` int(0) NOT NULL AUTO_INCREMENT,
+  `assignment_id` int(0) NOT NULL,
+  `student_id` int(0) NOT NULL,
+  `submission_time` datetime(0) NOT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `author` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `created_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-  `updated_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`submission_id`) USING BTREE,
+  INDEX `assignment_id`(`assignment_id`) USING BTREE,
+  INDEX `student_id`(`student_id`) USING BTREE,
+  CONSTRAINT `assignment_submission_ibfk_1` FOREIGN KEY (`assignment_id`) REFERENCES `assignment` (`assignment_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `assignment_submission_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of assignment_submission
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for channel
+-- ----------------------------
+DROP TABLE IF EXISTS `channel`;
+CREATE TABLE `channel`  (
+  `id` bigint(0) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of article
+-- Records of channel
+-- ----------------------------
+INSERT INTO `channel` VALUES (1, '推荐');
+INSERT INTO `channel` VALUES (2, '科技');
+INSERT INTO `channel` VALUES (3, '娱乐');
+INSERT INTO `channel` VALUES (4, '体育');
+INSERT INTO `channel` VALUES (5, '财经');
+INSERT INTO `channel` VALUES (6, '军事');
+
+-- ----------------------------
+-- Table structure for classroom
+-- ----------------------------
+DROP TABLE IF EXISTS `classroom`;
+CREATE TABLE `classroom`  (
+  `classroom_id` int(0) NOT NULL AUTO_INCREMENT,
+  `course_id` int(0) NOT NULL,
+  `teacher_id` int(0) NOT NULL,
+  `classroom_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `start_time` datetime(0) NOT NULL,
+  `end_time` datetime(0) NOT NULL,
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`classroom_id`) USING BTREE,
+  INDEX `course_id`(`course_id`) USING BTREE,
+  INDEX `teacher_id`(`teacher_id`) USING BTREE,
+  CONSTRAINT `classroom_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `classroom_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of classroom
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for classroom_student
+-- ----------------------------
+DROP TABLE IF EXISTS `classroom_student`;
+CREATE TABLE `classroom_student`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `classroom_id` int(0) NOT NULL,
+  `student_id` int(0) NOT NULL,
+  `join_time` datetime(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `classroom_id`(`classroom_id`) USING BTREE,
+  INDEX `student_id`(`student_id`) USING BTREE,
+  CONSTRAINT `classroom_student_ibfk_1` FOREIGN KEY (`classroom_id`) REFERENCES `classroom` (`classroom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `classroom_student_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of classroom_student
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for course
+-- ----------------------------
+DROP TABLE IF EXISTS `course`;
+CREATE TABLE `course`  (
+  `course_id` int(0) NOT NULL AUTO_INCREMENT,
+  `course_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `course_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `teacher_id` int(0) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `progress` int(0) NOT NULL DEFAULT 0,
+  `cover_image_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`course_id`) USING BTREE,
+  INDEX `teacher_id`(`teacher_id`) USING BTREE,
+  CONSTRAINT `course_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of course
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for course_student
+-- ----------------------------
+DROP TABLE IF EXISTS `course_student`;
+CREATE TABLE `course_student`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `course_id` int(0) NOT NULL,
+  `student_id` int(0) NOT NULL,
+  `join_date` date NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `course_id`(`course_id`) USING BTREE,
+  INDEX `student_id`(`student_id`) USING BTREE,
+  CONSTRAINT `course_student_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `course_student_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of course_student
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for exam
+-- ----------------------------
+DROP TABLE IF EXISTS `exam`;
+CREATE TABLE `exam`  (
+  `exam_id` int(0) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `teacher_id` int(0) NOT NULL,
+  `exam_date` datetime(0) NOT NULL,
+  PRIMARY KEY (`exam_id`) USING BTREE,
+  INDEX `teacher_id`(`teacher_id`) USING BTREE,
+  CONSTRAINT `exam_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of exam
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for exam_submission
+-- ----------------------------
+DROP TABLE IF EXISTS `exam_submission`;
+CREATE TABLE `exam_submission`  (
+  `submission_id` int(0) NOT NULL AUTO_INCREMENT,
+  `exam_id` int(0) NOT NULL,
+  `student_id` int(0) NOT NULL,
+  `submission_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `submission_date` datetime(0) NOT NULL,
+  PRIMARY KEY (`submission_id`) USING BTREE,
+  INDEX `exam_id`(`exam_id`) USING BTREE,
+  INDEX `student_id`(`student_id`) USING BTREE,
+  CONSTRAINT `exam_submission_ibfk_1` FOREIGN KEY (`exam_id`) REFERENCES `exam` (`exam_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `exam_submission_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of exam_submission
 -- ----------------------------
 
 -- ----------------------------
@@ -12285,6 +12485,27 @@ INSERT INTO `school` VALUES (16199, 0, 0, '澳门科技大学', 3024, NULL, NULL
 INSERT INTO `school` VALUES (16200, 0, 0, '澳门大学', 3024, NULL, NULL, '澳门特别行政区凼仔卓家村路', 113.563, 22.1611, '澳门特别行政区', NULL, '凼仔', 22, 3, 12, 0, '2019-05-20 20:20:43', NULL);
 
 -- ----------------------------
+-- Table structure for sign_in
+-- ----------------------------
+DROP TABLE IF EXISTS `sign_in`;
+CREATE TABLE `sign_in`  (
+  `sign_in_id` int(0) NOT NULL AUTO_INCREMENT,
+  `classroom_id` int(0) NOT NULL,
+  `student_id` int(0) NOT NULL,
+  `sign_in_time` datetime(0) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`sign_in_id`) USING BTREE,
+  INDEX `classroom_id`(`classroom_id`) USING BTREE,
+  INDEX `student_id`(`student_id`) USING BTREE,
+  CONSTRAINT `sign_in_ibfk_1` FOREIGN KEY (`classroom_id`) REFERENCES `classroom` (`classroom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `sign_in_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `user` (`uid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sign_in
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -12298,6 +12519,7 @@ CREATE TABLE `user`  (
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `emailverified` tinyint(1) NULL DEFAULT 0,
   `schedfile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `role` enum('TEACHER','STUDENT') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'STUDENT',
   PRIMARY KEY (`uid`) USING BTREE,
   UNIQUE INDEX `uno`(`uno`) USING BTREE,
   UNIQUE INDEX `unique_email`(`email`) USING BTREE
@@ -12306,6 +12528,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('广州软件学院', 20, '2340709133', '123456', '小杨', '/www/jars/avatars/default_avatar.png', '1074711419@qq.com', 1, 'E:\\Intelligent-Campus-Platform/schedules/schedule_20.json');
+INSERT INTO `user` VALUES ('广州软件学院', 20, '2340709133', '123456', '小杨', '/www/jars/avatars/default_avatar.png', '1074711419@qq.com', 1, 'E:\\Intelligent-Campus-Platform/schedules/schedule_20.json', 'STUDENT');
 
 SET FOREIGN_KEY_CHECKS = 1;
