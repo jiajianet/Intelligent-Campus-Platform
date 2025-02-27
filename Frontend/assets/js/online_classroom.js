@@ -114,7 +114,7 @@ function initStudentPage(){
 function initTeacherPage(){
     document.getElementById("classroomList").innerHTML = `
       <ul class="course-list" style="display: flex;justify-content: center;align-content: center;flex-direction: column;flex-wrap: wrap;">
-         <li class="selection-item-1" id="createClassroom">
+         <li class="selection-item-1" id="createClassroom" data-toggle="modal" data-target="#createClassroomModal"><!--修改了这里-->
             <div class="course-content">
                 <div class="img-wrap">
                     <img src="../assets/img/teacher.svg" width="64">
@@ -143,12 +143,12 @@ function initTeacherPage(){
         initStudentPage();
     })
 let createClassroomModal = null;
-    $('#createClassroom').click(function () {
-        createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'), {
-            keyboard: true
-        });
-        createClassroomModal.show()
-    })
+    // $('#createClassroom').click(function () {
+    //     createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'), {
+    //         keyboard: true
+    //     });
+    //     createClassroomModal.show()
+    // })
 
     $('#btnCreateClassroomOkVerify').click(function () {
             let postParam = {

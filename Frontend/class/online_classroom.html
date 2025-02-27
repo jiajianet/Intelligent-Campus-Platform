@@ -211,6 +211,9 @@
     <script src="../assets/vendor/crypto-js/crypto-js.js"></script>
     <script src="../assets/vendor/captcha/js/ase.js"></script>
     <script src="../assets/vendor/captcha/js/verify.js" ></script>
+    <!--zui对应文件-->
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/zui/zui.css">
+    <script src="../assets/vendor/zui/zui.js"></script>
 </head>
 
 <body>
@@ -246,27 +249,47 @@
         </div>
     </div>
 
-    <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+<!--    <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="exampleModalLabel">开始授课</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <form>-->
+<!--                        <div class="mb-3">-->
+<!--                            <span>即将开始在线课堂，点击“发起课堂”后，将在当前所授课程下创建在线教室，并向所有参与学生发送课堂开始通知</span>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>-->
+<!--                    <button type="button" class="btn btn-primary" id="btnCreateClassroomOkVerify">发起课堂</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="modal" id="createClassroomModal">
+        <div class="modal-dialog shadow">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">开始授课</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-title">开始授课</div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <span>即将开始在线课堂，点击“发起课堂”后，将在当前所授课程下创建在线教室，并向所有参与学生发送课堂开始通知</span>
-                        </div>
-                    </form>
+                    <p>即将开始在线课堂，点击“发起课堂”后，将在当前所授课程下创建在线教室，并向所有参与学生发送课堂开始通知</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="btnCreateClassroomOkVerify">发起课堂</button>
+                    <button type="button" class="btn" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn primary" id="btnCreateClassroomOkVerify">发起课堂</button>
                 </div>
             </div>
         </div>
     </div>
+<!--    上面是新的-->
 
     <h2 class="section-title" style="margin-top: 3%">在线课堂</h2>
     <div id="classroomList">
