@@ -40,9 +40,13 @@ console.log(login_token)
 function checkLogin() {
 
     $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
+        headers:{
+            "Authorization": "Bearer " + login_token,
+            "Content-Type": "application/json"
+        },
         success: function (data) {
             if (data.code == 0) {
                 // 将后端返回的数据填充到页面中
@@ -54,7 +58,7 @@ function checkLogin() {
                 $("#userSchool").val(data.data.uschool || "未知学校");
             }else{
                 errorToast("您还未登录，请先登录", 2)
-                setRedirect("http://111.230.253.94/login.html")
+                setRedirect("http://111.230.253.94/login")
 
             }
 
@@ -80,11 +84,15 @@ $('#submitRegister').click(function () {
             //console.log(encryptedPasswd)
             $.ajax({
                 type: "POST",
-                url: "http://111.230.253.94:8081/user/updateUserInfo?token=" + login_token,
+                url: "http://111.230.253.94:8081/user/updateUserInfo",
                 Cache: false,
                 data: JSON.stringify(postParam),
                 dataType: "JSON",
                 contentType: "application/json",
+                headers:{
+                    "Authorization": "Bearer " + login_token,
+                    "Content-Type": "application/json"
+                },
                 success: function (result) {
                     console.log(result)
                     if (result.code == -1) {

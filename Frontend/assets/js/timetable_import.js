@@ -16,7 +16,7 @@ $(document).ready(function () {
     const login_token = localStorage.getItem("intelli_campus_login_token");
     if (!login_token) {
         errorToast("您还未登录，请先登录")
-        setRedirect("http://111.230.253.94/login.html")
+        setRedirect("http://111.230.253.94/login")
     }
 
     uploadArea.addEventListener('click', () => {
@@ -224,8 +224,12 @@ $(document).ready(function () {
 
                     $.ajax({
                         type: "POST",
-                        url: "http://111.230.253.94:8081/user/saveUserSchedule?token=" + login_token,
+                        url: "http://111.230.253.94:8081/user/saveUserSchedule",
                         Cache: false,
+                        headers:{
+                            "Authorization": "Bearer " + login_token,
+                            "Content-Type": "application/json"
+                        },
                         data: JSON.stringify(courseData),
                         dataType: "JSON",
                         contentType: "application/json",
@@ -237,7 +241,7 @@ $(document).ready(function () {
                             } else if (result.code == 0) {
                                 successToast("上传成功，正在跳转...")
                                 setTimeout(function () {
-                                    window.location.href = "../../timetable/index.html"
+                                    window.location.href = "../../timetable/index"
                                 }, 1000)
 
                             } else {
@@ -253,8 +257,12 @@ $(document).ready(function () {
         }
     });
     $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserInfo?token=" + login_token, // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
         method: "GET", // 请求类型
+        headers:{
+            "Authorization": "Bearer " + login_token,
+            "Content-Type": "application/json"
+        },
         dataType: "json", // 返回的数据类型
         success: function (data) {
             if (data.code == 0) {
@@ -262,7 +270,7 @@ $(document).ready(function () {
             } else {
                 console.log("加载学生信息失败");
                 errorToast("登录过期，请重新登录", 2)
-                setRedirect("http://111.230.253.94/login.html")
+                setRedirect("http://111.230.253.94/login")
             }
             // 将后端返回的数据填充到页面中
 
@@ -447,20 +455,24 @@ $(document).ready(function () {
 
                 $.ajax({
                     type: "POST",
-                    url: "http://111.230.253.94:8081/user/saveUserSchedule?token=" + login_token,
+                    url: "http://111.230.253.94:8081/user/saveUserSchedule",
                     Cache: false,
                     data: JSON.stringify(courseData),
                     dataType: "JSON",
+                    headers:{
+                        "Authorization": "Bearer " + login_token,
+                        "Content-Type": "application/json"
+                    },
                     contentType: "application/json",
                     success: function (result) {
                         //console.log(result)
                         if (result.code == 403) {
                             errorToast("登录已过期，请重新登录", 2)
-                            setRedirect("http://111.230.253.94/login.html")
+                            setRedirect("http://111.230.253.94/login")
                         } else if (result.code == 0) {
                             successToast("上传成功，正在跳转...")
                             setTimeout(function () {
-                                window.location.href = "../../index.html"
+                                window.location.href = "../../index"
                             }, 1000)
 
                         } else {

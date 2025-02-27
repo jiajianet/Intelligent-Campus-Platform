@@ -17,21 +17,25 @@
   window.onload = function () {
       const login_token = localStorage.getItem("intelli_campus_login_token");
       $.ajax({
-          url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+          url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
           method: "GET", // 请求类型
           dataType: "json", // 返回的数据类型
+          headers:{
+              "Authorization": "Bearer " + login_token,
+              "Content-Type": "application/json"
+          },
           success: function (data) {
               if (data.code == 0) {
-                  if (data.data.role === "STUDENT") window.location.href = "http://111.230.253.94/student_hub.html"
-                  if (data.data.role === "TEACHER") window.location.href = "http://111.230.253.94/teacher_hub.html"
+                  if (data.data.role === "STUDENT") window.location.href = "http://111.230.253.94/student_hub"
+                  if (data.data.role === "TEACHER") window.location.href = "http://111.230.253.94/teacher_hub"
               }else{
                   errorToast("信息验证失败")
-                  setRedirect("http://111.230.253.94/login.html")
+                  setRedirect("http://111.230.253.94/login")
               }
           },
           error: function () {
               errorToast("信息验证失败")
-              setRedirect("http://111.230.253.94/login.html")
+              setRedirect("http://111.230.253.94/login")
           }
       });
   }

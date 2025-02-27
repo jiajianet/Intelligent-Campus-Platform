@@ -9,7 +9,7 @@ function successToast(message) {
     $("#success-toast").toast('show');
 }
 
-let currentUserEmail = "",currentUno = ""
+let currentUserEmail = "", currentUno = "", teacherId = null, login_token = null
 $(document).ready(function () {
     function errorToast(message) {
         $("#error-toast-body").text(message)
@@ -21,223 +21,76 @@ $(document).ready(function () {
         $("#success-toast-body").text(message)
         $("#success-toast").toast('show');
     }
-    let login_token = localStorage.getItem("intelli_campus_login_token");
+    login_token = localStorage.getItem("intelli_campus_login_token");
     console.log(login_token)
-
-    // 从后端获取数据并更新页面
-    $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
-        headers:{
-            "Authorization": "Bearer " + login_token,
-            "Content-Type": "application/json"
-        },
-        method: "GET", // 请求类型
-        dataType: "json", // 返回的数据类型
-        success: function (data) {
-            if (data.code == 0) {
-                // 将后端返回的数据填充到页面中
-                $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
-                $("#nav-avatar").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
-                $("#userName").text(data.data.uname || "未知姓名");
-                $("#userEmail").val(data.data.email || "未绑定邮箱");
-                currentUserEmail = data.data.email || "";
-                currentUno = data.data.uno || "";
-                $("#userRole").text(data.role || "学生");
-                $("#userId").text(data.data.uno || "未知学号");
-                $("#userSchool").text(data.data.uschool || "未知学校");
-            }else{
-                errorToast("登录已过期，请重新登录")
-                setRedirect("http://111.230.253.94/login")
-            }
-
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
-        }
-    });
-});
-
-const basePath = "http://111.230.253.94:8081"
-document.addEventListener('DOMContentLoaded', function () {
-
-    const tabs = document.querySelectorAll('.tab-link');
-    const contents = document.querySelectorAll('.tab-content');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const target = tab.getAttribute('data-tab');
-
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            contents.forEach(content => {
-                if (content.id === target) {
-                    content.classList.add('active');
-                } else {
-                    content.classList.remove('active');
-                }
-            });
-        });
-    });
-
-
-});
-let changeEmailModal,newEmailVal;
-$('#changeEmailBtn').click(function () {
-
-    newEmailVal = $("#userEmail").val()
-    if (newEmailVal == currentUserEmail){
-        errorToast("请输入新的电子邮箱")
-    }else {
-        console.log($("#userEmail").val())
+        // 从后端获取数据并更新页面
         $.ajax({
-            url: "http://111.230.253.94:8081/user/updateEmail?newEmail="+newEmailVal, // 后端 API 地址
+            url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
+            method: "GET", // 请求类型
+            dataType: "json", // 返回的数据类型
             headers:{
                 "Authorization": "Bearer " + login_token,
                 "Content-Type": "application/json"
             },
-            method: "POST", // 请求类型
-            dataType: "json", // 返回的数据类型
             success: function (data) {
                 if (data.code == 0) {
-                    startVerifyInterval("changeEmailBtn","更改邮箱","white")
                     // 将后端返回的数据填充到页面中
-                    changeEmailModal = new bootstrap.Modal(document.getElementById('changeEmail'), {
-                        keyboard: false
-                    });
-                    changeEmailModal.show()
+                    if (data.data.role === "STUDENT"){
+                        errorToast("正在跳转...")
+                        setTimeout(function () {
+                            window.location.href = "./student_hub"
+                        },1000)
+                    }else{
+                        teacherId = data.data.uid
+                    }
                 }else{
-                    errorToast("验证邮件发送失败，请重试")
+                    errorToast("登录已过期，请重新登录")
+                    setRedirect("http://111.230.253.94/login")
                 }
 
             },
             error: function () {
-                errorToast("验证邮件发送失败，请重试")
+                console.log("加载学生信息失败");
+                alert("加载学生信息失败，请稍后重试！");
             }
         });
-    }
-
-})
-$('#btnOkVerify').click(function () {
-    let EmailCodeVal = $("#email-verify-code").val()
-    console.log($("#email-verify-code").val())
     $.ajax({
-        url: "http://111.230.253.94:8081/user/verifyEmailUpdate?newEmail="+newEmailVal+"&emailCaptcha="+EmailCodeVal, // 后端 API 地址
+        url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
+        method: "GET", // 请求类型
+        dataType: "json", // 返回的数据类型
         headers:{
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
-        method: "POST", // 请求类型
-        dataType: "json", // 返回的数据类型
         success: function (data) {
-            console.log(data);
-            if (data.code == 0) {
+            if (data.code == 0 && data.data) {
                 // 将后端返回的数据填充到页面中
-                successToast("电子邮箱更改成功")
-                changeEmailModal.hide()
-            }else{
-                errorToast("验证码错误，请重试")
-            }
+                document.getElementById("courseHTMLArea").innerHTML = ""
+                for (let i = 0; i < data.data.length; i++) {
+                    document.getElementById("courseHTMLArea").innerHTML += `
+<li class="course-item">
+    <div class="progress" style="height: 3px;">
+        <div class="progress-bar" role="progressbar" style="width: 6%;background-color: #4154f1" aria-valuenow="6"
+            aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="course-content">
+        <div class="img-wrap">
+            <img src="./assets/img/values-1.png" width="128">
+        </div>
+        <div class="information-wrap">
+            <div class="course-title">${data.data[i].courseName}</div>
+            <div class="course-instructor">${data.data[i].teacherId}</div>
+            <a href="./course?courseId=${data.data[i].courseId}" style="margin-left:auto;"><button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">查看课程</button></a>
+        </div>
+    </div>
+</li>
+                    `;
 
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
-        }
-    });
 
-});
-
-$('#changePasswordBtn').click(function () {
-    window.location.href = "http://111.230.253.94/reset"
-})
-$('#changeUserInfoBtn').click(function () {
-    window.location.href = "http://111.230.253.94/change_user_info"
-})
-$('#titleText').click(function () {
-    window.location.href = "http://111.230.253.94/index"
-})
-let deleteProfileModal
-// // 初始化验证码  弹出式
-$('#mpanel1').slideVerify({
-    baseUrl: 'http://111.230.253.94:8081',  //服务器请求地址, 默认地址为安吉服务器;
-    mode: 'pop',     //展示模式
-    containerId: 'deleteProfile',//pop模式 必填 被点击之后出现行为验证码的元素id
-    imgSize: {       //图片的大小对象,有默认值{ width: '310px',height: '155px'},可省略
-        width: '400px',
-        height: '200px',
-    },
-    barSize: {          //下方滑块的大小对象,有默认值{ width: '310px',height: '50px'},可省略
-        width: '400px',
-        height: '40px',
-    },
-    beforeCheck: function () {  //检验参数合法性的函数  mode ="pop"有效
-        // var flag = true;
-        // //实现: 参数合法性的判断逻辑, 返回一个boolean值
-        // return flag
-        // console.log(passwdA)
-        // console.log(userSchool)
-        if (currentUno && currentUserEmail) {
-            return true
-        } else {
-            errorToast("系统异常", 2)
-            return false
-        }
-    },
-    ready: function () { },  //加载完毕的回调
-    success: function (params) { //成功的回调
-// params为返回的二次验证参数 需要在接下来的实现逻辑回传服务器
-        // 例如:
-        //login($.extend({}, params))
-        //console.log(passwdA)
-        //console.log(userSchool)
-            //console.log(encryptedPasswd)
-            $.ajax({
-                type: "DELETE",
-                url: "http://111.230.253.94:8081/user/deleteAccount?uno="+currentUno+"&email="+currentUserEmail+ "&captchaVerification=" + params.captchaVerification.replace(/\+/g, "%2B"), // 后端 API 地址
-                Cache: false,
-                dataType: "JSON",
-                success: function (result) {
-                    console.log(result)
-                    if (result.code == -1) {
-                        errorToast("重设失败", 1)
-                    } else if (result.code == 456) {
-                        errorToast("用户已存在", 1)
-                    } else if (result.code == 0) {
-                        successToast("验证码已发送，请注意查收",0)
-                        startVerifyInterval("deleteProfile","注销","white")
-                        deleteProfileModal = new bootstrap.Modal(document.getElementById('deleteProfileModal'), {
-                            keyboard: false
-                        });
-                        deleteProfileModal.show()
-                    } else if (result.code == 400) {
-                        errorToast("安全验证失败，请重试", 1)
-                    } else {
-                        errorToast("未知错误，请重试", 1)
-                    }
                 }
-            });
-
-    },
-    error: function () { }        //失败的回调
-});
-$('#btnOkDelete').click(function () {
-    let EmailCodeVal = $("#email-verify-code-delete").val()
-    console.log($("#email-verify-code-delete").val())
-    $.ajax({
-        url: "http://111.230.253.94:8081/user/completeDeleteAccount?uno="+currentUno+"&email="+currentUserEmail+"&EmailcaptchaVerification="+EmailCodeVal, // 后端 API 地址
-        method: "POST", // 请求类型
-        dataType: "json", // 返回的数据类型
-        success: function (data) {
-            console.log(data);
-            if (data.code == 0) {
-                // 将后端返回的数据填充到页面中
-                successToast("账号已成功注销")
-                localStorage.removeItem("intelli_campus_login_token")
-                redirect()
             }else{
-                errorToast("注销失败，请检查验证码")
+                // errorToast("登录已过期，请重新登录")
+                // setRedirect("http://111.230.253.94/login")
             }
 
         },
@@ -246,11 +99,74 @@ $('#btnOkDelete').click(function () {
             alert("加载学生信息失败，请稍后重试！");
         }
     });
-
 });
+let createCourseModal;
+$('#createCourse').click(function () {
+    createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
+        keyboard: true
+    });
+    createCourseModal.show()
+    createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
+        keyboard: true
+    });
+    createCourseModal.show()
+})
+$('#course-startDate').datepicker({
+    language: 'zh-CN', // 中文语言包
+    autoclose: 1, // 选中日期后自动关闭
+    format: 'yyyy-mm-dd', // 日期格式
+    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
+    todayBtn: 1, // 显示今天按钮
+    todayHighlight: 1, // 显示今天高亮
+});
+$('#course-endDate').datepicker({
+    language: 'zh-CN', // 中文语言包
+    autoclose: 1, // 选中日期后自动关闭
+    format: 'yyyy-mm-dd', // 日期格式
+    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
+    todayBtn: 1, // 显示今天按钮
+    todayHighlight: 1, // 显示今天高亮
+});
+$('#btnCreateCourseOkVerify').click(function () {
+    let courseName = $('#course-name').val()
+    let courseIntro = $('#course-intro').val()
+    let startDate = $('#course-startDate').val()
+    let endDate = $('#course-endDate').val()
+    if (courseName && courseIntro && startDate && endDate) {
+        let postParam = {
+            "courseName": courseName ,
+            "courseDescription": courseIntro,
+            "teacherId": teacherId,
+            "startDate": startDate,
+            "endDate": endDate,
+            "progress": 0
+        }
+        $.ajax({
+            type: "POST",
+            url: "http://111.230.253.94:8081/course/createCourse",
+            headers:{
+                "Authorization": "Bearer " + login_token,
+                "Content-Type": "application/json"
+            },
+            Cache: false,
+            data: JSON.stringify(postParam),
+            dataType: "JSON",
+            success: function (result) {
+                if (result.code === 0){
+                    createCourseModal.hide()
+                    location.reload()
+                }else{
+                    errorToast("课程创建失败")
+                }
+            }
+        });
 
-const login_token = localStorage.getItem("intelli_campus_login_token");
-//console.log(login_token)
+    }else{
+        errorToast("请输入信息")
+    }
+
+})
+
 /**
  * 压缩图片方法
  * @param {file} file 文件
@@ -432,3 +348,4 @@ function previewImage(event) {
         })
     }
 }
+

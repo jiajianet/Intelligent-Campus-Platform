@@ -264,73 +264,83 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="email-verify-code" class="col-form-label">已向要修改的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
+                            <input type="text" class="form-control" id="email-verify-code">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Rest of your existing HTML content remains unchanged -->
     <div class="container">
         <div class="tabs">
-            <span class="tab-link active" data-tab="basic-info">基本信息</span>
-            <span class="tab-link" data-tab="account-management">账号管理</span>
+            <span class="tab-link active" data-tab="basic-info">课程信息</span>
+            <span class="tab-link" data-tab="account-management">课程管理</span>
         </div>
 
         <main id="basic-info" class="tab-content active">
             <div class="content">
                 <section class="left-column" style="padding: 20px 20px 20px 20px;">
-                    <h2>基本信息</h2>
+                    <h2>课程信息</h2>
+
+                    <div class="info-group">
+                        <div class="info-label" >课程名</div>
+                        <div class="info-value" id="courseName">
+
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >课程介绍</div>
+                        <div class="info-value" id="courseIntro">
+
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >开始时间</div>
+                        <div class="info-value" id="courseStartTime">
+
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label" >结束时间</div>
+                        <div class="info-value" id="courseEndTime">
+
+                        </div>
+                    </div>
                     <div class="info-group" style="display: flex;align-items: center">
                         <!-- 添加头像 -->
+                        <div class="info-label" >课程封面</div>
                         <img src="/assets/img/avatar.png" alt="头像" class="avatar" id="profileImage">
-                        <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">编辑头像</button>
+                        <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">修改封面</button>
                         <input type="file" id="fileInput" style="display: none;" accept="image/*"
-                            onchange="previewImage(event)">
+                               onchange="previewImage(event)">
                     </div>
-                    <div class="info-group">
-                        <div class="info-label" >姓名</div>
-                        <div class="info-value" id="userName">
 
-                        </div>
-                    </div>
-                    <div class="info-group">
-                        <div class="info-label" >Email</div>
-                        <div class="info-value">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="userEmail" placeholder="暂未绑定邮箱">
-                                <button class="btn btn-primary" style="background-color: #4154f1" id="changeEmailBtn">更改邮箱</button>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="email-verify-code" class="col-form-label">已向要修改的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
-                                            <input type="text" class="form-control" id="email-verify-code">
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
 
                 <section class="right-column">
-                    <h2>认证信息</h2>
+                    <h2>参与学生</h2>
                     <div class="info-group">
-                        <div class="info-label" >学号</div>
-                        <div class="info-value" id="userId"></div>
-                    </div>
-                    <div class="info-group">
-                        <div class="info-label" >学校</div>
-                        <div class="info-value" id="userSchool"></div>
+                        <div class="info-value" id="courseStudents">
+
+                        </div>
                     </div>
 
                     <!-- <div class="info-group">
@@ -396,5 +406,5 @@
 </body>
 <script src="./assets/js/redirect_jump.js"></script>
 <script src="./assets/js/interval_verify.js"></script>
-<script type="text/javascript" src="./assets/js/user_center.js"></script>
+<script type="text/javascript" src="./assets/js/course.js"></script>
 </html>

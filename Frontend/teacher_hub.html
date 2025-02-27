@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicons -->
+    <link href="assets/img/logo_dark_32.png" rel="icon">
+    <link href="assets/img/logo_dark_32.png" rel="apple-touch-icon">
     <title>学生首页_智慧校园服务平台</title>
     <style>
         body {
@@ -11,6 +14,9 @@
             margin: 0;
             padding: 0;
             background: url("./assets/img/hero-bg.png");
+        }
+        .toast-container{
+            z-index: 9999!important;
         }
 
         /* Add new navigation styles */
@@ -72,7 +78,7 @@
         }
         .course-item {
             background-color: white;
-            margin: 2% 10% 2% 10%;
+            margin: 2% 0 2% 0;
             padding: 0 10px 10px 10px;
             border-radius: 12px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -156,6 +162,9 @@
         .course-warn-title{
             font-size: 1.2em;
             font-weight: bold;
+            width: 100%;
+            display: flex;
+
         }
         .course-warn-list{
             list-style: none;
@@ -188,6 +197,10 @@
         .tab-content.active {
             display: block;
         }
+        .modal-dialog{
+            max-width: 75%!important;
+            max-height: 75%!important;
+        }
     </style>
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -213,6 +226,9 @@
     <script src="assets/vendor/captcha/js/verify.js" ></script>
     <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
     <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="assets/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
 </head>
 
 <body>
@@ -234,9 +250,6 @@
                         aria-label="Close"></button>
             </div>
         </div>
-    </div>
-
-    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
         <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
              aria-atomic="true" id="success-toast">
             <div class="d-flex">
@@ -248,6 +261,39 @@
         </div>
     </div>
 
+    <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">创建课程</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="course-name" class="col-form-label">请在下方输入课程信息<br/><br/>课程名：</label>
+                            <input type="text" class="form-control" id="course-name">
+                            <label for="course-intro" class="col-form-label"><br/>课程简介：</label>
+                            <textarea id="course-intro" class="form-control" cols="5" rows="10"></textarea>
+                            <label for="course-startDate" class="col-form-label"><br/>课程开始日期：</label>
+                            <input type="text" id="course-startDate" class="form-control">
+                            <label for="course-endDate" class="col-form-label"><br/>课程结束日期：</label>
+                            <input type="text" id="course-endDate" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnCreateCourseOkVerify">创建课程</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <ul class="selection-list">
         <li class="selection-item-1">
             <div class="course-content">
@@ -255,7 +301,7 @@
                     <img src="./assets/img/teacher.svg" width="64">
                 </div>
                 <div class="information-wrap">
-                    <div class="course-title">在线课堂</div>
+                    <div class="course-title">课堂管理</div>
                     <div class="course-instructor">在线上课、考勤、点评等</div>
                 </div>
             </div>
@@ -266,8 +312,8 @@
                     <img src="./assets/img/assignment.svg" width="64">
                 </div>
                 <div class="information-wrap">
-                    <div class="course-title">我的作业</div>
-                    <div class="course-instructor">查看、完成作业等</div>
+                    <div class="course-title">作业管理</div>
+                    <div class="course-instructor">发布、管理、批改学生作业等</div>
                </div>
             </div>
         </li>
@@ -277,8 +323,8 @@
                     <img src="./assets/img/exam.svg" width="64">
                 </div>
                 <div class="information-wrap">
-                    <div class="course-title">我的考试</div>
-                    <div class="course-instructor">在线参加和完成考试</div>
+                    <div class="course-title">考试管理</div>
+                    <div class="course-instructor">发布、管理、批改学生考试等</div>
                 </div>
             </div>
         </li>
@@ -288,115 +334,29 @@
                     <img src="./assets/img/grade.svg" width="64">
                 </div>
                 <div class="information-wrap">
-                    <div class="course-title">我的成绩</div>
-                    <div class="course-instructor">查看测验及考试成绩</div>
+                    <div class="course-title">学生成绩</div>
+                    <div class="course-instructor">查看、发布及点评学生成绩</div>
                 </div>
             </div>
         </li>
     </ul>
     <div class="course-warn">
-        <div class="course-warn-title">课程提醒</div>
-        <ul class="course-warn-list">
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业1</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业2</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业3</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业4</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业5</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业6</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+        <div class="course-warn-title">
+            <span>课程管理</span>
+            <button class="btn btn-primary" id="createCourse" style="background: linear-gradient(41deg, #0067FF 25%,#2E79FF 75%);border:none;margin-left: auto">创建课程</button>
+        </div>
+        <div id="courseArea">
+            <ul class="course-list" id="courseHTMLArea">
+                <h2 class="section-title">您还未创建任何课程~</h2>
+            </ul>
+
+        </div>
+
     </div>
-    <h2 class="section-title">我的课程</h2>
-    <ul class="course-list">
-        <li class="course-item">
-            <div class="progress" style="height: 3px;">
-                <div class="progress-bar" role="progressbar" style="width: 25%;background-color: #4154f1" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/1.jpg" width="128">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">测试课程1</div>
-                    <div class="course-instructor">教师1、教师2、教师3</div>
-                    <button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">查看课程</button>
-                </div>
-            </div>
-        </li>
-        <li class="course-item">
-            <div class="progress" style="height: 3px;">
-                <div class="progress-bar" role="progressbar" style="width: 63%;background-color: #4154f1" aria-valuenow="63" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/values-3.png" width="128">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">测试课程2</div>
-                    <div class="course-instructor">教师1</div>
-                    <button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">查看课程</button>
-                </div>
-            </div>
-        </li>
-        <li class="course-item">
-            <div class="progress" style="height: 3px;">
-                <div class="progress-bar" role="progressbar" style="width: 6%;background-color: #4154f1" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/values-1.png" width="128">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">测试课程3</div>
-                    <div class="course-instructor">教师1、教师2</div>
-                    <button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">查看课程</button>
-                </div>
-            </div>
-        </li>
-    </ul>
+
+
 </body>
 <script src="./assets/js/redirect_jump.js"></script>
 <script src="./assets/js/interval_verify.js"></script>
-<script type="text/javascript" src="./assets/js/student_hub.js"></script>
+<script type="text/javascript" src="./assets/js/teacher_hub.js"></script>
 </html>

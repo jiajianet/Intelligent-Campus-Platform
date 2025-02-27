@@ -39,7 +39,11 @@ function checkLogin() {
     let login_token = localStorage.getItem("intelli_campus_login_token");
     console.log(login_token)
     $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
+        headers:{
+            "Authorization": "Bearer " + login_token,
+            "Content-Type": "application/json"
+        },
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
         success: function (data) {
@@ -190,8 +194,10 @@ $('#mpanel1').slideVerify({
                         startVerifyInterval("sendEmail","发送验证码","#4154f1")
                     } else if (result.code == 400) {
                         errorToast("安全验证失败，请重试", 1)
-                    } else {
-                        errorToast("未知错误，请重试", 1)
+                    } else if(result.code == 409) {
+                        errorToast("此邮箱已注册过用户，如忘记密码可通过此邮箱找回", 1)
+                    }else{
+                        errorToast("验证码发送失败", 1)
                     }
                 }
             });

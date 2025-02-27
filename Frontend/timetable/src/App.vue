@@ -128,7 +128,7 @@ export default {
           }else{
             ElMessage.error('登录已过期，请重新登录')
             setTimeout(function () {
-              window.location.href = "http://111.230.253.94/timetable_import.html"
+              window.location.href = "http://111.230.253.94/timetable_import"
             }, 3000)
           }
 

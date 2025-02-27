@@ -334,7 +334,11 @@ function successToast(message) {
 function logout(){
   localStorage.removeItem("intelli_campus_login_token");
   $.ajax({
-    url: "http://111.230.253.94:8081/user/logout?token="+login_token, // 后端 API 地址
+    url: "http://111.230.253.94:8081/user/logout", // 后端 API 地址
+    headers:{
+      "Authorization": "Bearer " + login_token,
+      "Content-Type": "application/json"
+    },
     method: "POST", // 请求类型
     dataType: "json", // 返回的数据类型
     success: function (data) {
@@ -349,7 +353,11 @@ function logout(){
 let login_token = localStorage.getItem("intelli_campus_login_token");
 console.log(login_token)
 $.ajax({
-  url: "http://111.230.253.94:8081/user/getUserInfo?token="+login_token, // 后端 API 地址
+  url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
+  headers:{
+    "Authorization": "Bearer " + login_token,
+    "Content-Type": "application/json"
+  },
   method: "GET", // 请求类型
   dataType: "json", // 返回的数据类型
   success: function (data) {
@@ -361,8 +369,8 @@ $.ajax({
                             <img src="./assets/img/avatar.png" alt="用户头像" style="width: 36px;height: 36px;border-radius: 50%;cursor: pointer;margin-left: 5%" id="userAvatar">
                             <span style="margin-left: 10%;width: 100px;color: white" id="userName"></span>
                         <div class="dropdown-content">
-                        <div><a href="./hub.html" id="userHub"style="font-weight: normal;">我的学习</a></div>
-                        <div><a href="./user_center.html" id="userCenter"style="font-weight: normal;">我的账号</a></div>
+                        <div><a href="./hub" id="userHub"style="font-weight: normal;">我的学习</a></div>
+                        <div><a href="./user_center" id="userCenter"style="font-weight: normal;">我的账号</a></div>
                             <div><a href="#" id="logout" style="font-weight: normal;color: red" onclick="logout()">退出登录</a></div>
                         </div>
                     </div>
@@ -371,10 +379,14 @@ $.ajax({
       $("#userName").text(data.data.uname);
       document.getElementById("userAvatar").addEventListener('click', () => {
         ////显示完整ID
-        window.location.href = "./user_center.html"
+        window.location.href = "./user_center"
       })
       $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserScheduleList?token="+login_token, // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserScheduleList", // 后端 API 地址
+        headers:{
+          "Authorization": "Bearer " + login_token,
+          "Content-Type": "application/json"
+        },
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
         success: function (data) {
@@ -390,12 +402,12 @@ $.ajax({
             document.getElementById("reimportBtn").style.display = "inline";
           }else if(data.code == 429){
             errorToast("刷新过于频繁，请稍后再试")
-          }else if (data.code == 404) {
+          }else{
             $("#timetableTitle").text("您还未导入课程表");
             $("#timetableText").text("立即导入课程表");
             $("#timetableTips").text("使用课程表功能更直观地查看您在内网系统的课程");
             $("#timetableBtnText").text("导入");
-            $("#timetableBtn").attr('href','./timetable_import.html')
+            $("#timetableBtn").attr('href','./timetable_import')
           }
 
         },
@@ -419,5 +431,5 @@ $.ajax({
   }
 });
 $('#reimportBtn').click(function () {
-  window.location.href = "http://111.230.253.94/timetable_import.html"
+  window.location.href = "http://111.230.253.94/timetable_import"
 })

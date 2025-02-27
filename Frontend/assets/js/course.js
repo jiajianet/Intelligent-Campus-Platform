@@ -8,8 +8,39 @@ function successToast(message) {
     $("#success-toast-body").text(message)
     $("#success-toast").toast('show');
 }
+function getUrlDataFN(urlStr) {
+    // 定义一个空对象以储存数据
+    const urlObj = {}
+    // 检查url中是否携带数据
+    if (urlStr.indexOf('?') === -1) return null
+    // 找到 '?' 对应的下标
+    const index = urlStr.indexOf('?') // index = 31
+    // 截取 '?' 后的内容
+    const dataStr = urlStr.substr(index + 1) // dataStr = a=1&b=2&c=&d=xxx&e
+    // 通过 '&' 将字符串分割成数组
+    const dataArr = dataStr.split('&') // ['a=1', 'b=2', 'c=', 'd=xxx', 'e']
+    // 遍历字符串分割后的数组
+    dataArr.forEach(str => {
+        // 判断数组内的字符串是否有 '='
+        if (str.indexOf('=') === -1) {
+            // 如没有 '=' , 则将此字符串作为对象内键值对的键, 键值对的值为 undefined
+            urlObj[str] = undefined // { e: undefined }
+        } else {
+            // 如果有 '='
+            // 通过 '=' 将此字符串截取成两段字符串（不推荐使用 split 分割, 因为数据中可能携带多个 '=' ）
+            const innerArrIndex = str.indexOf('=')
+            const key = str.substring(0, innerArrIndex)
+            const value = str.substr(innerArrIndex + 1)
+            // 以截取后的两段字符串作为对象的键值对
+            urlObj[key] = value // {a: '1', b: '2', c: '', d: 'xxx'}
+        }
+    })
+    // 返回对象
+    return urlObj
+}
 
-let currentUserEmail = "",currentUno = ""
+let currentUserEmail = "",currentUno = "",login_token= localStorage.getItem("intelli_campus_login_token");
+
 $(document).ready(function () {
     function errorToast(message) {
         $("#error-toast-body").text(message)
@@ -21,22 +52,21 @@ $(document).ready(function () {
         $("#success-toast-body").text(message)
         $("#success-toast").toast('show');
     }
-    let login_token = localStorage.getItem("intelli_campus_login_token");
-    console.log(login_token)
+
 
     // 从后端获取数据并更新页面
     $.ajax({
         url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
+        method: "GET", // 请求类型
+        dataType: "json", // 返回的数据类型
         headers:{
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
-        method: "GET", // 请求类型
-        dataType: "json", // 返回的数据类型
         success: function (data) {
             if (data.code == 0) {
                 // 将后端返回的数据填充到页面中
-                $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
+
                 $("#nav-avatar").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
                 $("#userName").text(data.data.uname || "未知姓名");
                 $("#userEmail").val(data.data.email || "未绑定邮箱");
@@ -56,6 +86,41 @@ $(document).ready(function () {
             alert("加载学生信息失败，请稍后重试！");
         }
     });
+
+});
+
+let courseId = getUrlDataFN(window.location.href).courseId
+console.log(login_token);
+
+$.ajax({
+    url: "http://111.230.253.94:8081/course/getCourseInfo?id="+courseId, // 后端 API 地址
+    method: "GET", // 请求类型
+    dataType: "json", // 返回的数据类型
+    headers:{
+        "Authorization": "Bearer " + login_token,
+        "Content-Type": "application/json"
+    },
+    success: function (data) {
+        if (data.code == 0) {
+            console.log(data)
+            // 将后端返回的数据填充到页面中
+            $("#courseName").text(data.data.courseName || "未知");
+            $("#courseIntro").text(data.data.courseDescription || "未知");
+            $("#courseStartTime").text(data.data.startDate || "未知");
+            $("#courseEndTime").text(data.data.endDate || "未知");
+            $("#userSchool").text(data.data.uschool || "未知");
+            $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.coverImageBase64 || "/assets/img/avatar.png");
+        }else{
+            errorToast("发生错误，请查看控制台日志")
+            console.log(data)
+            // setRedirect("http://111.230.253.94/login")
+        }
+
+    },
+    error: function () {
+        console.log("加载课程信息失败");
+        alert("加载课程信息失败，请稍后重试！");
+    }
 });
 
 const basePath = "http://111.230.253.94:8081"
@@ -93,12 +158,12 @@ $('#changeEmailBtn').click(function () {
         console.log($("#userEmail").val())
         $.ajax({
             url: "http://111.230.253.94:8081/user/updateEmail?newEmail="+newEmailVal, // 后端 API 地址
+            method: "POST", // 请求类型
+            dataType: "json", // 返回的数据类型
             headers:{
                 "Authorization": "Bearer " + login_token,
                 "Content-Type": "application/json"
             },
-            method: "POST", // 请求类型
-            dataType: "json", // 返回的数据类型
             success: function (data) {
                 if (data.code == 0) {
                     startVerifyInterval("changeEmailBtn","更改邮箱","white")
@@ -124,12 +189,12 @@ $('#btnOkVerify').click(function () {
     console.log($("#email-verify-code").val())
     $.ajax({
         url: "http://111.230.253.94:8081/user/verifyEmailUpdate?newEmail="+newEmailVal+"&emailCaptcha="+EmailCodeVal, // 后端 API 地址
+        method: "POST", // 请求类型
+        dataType: "json", // 返回的数据类型
         headers:{
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
-        method: "POST", // 请求类型
-        dataType: "json", // 返回的数据类型
         success: function (data) {
             console.log(data);
             if (data.code == 0) {
@@ -249,8 +314,6 @@ $('#btnOkDelete').click(function () {
 
 });
 
-const login_token = localStorage.getItem("intelli_campus_login_token");
-//console.log(login_token)
 /**
  * 压缩图片方法
  * @param {file} file 文件
@@ -406,7 +469,7 @@ function previewImage(event) {
                 profileImage.src = 'data:image/jpeg;base64,' + result; // 更新头像的 src 属性
                 console.log(result)
                 $.ajax({
-                    url: basePath + "/user/uploadAvatar",
+                    url: basePath + "/course/uploadCourseCover?courseId="+courseId,
                     type: "post",
                     data: result,
                     headers:{
