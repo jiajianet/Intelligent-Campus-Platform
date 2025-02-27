@@ -10,7 +10,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: url("./assets/img/hero-bg.png");
+            background: url("../assets/img/hero-bg.png");
         }
 
         /* Add new navigation styles */
@@ -189,40 +189,38 @@
             display: block;
         }
     </style>
-    <script src="./assets/vendor/jquery/jquery.min.js"></script>
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="assets/vendor/captcha/css/verify.css">
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/captcha/css/verify.css">
     <!-- Template Main CSS File -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
     <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="assets/vendor/aos/aos.js"></script>
-    <script src="assets/vendor/php-email-form/validate.js"></script>
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="assets/vendor/purecounter/purecounter.js"></script>
-    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/crypto-js/crypto-js.js"></script>
-    <script src="assets/vendor/captcha/js/ase.js"></script>
-    <script src="assets/vendor/captcha/js/verify.js" ></script>
-    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="../assets/vendor/aos/aos.js"></script>
+    <script src="../assets/vendor/php-email-form/validate.js"></script>
+    <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="../assets/vendor/purecounter/purecounter.js"></script>
+    <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="../assets/vendor/crypto-js/crypto-js.js"></script>
+    <script src="../assets/vendor/captcha/js/ase.js"></script>
+    <script src="../assets/vendor/captcha/js/verify.js" ></script>
 </head>
 
 <body>
     <!-- Add navigation header -->
     <div class="nav-header">
         <a href="#" class="nav-logo">
-            <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
+            <img src="../assets/img/logo_dark.png" alt="智慧校园服务平台">
              <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
         </a>
-        <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
+        <img src="../assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
     </div>
     <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
         <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
@@ -248,35 +246,37 @@
         </div>
     </div>
 
+    <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">开始授课</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <span>即将开始在线课堂，点击“发起课堂”后，将在当前所授课程下创建在线教室，并向所有参与学生发送课堂开始通知</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnCreateClassroomOkVerify">发起课堂</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h2 class="section-title" style="margin-top: 3%">在线课堂</h2>
-    <ul class="course-list">
-        <li class="course-item">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/1.jpg" width="128">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">测试教室1</div>
-                    <div class="course-instructor">教师1、教师2</div>
-                    <button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">进入教室</button>
-                </div>
-            </div>
-        </li>
-        <li class="course-item">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/values-3.png" width="128">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">测试教室2</div>
-                    <div class="course-instructor">教师1</div>
-                    <button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">进入教室</button>
-                </div>
-            </div>
-        </li>
-    </ul>
+    <div id="classroomList">
+        <ul class="course-list">
+            <h2 class="section-title">还没有教师上课~</h2>
+        </ul>
+    </div>
+
 </body>
-<script src="./assets/js/redirect_jump.js"></script>
-<script src="./assets/js/interval_verify.js"></script>
-<!--<script type="text/javascript" src="./assets/js/user_center.js"></script>-->
+<script src="../assets/js/redirect_jump.js"></script>
+<script src="../assets/js/interval_verify.js"></script>
+<script type="text/javascript" src="../assets/js/online_classroom.js"></script>
 </html>

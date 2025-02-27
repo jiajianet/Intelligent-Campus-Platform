@@ -8,11 +8,13 @@ import { getToken } from './token';
 // 请求拦截器 响应拦截器
 const request = axios.create({
     withCredentials: true,
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://111.230.253.94',
     timeout: 5000,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+        'Origin': 'http://111.230.253.94'
     },
 })
 

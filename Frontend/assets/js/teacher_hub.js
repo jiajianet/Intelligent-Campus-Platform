@@ -9,7 +9,11 @@ function successToast(message) {
     $("#success-toast").toast('show');
 }
 
-let currentUserEmail = "", currentUno = "", teacherId = null, login_token = null
+let currentUserEmail = "",
+    currentUno = "",
+    teacherId = null,
+    teacherName = null,
+    login_token = null
 $(document).ready(function () {
     function errorToast(message) {
         $("#error-toast-body").text(message)
@@ -41,7 +45,8 @@ $(document).ready(function () {
                             window.location.href = "./student_hub"
                         },1000)
                     }else{
-                        teacherId = data.data.uid
+                        teacherId = data.data.uname
+                        teacherName = data.data.userName
                     }
                 }else{
                     errorToast("登录已过期，请重新登录")
@@ -63,11 +68,19 @@ $(document).ready(function () {
             "Content-Type": "application/json"
         },
         success: function (data) {
-            if (data.code == 0 && data.data) {
+            if (data.code === "0" && data.data) {
                 // 将后端返回的数据填充到页面中
                 document.getElementById("courseHTMLArea").innerHTML = ""
-                for (let i = 0; i < data.data.length; i++) {
-                    document.getElementById("courseHTMLArea").innerHTML += `
+                console.log(data)
+                if (data.data.length !== 0){
+                    for (let i = 0; i < data.data.length; i++) {
+                        let coverImgBase64 = null;
+                        if (!data.data[i].coverImageBase64) {
+                            coverImgBase64 = "./assets/img/values-1.png"
+                        } else {
+                            coverImgBase64 = 'data:image/jpeg;base64,' + data.data[i].coverImageBase64
+                        }
+                        document.getElementById("courseHTMLArea").innerHTML += `
 <li class="course-item">
     <div class="progress" style="height: 3px;">
         <div class="progress-bar" role="progressbar" style="width: 6%;background-color: #4154f1" aria-valuenow="6"
@@ -75,7 +88,7 @@ $(document).ready(function () {
     </div>
     <div class="course-content">
         <div class="img-wrap">
-            <img src="./assets/img/values-1.png" width="128">
+            <img src="${coverImgBase64}" width="200px" height="128px" style="border-radius: 10px">
         </div>
         <div class="information-wrap">
             <div class="course-title">${data.data[i].courseName}</div>
@@ -87,7 +100,11 @@ $(document).ready(function () {
                     `;
 
 
+                    }
+                }else{
+                    document.getElementById("courseHTMLArea").innerHTML = "<h2 class=\"section-title\">您还未创建任何课程~</h2>"
                 }
+
             }else{
                 // errorToast("登录已过期，请重新登录")
                 // setRedirect("http://111.230.253.94/login")
@@ -127,6 +144,11 @@ $('#course-endDate').datepicker({
     todayBtn: 1, // 显示今天按钮
     todayHighlight: 1, // 显示今天高亮
 });
+
+$('#online_classroom').click(function () {
+    window.open("/class/online_classroom")
+})
+
 $('#btnCreateCourseOkVerify').click(function () {
     let courseName = $('#course-name').val()
     let courseIntro = $('#course-intro').val()
@@ -137,6 +159,7 @@ $('#btnCreateCourseOkVerify').click(function () {
             "courseName": courseName ,
             "courseDescription": courseIntro,
             "teacherId": teacherId,
+            "teacherName": teacherName,
             "startDate": startDate,
             "endDate": endDate,
             "progress": 0
@@ -152,9 +175,9 @@ $('#btnCreateCourseOkVerify').click(function () {
             data: JSON.stringify(postParam),
             dataType: "JSON",
             success: function (result) {
-                if (result.code === 0){
+                if (result.code === "0"){
                     createCourseModal.hide()
-                    location.reload()
+                    // location.reload()
                 }else{
                     errorToast("课程创建失败")
                 }

@@ -198,6 +198,10 @@ $('#mpanel1').slideVerify({
                 url: "http://111.230.253.94:8081/user/deleteAccount?uno="+currentUno+"&email="+currentUserEmail+ "&captchaVerification=" + params.captchaVerification.replace(/\+/g, "%2B"), // 后端 API 地址
                 Cache: false,
                 dataType: "JSON",
+                headers:{
+                    "Authorization": "Bearer " + login_token,
+                    "Content-Type": "application/json"
+                },
                 success: function (result) {
                     console.log(result)
                     if (result.code == -1) {

@@ -142,15 +142,13 @@
             display: inline-block;
             font-size: 14px;
         }
-
         .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+            width: 200px;
+            height: 128px;
+            border-radius: 10px;
             object-fit: cover;
             margin-bottom: 10px;
         }
-
         .account-section {
             display: flex;
             justify-content: space-between;
@@ -205,6 +203,19 @@
         .tab-content.active {
             display: block;
         }
+        .course-cover {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
+        }
+        .course-cover-all{
+                display: flex;
+                align-items: flex-start;
+                flex-direction: column;
+                justify-content: flex-start;
+        }
+
     </style>
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -228,8 +239,9 @@
     <script src="assets/vendor/crypto-js/crypto-js.js"></script>
     <script src="assets/vendor/captcha/js/ase.js"></script>
     <script src="assets/vendor/captcha/js/verify.js" ></script>
-    <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-    <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
+    <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="assets/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
 </head>
 
 <body>
@@ -265,24 +277,52 @@
         </div>
     </div>
 
-    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modifyCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">修改课程信息</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form>
                         <div class="mb-3">
-                            <label for="email-verify-code" class="col-form-label">已向要修改的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
-                            <input type="text" class="form-control" id="email-verify-code">
+                            <label for="course-name" class="col-form-label">请在下方输入新的课程信息<br/><br/>课程名：</label>
+                            <input type="text" class="form-control" id="course-name">
+                            <label for="course-intro" class="col-form-label"><br/>课程简介：</label>
+                            <textarea id="course-intro" class="form-control" cols="5" rows="10"></textarea>
+                            <label for="course-startDate" class="col-form-label"><br/>课程开始日期：</label>
+                            <input type="text" id="course-startDate" class="form-control">
+                            <label for="course-endDate" class="col-form-label"><br/>课程结束日期：</label>
+                            <input type="text" id="course-endDate" class="form-control">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>
+                    <button type="button" class="btn btn-primary" id="btnModifyCourseOkVerify">提交修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteCourseModalTitle">修改课程信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <span>您确定要删除课程吗？<br />注意，删除课程将丢失所有课程资料，包括但不限于参与学生、课程所属作业、考试、成绩信息、课堂记录等!</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnDeleteCourseOkVerify">我确认删除该课程</button>
                 </div>
             </div>
         </div>
@@ -324,13 +364,16 @@
 
                         </div>
                     </div>
-                    <div class="info-group" style="display: flex;align-items: center">
+                    <div class="info-group course-cover-all">
                         <!-- 添加头像 -->
                         <div class="info-label" >课程封面</div>
-                        <img src="/assets/img/avatar.png" alt="头像" class="avatar" id="profileImage">
-                        <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">修改封面</button>
-                        <input type="file" id="fileInput" style="display: none;" accept="image/*"
-                               onchange="previewImage(event)">
+                        <div class="course-cover">
+                            <img src="/assets/img/avatar.png" alt="头像" class="avatar" id="profileImage">
+                            <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">修改封面</button>
+                            <input type="file" id="fileInput" style="display: none;" accept="image/*"
+                                   onchange="previewImage(event)">
+                        </div>
+
                     </div>
 
                 </section>
@@ -358,47 +401,18 @@
         <main id="account-management" class="tab-content">
             <div class="account-section">
                 <div class="section-info">
-                    <div class="section-title" >修改密码</div>
-                    <div class="section-description">设置复杂密码更能保护您的账号安全</div>
+                    <div class="section-title" >修改课程信息</div>
+                    <div class="section-description">修改所授课程的课程信息</div>
                 </div>
-                <button class="btn btn-primary" style="background-color: #4154f1" id="changePasswordBtn">修改</button>
-            </div>
-            <div class="account-section">
-                <div class="section-info">
-                    <div class="section-title">修改认证信息</div>
-                    <div class="section-description">认证信息与您的成绩相关，请谨慎修改</div>
-                </div>
-                <button class="btn btn-primary" style="background-color: #4154f1" id="changeUserInfoBtn" >修改</button>
+                <button class="btn btn-primary" style="background-color: #4154f1" id="changeCourseInfo">修改</button>
             </div>
 
             <div class="account-section">
                 <div class="section-info">
-                    <div class="section-title">账号注销</div>
-                    <div class="section-description">为保证您的账号安全，需要满足相应的条件，才能提交注销申请</div>
+                    <div class="section-title">删除课程</div>
+                    <div class="section-description">注意，删除课程将丢失所有课程资料，包括但不限于参与学生、课程所属作业、考试、成绩信息、课堂记录等</div>
                 </div>
-                <button class="btn btn-danger" id="deleteProfile">注销</button>
-            </div>
-            <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteProfileModalTitle">更改邮件</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                                <div class="mb-3">
-                                    <label for="email-verify-code" class="col-form-label">注意！您正在尝试注销账号！注销账号会删除账号内的全部数据！<br/>已向该账号绑定的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
-                                    <input type="text" class="form-control" id="email-verify-code-delete">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkDelete">删除账号</button>
-                        </div>
-                    </div>
-                </div>
+                <button class="btn btn-danger" id="deleteProfile">删除课程</button>
             </div>
         </main>
         <div id="mpanel1" style="margin-top:50px;"></div>

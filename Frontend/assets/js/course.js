@@ -39,7 +39,13 @@ function getUrlDataFN(urlStr) {
     return urlObj
 }
 
-let currentUserEmail = "",currentUno = "",login_token= localStorage.getItem("intelli_campus_login_token");
+let login_token= localStorage.getItem("intelli_campus_login_token"),
+    courseId = getUrlDataFN(window.location.href).courseId,
+    teacherId = null,
+    startDate = null,
+    endDate = null,
+    courseName = null,
+    courseIntro = null;
 
 $(document).ready(function () {
     function errorToast(message) {
@@ -66,15 +72,8 @@ $(document).ready(function () {
         success: function (data) {
             if (data.code == 0) {
                 // 将后端返回的数据填充到页面中
-
                 $("#nav-avatar").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
-                $("#userName").text(data.data.uname || "未知姓名");
-                $("#userEmail").val(data.data.email || "未绑定邮箱");
-                currentUserEmail = data.data.email || "";
-                currentUno = data.data.uno || "";
-                $("#userRole").text(data.role || "学生");
-                $("#userId").text(data.data.uno || "未知学号");
-                $("#userSchool").text(data.data.uschool || "未知学校");
+                teacherId = data.data.uid
             }else{
                 errorToast("登录已过期，请重新登录")
                 setRedirect("http://111.230.253.94/login")
@@ -88,9 +87,22 @@ $(document).ready(function () {
     });
 
 });
-
-let courseId = getUrlDataFN(window.location.href).courseId
-console.log(login_token);
+$('#course-startDate').datepicker({
+    language: 'zh-CN', // 中文语言包
+    autoclose: 1, // 选中日期后自动关闭
+    format: 'yyyy-mm-dd', // 日期格式
+    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
+    todayBtn: 1, // 显示今天按钮
+    todayHighlight: 1, // 显示今天高亮
+});
+$('#course-endDate').datepicker({
+    language: 'zh-CN', // 中文语言包
+    autoclose: 1, // 选中日期后自动关闭
+    format: 'yyyy-mm-dd', // 日期格式
+    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
+    todayBtn: 1, // 显示今天按钮
+    todayHighlight: 1, // 显示今天高亮
+});
 
 $.ajax({
     url: "http://111.230.253.94:8081/course/getCourseInfo?id="+courseId, // 后端 API 地址
@@ -101,7 +113,7 @@ $.ajax({
         "Content-Type": "application/json"
     },
     success: function (data) {
-        if (data.code == 0) {
+        if (data.code === "0") {
             console.log(data)
             // 将后端返回的数据填充到页面中
             $("#courseName").text(data.data.courseName || "未知");
@@ -109,11 +121,21 @@ $.ajax({
             $("#courseStartTime").text(data.data.startDate || "未知");
             $("#courseEndTime").text(data.data.endDate || "未知");
             $("#userSchool").text(data.data.uschool || "未知");
-            $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.coverImageBase64 || "/assets/img/avatar.png");
-        }else{
-            errorToast("发生错误，请查看控制台日志")
-            console.log(data)
+            if (data.data.coverImageBase64){
+                $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.coverImageBase64);
+            }else{
+                $("#profileImage").attr("src", "./assets/img/values-1.png");
+            }
+            startDate = data.data.startDate || "";
+            endDate = data.data.endDate || "";
+            courseName = data.data.courseName || "";
+            courseIntro = data.data.courseDescription || "";
+        }else if (data.code === "404"){
+            errorToast("课程不存在")
+            window.location.href = "/hub"
             // setRedirect("http://111.230.253.94/login")
+        }else{
+            errorToast("服务器繁忙，请稍后再试")
         }
 
     },
@@ -148,171 +170,98 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
-let changeEmailModal,newEmailVal;
-$('#changeEmailBtn').click(function () {
-
-    newEmailVal = $("#userEmail").val()
-    if (newEmailVal == currentUserEmail){
-        errorToast("请输入新的电子邮箱")
-    }else {
-        console.log($("#userEmail").val())
+let modifyCourseModal = null,deleteCourseModal = null;
+$('#changeCourseInfo').click(function () {
+    document.getElementById('course-name').value = courseName;
+    document.getElementById('course-intro').value = courseIntro;
+    document.getElementById('course-startDate').value = startDate;
+    document.getElementById('course-endDate').value = endDate;
+    modifyCourseModal = new bootstrap.Modal(document.getElementById('modifyCourseModal'), {
+        keyboard: true
+    });
+    modifyCourseModal.show()
+})
+$('#btnModifyCourseOkVerify').click(function () {
+    let courseName = $('#course-name').val()
+    let courseIntro = $('#course-intro').val()
+    let startDate = $('#course-startDate').val()
+    let endDate = $('#course-endDate').val()
+    if (courseName || courseIntro || startDate || endDate) {
+        let postParam = {
+            "courseName": courseName ,
+            "courseDescription": courseIntro,
+            "teacherId": teacherId,
+            "startDate": startDate,
+            "endDate": endDate,
+            "progress": 0
+        }
         $.ajax({
-            url: "http://111.230.253.94:8081/user/updateEmail?newEmail="+newEmailVal, // 后端 API 地址
-            method: "POST", // 请求类型
+            url: "http://111.230.253.94:8081/course/updateCourse?courseId="+courseId,
+            method: "POST",
             dataType: "json", // 返回的数据类型
             headers:{
                 "Authorization": "Bearer " + login_token,
                 "Content-Type": "application/json"
             },
-            success: function (data) {
-                if (data.code == 0) {
-                    startVerifyInterval("changeEmailBtn","更改邮箱","white")
-                    // 将后端返回的数据填充到页面中
-                    changeEmailModal = new bootstrap.Modal(document.getElementById('changeEmail'), {
-                        keyboard: false
-                    });
-                    changeEmailModal.show()
+            Cache: false,
+            data: JSON.stringify(postParam),
+            success: function (result) {
+                if (result.code === "0"){
+                    modifyCourseModal.hide()
+                    successToast("课程信息修改成功")
+                    location.reload();
                 }else{
-                    errorToast("验证邮件发送失败，请重试")
+                    errorToast("课程信息修改失败")
                 }
-
             },
             error: function () {
-                errorToast("验证邮件发送失败，请重试")
+                console.log("修改课程信息失败");
+                alert("修改课程信息失败，请稍后重试！");
             }
         });
+    }else{
+        errorToast("课程信息不能为空")
     }
 
 })
-$('#btnOkVerify').click(function () {
-    let EmailCodeVal = $("#email-verify-code").val()
-    console.log($("#email-verify-code").val())
+
+$('#titleText').click(function () {
+    window.location.href = "http://111.230.253.94/"
+})
+
+$('#deleteProfile').click(function () {
+    deleteCourseModal = new bootstrap.Modal(document.getElementById('deleteCourseModal'), {
+        keyboard: true
+    });
+    deleteCourseModal.show()
+})
+
+
+$('#btnDeleteCourseOkVerify').click(function () {
     $.ajax({
-        url: "http://111.230.253.94:8081/user/verifyEmailUpdate?newEmail="+newEmailVal+"&emailCaptcha="+EmailCodeVal, // 后端 API 地址
-        method: "POST", // 请求类型
-        dataType: "json", // 返回的数据类型
+        type: "DELETE",
+        url: "http://111.230.253.94:8081/course/deleteCourse?id="+courseId, // 后端 API 地址
+        Cache: false,
+        dataType: "JSON",
         headers:{
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
-        success: function (data) {
-            console.log(data);
-            if (data.code == 0) {
-                // 将后端返回的数据填充到页面中
-                successToast("电子邮箱更改成功")
-                changeEmailModal.hide()
-            }else{
-                errorToast("验证码错误，请重试")
+        success: function (result) {
+            if (result.code === "-1") {
+                errorToast("删除失败")
+            } else if (result.code === "0") {
+                successToast("课程删除成功")
+                deleteCourseModal.hide()
+                window.location.href = "/hub"
+            } else if (result.code === "400") {
+                errorToast("安全验证失败，请重试")
+            } else {
+                errorToast("未知错误，请重试")
             }
-
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
         }
     });
-
-});
-
-$('#changePasswordBtn').click(function () {
-    window.location.href = "http://111.230.253.94/reset"
 })
-$('#changeUserInfoBtn').click(function () {
-    window.location.href = "http://111.230.253.94/change_user_info"
-})
-$('#titleText').click(function () {
-    window.location.href = "http://111.230.253.94/index"
-})
-let deleteProfileModal
-// // 初始化验证码  弹出式
-$('#mpanel1').slideVerify({
-    baseUrl: 'http://111.230.253.94:8081',  //服务器请求地址, 默认地址为安吉服务器;
-    mode: 'pop',     //展示模式
-    containerId: 'deleteProfile',//pop模式 必填 被点击之后出现行为验证码的元素id
-    imgSize: {       //图片的大小对象,有默认值{ width: '310px',height: '155px'},可省略
-        width: '400px',
-        height: '200px',
-    },
-    barSize: {          //下方滑块的大小对象,有默认值{ width: '310px',height: '50px'},可省略
-        width: '400px',
-        height: '40px',
-    },
-    beforeCheck: function () {  //检验参数合法性的函数  mode ="pop"有效
-        // var flag = true;
-        // //实现: 参数合法性的判断逻辑, 返回一个boolean值
-        // return flag
-        // console.log(passwdA)
-        // console.log(userSchool)
-        if (currentUno && currentUserEmail) {
-            return true
-        } else {
-            errorToast("系统异常", 2)
-            return false
-        }
-    },
-    ready: function () { },  //加载完毕的回调
-    success: function (params) { //成功的回调
-// params为返回的二次验证参数 需要在接下来的实现逻辑回传服务器
-        // 例如:
-        //login($.extend({}, params))
-        //console.log(passwdA)
-        //console.log(userSchool)
-            //console.log(encryptedPasswd)
-            $.ajax({
-                type: "DELETE",
-                url: "http://111.230.253.94:8081/user/deleteAccount?uno="+currentUno+"&email="+currentUserEmail+ "&captchaVerification=" + params.captchaVerification.replace(/\+/g, "%2B"), // 后端 API 地址
-                Cache: false,
-                dataType: "JSON",
-                success: function (result) {
-                    console.log(result)
-                    if (result.code == -1) {
-                        errorToast("重设失败", 1)
-                    } else if (result.code == 456) {
-                        errorToast("用户已存在", 1)
-                    } else if (result.code == 0) {
-                        successToast("验证码已发送，请注意查收",0)
-                        startVerifyInterval("deleteProfile","注销","white")
-                        deleteProfileModal = new bootstrap.Modal(document.getElementById('deleteProfileModal'), {
-                            keyboard: false
-                        });
-                        deleteProfileModal.show()
-                    } else if (result.code == 400) {
-                        errorToast("安全验证失败，请重试", 1)
-                    } else {
-                        errorToast("未知错误，请重试", 1)
-                    }
-                }
-            });
-
-    },
-    error: function () { }        //失败的回调
-});
-$('#btnOkDelete').click(function () {
-    let EmailCodeVal = $("#email-verify-code-delete").val()
-    console.log($("#email-verify-code-delete").val())
-    $.ajax({
-        url: "http://111.230.253.94:8081/user/completeDeleteAccount?uno="+currentUno+"&email="+currentUserEmail+"&EmailcaptchaVerification="+EmailCodeVal, // 后端 API 地址
-        method: "POST", // 请求类型
-        dataType: "json", // 返回的数据类型
-        success: function (data) {
-            console.log(data);
-            if (data.code == 0) {
-                // 将后端返回的数据填充到页面中
-                successToast("账号已成功注销")
-                localStorage.removeItem("intelli_campus_login_token")
-                redirect()
-            }else{
-                errorToast("注销失败，请检查验证码")
-            }
-
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
-        }
-    });
-
-});
 
 /**
  * 压缩图片方法
