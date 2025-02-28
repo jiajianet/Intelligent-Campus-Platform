@@ -1,9 +1,11 @@
 package com.xiyanchenghong.backenduser.WebMvc;
-import com.xiyanchenghong.backenduser.WebMvc.JwtFilter;
+
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     @Bean
     public OncePerRequestFilter jwtFilter() {
@@ -30,19 +34,32 @@ public class WebConfig implements WebMvcConfigurer {
                             try {
                                 Claims claims = JwtUtils.parseJwt(token);
                                 if (JwtUtils.isTokenExpired(token)) {
+                                    logger.warn("Token expired for request: {} {}", request.getMethod(), request.getRequestURI());
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
                                     return false;
                                 }
                                 request.setAttribute("claims", claims);
+                                logger.info("Token validated for request: {} {}", request.getMethod(), request.getRequestURI());
                             } catch (Exception e) {
+                                logger.error("Invalid token for request: {} {}", request.getMethod(), request.getRequestURI(), e);
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                                 return false;
                             }
                         } else {
+                            logger.warn("Token missing for request: {} {}", request.getMethod(), request.getRequestURI());
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token missing");
                             return false;
                         }
                         return true;
+                    }
+
+                    @Override
+                    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                        if (ex != null) {
+                            logger.error("Request raised an exception: {} {}", request.getMethod(), request.getRequestURI(), ex);
+                        } else {
+                            logger.info("Request completed: {} {} with status {}", request.getMethod(), request.getRequestURI(), response.getStatus());
+                        }
                     }
                 }).addPathPatterns("/**") // 拦截所有请求
                 .excludePathPatterns(
@@ -87,6 +104,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/classroom/getOngoingClassrooms",
                         "/classroom/getRaisedHands",
                         "/classroom/raiseHand",
+                        "/classroom/beginSignIn",
+                        "/classroom/endSignIn",
                         "/student/getAssignmentInfo/{assignmentId}",
                         "/student/getAssignmentData/{assignmentId}",
                         "/student/submitAssignment",
@@ -103,8 +122,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/teacher/addExam",
                         "/teacher/deleteExam/{examId}",
                         "/teacher/modifyExam/{examId}",
-                        "/teacher/beginSignIn",
-                        "/teacher/endSignIn",
                         "/school/getSchoolAddress"
                 ); // 排除常用用户接口
     }
