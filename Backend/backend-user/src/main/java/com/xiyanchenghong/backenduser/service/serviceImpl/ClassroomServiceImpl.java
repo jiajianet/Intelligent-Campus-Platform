@@ -56,7 +56,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (existingClassroom != null) {
             existingClassroom.setCourseId(classroom.getCourseId());
             existingClassroom.setClassroomName(classroom.getClassroomName());
-            existingClassroom.setLocation(classroom.getLocation());
             existingClassroom.setStartTime(classroom.getStartTime());
             existingClassroom.setEndTime(classroom.getEndTime());
             return classroomRepository.save(existingClassroom);
@@ -77,6 +76,16 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> getOngoingClassrooms() {
         return classroomRepository.findByEndTimeIsNull();
+    }
+
+    @Override
+    public List<Classroom> getOngoingClassroomsByTeacherId(Long teacherId) {
+        return classroomRepository.findByTeacherIdAndEndTimeIsNull(teacherId);
+    }
+
+    @Override
+    public List<Classroom> getOngoingClassroomsByStudentId(Long studentId) {
+        return classroomStudentRepository.findOngoingClassroomsByStudentId(studentId);
     }
 
     @Override

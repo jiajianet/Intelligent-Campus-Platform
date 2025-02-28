@@ -11,7 +11,6 @@ public class Classroom {
     private Integer courseId;
     private Integer teacherId;
     private String classroomName;
-    private String location;
     private Date startTime;
     private Date endTime;
 
@@ -47,14 +46,6 @@ public class Classroom {
 
     public void setClassroomName(String classroomName) {
         this.classroomName = classroomName;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public Date getStartTime() {
