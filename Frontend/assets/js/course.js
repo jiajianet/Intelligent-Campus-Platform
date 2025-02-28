@@ -176,10 +176,13 @@ $('#changeCourseInfo').click(function () {
     document.getElementById('course-intro').value = courseIntro;
     document.getElementById('course-startDate').value = startDate;
     document.getElementById('course-endDate').value = endDate;
-    modifyCourseModal = new bootstrap.Modal(document.getElementById('modifyCourseModal'), {
-        keyboard: true
+    // modifyCourseModal = new bootstrap.Modal(document.getElementById('modifyCourseModal'), {
+    //     keyboard: true
+    // });
+    // modifyCourseModal.show()
+    $('#modifyCourseModal').on('click', () => {
+        zui.Messager.show('修改课程信息成功！')
     });
-    modifyCourseModal.show()
 })
 $('#btnModifyCourseOkVerify').click(function () {
     let courseName = $('#course-name').val()

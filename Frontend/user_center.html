@@ -229,6 +229,8 @@
     <script src="assets/vendor/captcha/js/ase.js"></script>
     <script src="assets/vendor/captcha/js/verify.js" ></script>
 
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/zui/zui.css">
+    <script src="../assets/vendor/zui/zui.js"></script>
 </head>
 
 <body>
@@ -297,12 +299,38 @@
 
                         </div>
                     </div>
-                    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+<!--                    <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--                        <div class="modal-dialog">-->
+<!--                            <div class="modal-content">-->
+<!--                                <div class="modal-header">-->
+<!--                                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>-->
+<!--                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                                </div>-->
+<!--                                <div class="modal-body">-->
+<!--                                    <form>-->
+<!--                                        <div class="mb-3">-->
+<!--                                            <label for="email-verify-code" class="col-form-label">已向要修改的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>-->
+<!--                                            <input type="text" class="form-control" id="email-verify-code">-->
+<!--                                        </div>-->
+<!--                                    </form>-->
+<!--                                </div>-->
+<!--                                <div class="modal-footer">-->
+<!--                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>-->
+<!--                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+                    <div class="modal" id="changeEmail">
+                        <div class="modal-dialog shadow">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">更改邮件</h5>
+                                    <div class="modal-title">更改邮件</div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-actions">
+                                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                                 </div>
                                 <div class="modal-body">
                                     <form>
@@ -313,12 +341,14 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkVerify">提交更改</button>
+                                    <button type="button" class="btn" data-dismiss="modal">取消</button>
+                                    <button type="button" class="btn primary" id="btnOkVerify">提交更改</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </section>
 
                 <section class="right-column">
@@ -367,14 +397,41 @@
                 </div>
                 <button class="btn btn-danger" id="deleteProfile">注销</button>
             </div>
-            <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+
+<!--            <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--                <div class="modal-dialog">-->
+<!--                    <div class="modal-content">-->
+<!--                        <div class="modal-header">-->
+<!--                            <h5 class="modal-title" id="deleteProfileModalTitle">更改邮件</h5>-->
+<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                        </div>-->
+<!--                        <div class="modal-body">-->
+<!--                            <form>-->
+<!--                                <div class="mb-3">-->
+<!--                                    <label for="email-verify-code" class="col-form-label">注意！您正在尝试注销账号！注销账号会删除账号内的全部数据！<br/>已向该账号绑定的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>-->
+<!--                                    <input type="text" class="form-control" id="email-verify-code-delete">-->
+<!--                                </div>-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                        <div class="modal-footer">-->
+<!--                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>-->
+<!--                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkDelete">删除账号</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="modal" id="deleteProfileModal">
+                <div class="modal-dialog shadow">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteProfileModalTitle">更改邮件</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-title">更改邮件</div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                         </div>
                         <div class="modal-body">
+<!--                            <p>这是内容</p>-->
                             <form>
                                 <div class="mb-3">
                                     <label for="email-verify-code" class="col-form-label">注意！您正在尝试注销账号！注销账号会删除账号内的全部数据！<br/>已向该账号绑定的邮箱发送验证码，请在下方输入<br/><br/>验证码：</label>
@@ -383,12 +440,13 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnOkDelete">删除账号</button>
+                            <button type="button" class="btn" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn primary" id="btnOkDelete">删除账号</button>
                         </div>
                     </div>
                 </div>
             </div>
+
         </main>
         <div id="mpanel1" style="margin-top:50px;"></div>
     </div>

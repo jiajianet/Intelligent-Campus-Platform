@@ -119,14 +119,20 @@ $(document).ready(function () {
 });
 let createCourseModal;
 $('#createCourse').click(function () {
-    createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
-        keyboard: true
+    // createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
+    //     keyboard: true
+    // });
+    // createCourseModal.show()
+    $('#createCourseModal').on('click', () => {
+        zui.Messager.show('创建课程成功！')
     });
-    createCourseModal.show()
-    createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
-        keyboard: true
+    // createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
+    //     keyboard: true
+    // });
+    // createCourseModal.show()
+    $('#createCourseModal').on('click', () => {
+        zui.Messager.show('创建课程成功！')
     });
-    createCourseModal.show()
 })
 $('#course-startDate').datepicker({
     language: 'zh-CN', // 中文语言包

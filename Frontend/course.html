@@ -242,6 +242,9 @@
     <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="assets/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
     <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/zui/zui.css">
+    <script src="../assets/vendor/zui/zui.js"></script>
 </head>
 
 <body>
@@ -277,12 +280,43 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modifyCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+<!--    <div class="modal fade" id="modifyCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="exampleModalLabel">修改课程信息</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <form>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="course-name" class="col-form-label">请在下方输入新的课程信息<br/><br/>课程名：</label>-->
+<!--                            <input type="text" class="form-control" id="course-name">-->
+<!--                            <label for="course-intro" class="col-form-label"><br/>课程简介：</label>-->
+<!--                            <textarea id="course-intro" class="form-control" cols="5" rows="10"></textarea>-->
+<!--                            <label for="course-startDate" class="col-form-label"><br/>课程开始日期：</label>-->
+<!--                            <input type="text" id="course-startDate" class="form-control">-->
+<!--                            <label for="course-endDate" class="col-form-label"><br/>课程结束日期：</label>-->
+<!--                            <input type="text" id="course-endDate" class="form-control">-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>-->
+<!--                    <button type="button" class="btn btn-primary" id="btnModifyCourseOkVerify">提交修改</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="modal" id="modifyCourseModal">
+        <div class="modal-dialog shadow">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">修改课程信息</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-title">修改课程信息</div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -299,19 +333,44 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="btnModifyCourseOkVerify">提交修改</button>
+                    <button type="button" class="btn" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn primary"  id="btnModifyCourseOkVerify">提交修改</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="deleteCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+
+<!--    <div class="modal fade" id="deleteCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="deleteCourseModalTitle">修改课程信息</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <form>-->
+<!--                        <div class="mb-3">-->
+<!--                            <span>您确定要删除课程吗？<br />注意，删除课程将丢失所有课程资料，包括但不限于参与学生、课程所属作业、考试、成绩信息、课堂记录等!</span>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>-->
+<!--                    <button type="button" class="btn btn-primary" id="btnDeleteCourseOkVerify">我确认删除该课程</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="modal" id="deleteCourseModal">
+        <div class="modal-dialog shadow">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteCourseModalTitle">修改课程信息</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-title">修改课程信息</div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -321,8 +380,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="btnDeleteCourseOkVerify">我确认删除该课程</button>
+                    <button type="button" class="btn" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn primary"  id="btnDeleteCourseOkVerify">我确认删除该课程</button>
                 </div>
             </div>
         </div>

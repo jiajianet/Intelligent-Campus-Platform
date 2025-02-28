@@ -103,10 +103,13 @@ $('#changeEmailBtn').click(function () {
                 if (data.code == 0) {
                     startVerifyInterval("changeEmailBtn","更改邮箱","white")
                     // 将后端返回的数据填充到页面中
-                    changeEmailModal = new bootstrap.Modal(document.getElementById('changeEmail'), {
-                        keyboard: false
+                    // changeEmailModal = new bootstrap.Modal(document.getElementById('changeEmail'), {
+                    //     keyboard: false
+                    // });
+                    // changeEmailModal.show()
+                    $('#changeEmail').on('click', () => {
+                        zui.Messager.show('修改邮箱成功！')
                     });
-                    changeEmailModal.show()
                 }else{
                     errorToast("验证邮件发送失败，请重试")
                 }
@@ -211,10 +214,15 @@ $('#mpanel1').slideVerify({
                     } else if (result.code == 0) {
                         successToast("验证码已发送，请注意查收",0)
                         startVerifyInterval("deleteProfile","注销","white")
-                        deleteProfileModal = new bootstrap.Modal(document.getElementById('deleteProfileModal'), {
-                            keyboard: false
+                        // deleteProfileModal = new bootstrap.Modal(document.getElementById('deleteProfileModal'), {
+                        //     keyboard: false
+                        // });
+                        // deleteProfileModal.show()
+// 不确定
+                        $('#deleteProfileModal').on('click', () => {
+                            zui.Messager.show('嘿！这是一条消息。')
                         });
-                        deleteProfileModal.show()
+                        // $('#deleteProfileModal').modal('show');
                     } else if (result.code == 400) {
                         errorToast("安全验证失败，请重试", 1)
                     } else {
