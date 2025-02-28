@@ -46,11 +46,30 @@ public class CourseController {
                 return Result.error(403, "Token expired");
             }
 
-            // 获取课程列表
-            List<Course> courseList = courseService.getAllCourses();
+            // 获取用户ID和角色
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                return Result.error(403, "Unauthorized");
+            }
+
+            List<Course> courses;
+            if (user.getRole() == User.Role.TEACHER) {
+                // 获取教师创建的课程
+                courses = courseService.getCoursesByTeacherId(userId);
+            } else if (user.getRole() == User.Role.STUDENT) {
+                // 获取学生参加的课程
+                courses = courseService.getCoursesByStudentId(userId);
+            } else {
+                return Result.error(403, "Unauthorized");
+            }
 
             // 将课程列表转换为CourseInfoResponse列表，并读取封面图片为Base64格式
-            List<CourseInfoResponse> courseInfoResponses = courseList.stream().map(course -> {
+            List<CourseInfoResponse> courseInfoResponses = courses.stream().map(course -> {
                 String coverImageBase64 = null;
                 if (course.getCoverImagePath() != null) {
                     try {
@@ -73,6 +92,53 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/getCourseListAll")
+    public Result<List<CourseInfoResponse>> getCourseListAll(@RequestHeader("Authorization") String token) {
+        try {
+            // 验证token
+            Claims claims = JwtUtils.parseJwt(token.substring(7)); // 移除 "Bearer " 前缀
+            if (JwtUtils.isTokenExpired(token.substring(7))) {
+                return Result.error(403, "Token expired");
+            }
+
+            // 获取用户ID
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
+            User user = userService.getUserById(userId);
+            if (user == null || user.getRole() != User.Role.STUDENT) {
+                return Result.error(403, "Unauthorized");
+            }
+
+            // 获取学生未选的所有课程
+            List<Course> courses = courseService.getAvailableCourses(userId);
+
+            // 将课程列表转换为CourseInfoResponse列表，并读取封面图片为Base64格式
+            List<CourseInfoResponse> courseInfoResponses = courses.stream().map(course -> {
+                String coverImageBase64 = null;
+                if (course.getCoverImagePath() != null) {
+                    try {
+                        byte[] imageBytes = Files.readAllBytes(Paths.get(course.getCoverImagePath()));
+                        coverImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+                    } catch (IOException e) {
+                        logger.error("Error reading cover image file for course: " + course.getCourseId(), e);
+                    }
+                }
+                User teacher = userService.getUserById(course.getTeacherId());
+                String teacherName = teacher != null ? teacher.getName() : null;
+                return new CourseInfoResponse(course, coverImageBase64, teacherName);
+            }).collect(Collectors.toList());
+
+            return Result.success(courseInfoResponses);
+
+        } catch (Exception e) {
+            logger.error("Error retrieving all courses", e);
+            return Result.error(500, "Internal server error");
+        }
+    }
+
     @GetMapping("/getCourseInfo")
     public Result<CourseInfoResponse> getCourseInfo(@RequestHeader("Authorization") String token, @RequestParam("id") Long courseId) {
         try {
@@ -91,10 +157,6 @@ public class CourseController {
             // 根据课程ID获取课程信息
             Course course = courseService.getCourseById(courseId);
             if (course != null) {
-                // 验证请求者是否为课程的教师
-                if (!course.getTeacherId().equals(userId)) {
-                    return Result.error(403, "Access denied");
-                }
 
                 String coverImageBase64 = null;
                 if (course.getCoverImagePath() != null) {
@@ -110,7 +172,12 @@ public class CourseController {
                 User teacher = userService.getUserById(course.getTeacherId());
                 String teacherName = teacher != null ? teacher.getName() : null;
 
-                CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64, teacherName);
+                // 获取参与课程的学生名字
+                List<String> studentNames = courseService.getStudentsByCourseId(courseId).stream()
+                        .map(User::getName)
+                        .collect(Collectors.toList());
+
+                CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64, teacherName, studentNames);
                 return Result.success(response);
             } else {
                 return Result.error(404, "Course not found");
@@ -258,12 +325,32 @@ public class CourseController {
                 return Result.error(403, "Token expired");
             }
 
+            // 获取用户ID
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
+            User user = userService.getUserById(userId);
+            if (user == null || user.getRole() != User.Role.TEACHER) {
+                return Result.error(403, "Unauthorized");
+            }
+
+            // 验证请求者是否为课程的教师
+            Course course = courseService.getCourseById(courseId);
+            if (course == null) {
+                return Result.error(404, "Course not found");
+            }
+            if (!course.getTeacherId().equals(userId)) {
+                return Result.error(403, "Access denied");
+            }
+
             // 删除课程
             boolean success = courseService.deleteCourse(courseId);
             if (success) {
                 return Result.success("Course deleted successfully");
             } else {
-                return Result.error(404, "Course not found");
+                return Result.error(500, "Failed to delete course");
             }
 
         } catch (Exception e) {
@@ -326,6 +413,7 @@ public class CourseController {
         private Date startDate;
         private Date endDate;
         private int progress;
+        private List<String> studentNames; // 增加的字段
 
         public CourseInfoResponse(Course course, String coverImageBase64, String teacherName) {
             this.courseId = course.getCourseId();
@@ -337,6 +425,11 @@ public class CourseController {
             this.endDate = course.getEndDate();
             this.progress = course.getProgress();
             this.coverImageBase64 = coverImageBase64;
+        }
+
+        public CourseInfoResponse(Course course, String coverImageBase64, String teacherName, List<String> studentNames) {
+            this(course, coverImageBase64, teacherName);
+            this.studentNames = studentNames;
         }
 
         // Getters and Setters
@@ -410,6 +503,14 @@ public class CourseController {
 
         public void setProgress(int progress) {
             this.progress = progress;
+        }
+
+        public List<String> getStudentNames() {
+            return studentNames;
+        }
+
+        public void setStudentNames(List<String> studentNames) {
+            this.studentNames = studentNames;
         }
     }
 }

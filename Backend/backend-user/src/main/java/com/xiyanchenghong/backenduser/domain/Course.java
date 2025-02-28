@@ -8,13 +8,14 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
+
     private String courseName;
     private String courseDescription;
     private Long teacherId;
     private Date startDate;
     private Date endDate;
     private int progress;
-    private String coverImagePath; // 新添加的字段
+    private String coverImagePath;
 
     // Getters and Setters
 

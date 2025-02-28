@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/classroom")
 public class ClassroomController {
@@ -71,7 +70,10 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");
@@ -86,6 +88,7 @@ public class ClassroomController {
             return Result.success(newClassroom, "Classroom started successfully!");
 
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.error(403, "Invalid token");
         }
     }
@@ -100,7 +103,10 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");
@@ -133,7 +139,10 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");
@@ -166,7 +175,10 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");
@@ -191,17 +203,31 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
+
             User user = userService.getUserById(userId);
-            if (user == null || user.getRole() != User.Role.TEACHER) {
+            if (user == null) {
                 return Result.error(403, "Unauthorized");
             }
 
-            // 获取正在上课的教室
-            List<Classroom> ongoingClassrooms = classroomService.getOngoingClassrooms();
+            List<Classroom> ongoingClassrooms;
+            if (user.getRole() == User.Role.TEACHER) {
+                // 获取教师创建的正在上课的教室
+                ongoingClassrooms = classroomService.getOngoingClassroomsByTeacherId(userId);
+            } else if (user.getRole() == User.Role.STUDENT) {
+                // 获取学生参加的正在上课的教室
+                ongoingClassrooms = classroomService.getOngoingClassroomsByStudentId(userId);
+            } else {
+                return Result.error(403, "Unauthorized");
+            }
+
             return Result.success(ongoingClassrooms);
 
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.error(403, "Invalid token");
         }
     }
@@ -216,7 +242,10 @@ public class ClassroomController {
             }
 
             // 获取用户ID
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null) {
                 return Result.error(403, "Unauthorized");
@@ -242,9 +271,12 @@ public class ClassroomController {
             }
 
             // 获取用户ID和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
-            if (user == null || user.getRole() != User.Role.TEACHER) {
+            if (user == null) {
                 return Result.error(403, "Unauthorized");
             }
 
@@ -267,7 +299,10 @@ public class ClassroomController {
             }
 
             // 获取用户 ID 和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");
@@ -296,7 +331,10 @@ public class ClassroomController {
             }
 
             // 获取用户 ID 和角色
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userId = JwtUtils.getUserIdFromToken(token.substring(7));
+            if (userId == null) {
+                return Result.error(403, "Invalid token");
+            }
             User user = userService.getUserById(userId);
             if (user == null || user.getRole() != User.Role.TEACHER) {
                 return Result.error(403, "Unauthorized");

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -38,9 +39,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public boolean joinCourse(Long userId, Long courseId) {
         try {
+            Course course = courseRepository.findById(courseId).orElse(null);
+            if (course == null) {
+                return false;
+            }
             CourseStudent courseStudent = new CourseStudent();
             courseStudent.setStudentId(userId);
-            courseStudent.setCourseId(courseId);
+            courseStudent.setCourse(course);
             courseStudent.setJoinDate(new Date());
             courseStudentRepository.save(courseStudent);
             return true;
@@ -53,7 +58,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public boolean dropCourse(Long userId, Long courseId) {
         try {
-            CourseStudent courseStudent = courseStudentRepository.findByStudentIdAndCourseId(userId, courseId);
+            CourseStudent courseStudent = courseStudentRepository.findByStudentIdAndCourse_CourseId(userId, courseId);
             if (courseStudent != null) {
                 courseStudentRepository.delete(courseStudent);
                 return true;
@@ -84,6 +89,35 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void updateCourse(Course course) {
         courseRepository.save(course);
+    }
+
+    @Override
+    public List<Course> getCoursesByTeacherId(Long teacherId) {
+        return courseRepository.findByTeacherId(teacherId);
+    }
+
+    @Override
+    public List<Course> getCoursesByStudentId(Long studentId) {
+        List<CourseStudent> courseStudents = courseStudentRepository.findByStudentId(studentId);
+        return courseStudents.stream()
+                .map(CourseStudent::getCourse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Course> getAvailableCourses(Long studentId) {
+        List<Course> allCourses = courseRepository.findAll();
+        List<Course> enrolledCourses = getCoursesByStudentId(studentId);
+        return allCourses.stream()
+                .filter(course -> !enrolledCourses.contains(course))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getStudentsByCourseId(Long courseId) {
+        return courseStudentRepository.findByCourse_CourseId(courseId).stream()
+                .map(courseStudent -> userRepository.findById(courseStudent.getStudentId()).orElse(null))
+                .collect(Collectors.toList());
     }
 
     @Override

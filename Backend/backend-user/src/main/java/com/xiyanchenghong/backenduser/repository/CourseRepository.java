@@ -2,8 +2,9 @@ package com.xiyanchenghong.backenduser.repository;
 
 import com.xiyanchenghong.backenduser.domain.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
 public interface CourseRepository extends JpaRepository<Course, Long> {
+    List<Course> findByTeacherId(Long teacherId);
 }
