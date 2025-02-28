@@ -2,8 +2,10 @@ package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.Course;
 import com.xiyanchenghong.backenduser.domain.CourseStudent;
+import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.repository.CourseRepository;
 import com.xiyanchenghong.backenduser.repository.CourseStudentRepository;
+import com.xiyanchenghong.backenduser.repository.UserRepository;
 import com.xiyanchenghong.backenduser.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseStudentRepository courseStudentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<Course> getAllCourses() {
@@ -79,5 +84,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void updateCourse(Course course) {
         courseRepository.save(course);
+    }
+
+    @Override
+    public User getTeacherById(Long teacherId) {
+        return userRepository.findById(teacherId).orElse(null);
     }
 }

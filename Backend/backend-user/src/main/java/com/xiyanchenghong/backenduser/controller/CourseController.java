@@ -60,7 +60,9 @@ public class CourseController {
                         logger.error("Error reading cover image file for course: " + course.getCourseId(), e);
                     }
                 }
-                return new CourseInfoResponse(course, coverImageBase64);
+                User teacher = userService.getUserById(course.getTeacherId());
+                String teacherName = teacher != null ? teacher.getName() : null;
+                return new CourseInfoResponse(course, coverImageBase64, teacherName);
             }).collect(Collectors.toList());
 
             return Result.success(courseInfoResponses);
@@ -103,7 +105,12 @@ public class CourseController {
                         return Result.error(500, "Error reading cover image file");
                     }
                 }
-                CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64);
+
+                // 获取教师姓名
+                User teacher = userService.getUserById(course.getTeacherId());
+                String teacherName = teacher != null ? teacher.getName() : null;
+
+                CourseInfoResponse response = new CourseInfoResponse(course, coverImageBase64, teacherName);
                 return Result.success(response);
             } else {
                 return Result.error(404, "Course not found");
@@ -314,16 +321,18 @@ public class CourseController {
         private String courseName;
         private String courseDescription;
         private Long teacherId;
+        private String teacherName;
         private String coverImageBase64;
         private Date startDate;
         private Date endDate;
         private int progress;
 
-        public CourseInfoResponse(Course course, String coverImageBase64) {
+        public CourseInfoResponse(Course course, String coverImageBase64, String teacherName) {
             this.courseId = course.getCourseId();
             this.courseName = course.getCourseName();
             this.courseDescription = course.getCourseDescription();
             this.teacherId = course.getTeacherId();
+            this.teacherName = teacherName;
             this.startDate = course.getStartDate();
             this.endDate = course.getEndDate();
             this.progress = course.getProgress();
@@ -361,6 +370,14 @@ public class CourseController {
 
         public void setTeacherId(Long teacherId) {
             this.teacherId = teacherId;
+        }
+
+        public String getTeacherName() {
+            return teacherName;
+        }
+
+        public void setTeacherName(String teacherName) {
+            this.teacherName = teacherName;
         }
 
         public String getCoverImageBase64() {

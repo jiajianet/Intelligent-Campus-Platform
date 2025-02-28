@@ -1,16 +1,16 @@
 package com.xiyanchenghong.backenduser.domain;
 
 import jakarta.persistence.*;
-import java.util.Date;
 
 @Entity
 public class ClassroomStudent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long classroomId;
     private Long studentId;
-    private Date joinTime;
+    private boolean handRaised;
 
     // Getters and Setters
 
@@ -38,11 +38,11 @@ public class ClassroomStudent {
         this.studentId = studentId;
     }
 
-    public Date getJoinTime() {
-        return joinTime;
+    public boolean isHandRaised() {
+        return handRaised;
     }
 
-    public void setJoinTime(Date joinTime) {
-        this.joinTime = joinTime;
+    public void setHandRaised(boolean handRaised) {
+        this.handRaised = handRaised;
     }
 }

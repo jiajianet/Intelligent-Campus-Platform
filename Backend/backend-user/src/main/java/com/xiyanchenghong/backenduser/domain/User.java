@@ -2,8 +2,6 @@ package com.xiyanchenghong.backenduser.domain;
 
 import jakarta.persistence.*;
 
-import javax.management.relation.Role;
-
 @Table(name = "user")
 @Entity
 public class User {
@@ -97,8 +95,8 @@ public class User {
         return emailverified;
     }
 
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailverified = emailVerified;
+    public void setEmailVerified(boolean emailverified) {
+        this.emailverified = emailverified;
     }
 
     public String getSchedfile() {
@@ -109,15 +107,21 @@ public class User {
         this.schedfile = schedfile;
     }
 
-    public enum Role {
-        STUDENT,
-        TEACHER
-    }
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    // 新增 getName 方法
+    public String getName() {
+        return uname;
+    }
+
+    public enum Role {
+        STUDENT,
+        TEACHER
     }
 }
