@@ -112,7 +112,8 @@ $(function () {
             }
 
         });
-        $('#btnOkVerify').click(function () {
+
+    $('#btnOkVerify').on('click', () => {
             let EmailCodeVal = $("#email-verify-code").val()
             console.log($("#email-verify-code").val())
             $.ajax({
@@ -142,13 +143,13 @@ $(function () {
 
         });
 
-        $('#changePasswordBtn').click(function () {
+    $('#changePasswordBtn').on('click', () => {
             window.location.href = "http://111.230.253.94/reset"
         })
-        $('#changeUserInfoBtn').click(function () {
+    $('#changeUserInfoBtn').on('click', () => {
             window.location.href = "http://111.230.253.94/change_user_info"
         })
-        $('#titleText').click(function () {
+    $('#titleText').on('click', () => {
             window.location.href = "http://111.230.253.94/index"
         })
         let deleteProfileModal
@@ -224,7 +225,8 @@ $(function () {
             },
             error: function () { }        //失败的回调
         });
-        $('#btnOkDelete').click(function () {
+
+    $('#btnOkDelete').on('click', () => {
             let EmailCodeVal = $("#email-verify-code-delete").val()
             console.log($("#email-verify-code-delete").val())
             $.ajax({

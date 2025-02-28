@@ -228,19 +228,18 @@ $('#btnModifyCourseOkVerify').click(function () {
 
 })
 
-$('#titleText').click(function () {
+$('#titleText').on('click', () => {
     window.location.href = "http://111.230.253.94/"
 })
 
-$('#deleteProfile').click(function () {
+$('#deleteProfile').on('click', () => {
     deleteCourseModal = new bootstrap.Modal(document.getElementById('deleteCourseModal'), {
         keyboard: true
     });
     deleteCourseModal.show()
 })
 
-
-$('#btnDeleteCourseOkVerify').click(function () {
+$('#btnDeleteCourseOkVerify').on('click', () => {
     $.ajax({
         type: "DELETE",
         url: "http://111.230.253.94:8081/course/deleteCourse?id="+courseId, // 后端 API 地址

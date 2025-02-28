@@ -150,12 +150,11 @@ $('#course-endDate').datepicker({
     todayBtn: 1, // 显示今天按钮
     todayHighlight: 1, // 显示今天高亮
 });
-
-$('#online_classroom').click(function () {
+$('#online_classroom').on('click', () => {
     window.open("/class/online_classroom")
 })
 
-$('#btnCreateCourseOkVerify').click(function () {
+$('#btnCreateCourseOkVerify').on('click', () => {
     let courseName = $('#course-name').val()
     let courseIntro = $('#course-intro').val()
     let startDate = $('#course-startDate').val()
