@@ -207,4 +207,6 @@ $('#mpanel1').slideVerify({
     },
     error: function () { }        //失败的回调
 });
-
+$('#titleText').on('click', () => {
+    window.open("/index")
+})

@@ -116,3 +116,6 @@ $('#submitRegister').click(function () {
         }
 })
 
+$('#titleText').on('click', () => {
+    window.open("/index")
+})

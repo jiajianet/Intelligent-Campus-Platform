@@ -74,6 +74,9 @@ $(document).ready(function () {
                 // 将后端返回的数据填充到页面中
                 $("#nav-avatar").attr("src", 'data:image/jpeg;base64,' + data.data.avatarBase64 || "/assets/img/avatar.png");
                 teacherId = data.data.uid
+                if (data.data.role === "STUDENT"){
+                    document.getElementById("courseManagement").style.display = "none";
+                }
             }else{
                 errorToast("登录已过期，请重新登录")
                 setRedirect("http://111.230.253.94/login")
@@ -87,22 +90,7 @@ $(document).ready(function () {
     });
 
 });
-$('#course-startDate').datepicker({
-    language: 'zh-CN', // 中文语言包
-    autoclose: 1, // 选中日期后自动关闭
-    format: 'yyyy-mm-dd', // 日期格式
-    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
-    todayBtn: 1, // 显示今天按钮
-    todayHighlight: 1, // 显示今天高亮
-});
-$('#course-endDate').datepicker({
-    language: 'zh-CN', // 中文语言包
-    autoclose: 1, // 选中日期后自动关闭
-    format: 'yyyy-mm-dd', // 日期格式
-    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
-    todayBtn: 1, // 显示今天按钮
-    todayHighlight: 1, // 显示今天高亮
-});
+
 
 $.ajax({
     url: "http://111.230.253.94:8081/course/getCourseInfo?id="+courseId, // 后端 API 地址
@@ -120,7 +108,14 @@ $.ajax({
             $("#courseIntro").text(data.data.courseDescription || "未知");
             $("#courseStartTime").text(data.data.startDate || "未知");
             $("#courseEndTime").text(data.data.endDate || "未知");
-            $("#userSchool").text(data.data.uschool || "未知");
+            $("#courseTeacher").text(data.data.teacherName || "未知");
+            for (let i=0;i<data.data.studentNames.length;i++){
+                document.getElementById("courseStudents").innerHTML = `
+            <p>${data.data.studentNames[i]}</p>
+            
+            `
+            }
+
             if (data.data.coverImageBase64){
                 $("#profileImage").attr("src", 'data:image/jpeg;base64,' + data.data.coverImageBase64);
             }else{
@@ -170,21 +165,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
-let modifyCourseModal = null,deleteCourseModal = null;
-$('#changeCourseInfo').click(function () {
+$('#changeCourseInfo').on('click', () => {
     document.getElementById('course-name').value = courseName;
     document.getElementById('course-intro').value = courseIntro;
     document.getElementById('course-startDate').value = startDate;
     document.getElementById('course-endDate').value = endDate;
-    // modifyCourseModal = new bootstrap.Modal(document.getElementById('modifyCourseModal'), {
-    //     keyboard: true
-    // });
-    // modifyCourseModal.show()
-    $('#modifyCourseModal').on('click', () => {
-        zui.Messager.show('修改课程信息成功！')
-    });
 })
-$('#btnModifyCourseOkVerify').click(function () {
+$('#btnModifyCourseOkVerify').on('click', () => {
     let courseName = $('#course-name').val()
     let courseIntro = $('#course-intro').val()
     let startDate = $('#course-startDate').val()
@@ -210,11 +197,10 @@ $('#btnModifyCourseOkVerify').click(function () {
             data: JSON.stringify(postParam),
             success: function (result) {
                 if (result.code === "0"){
-                    modifyCourseModal.hide()
-                    successToast("课程信息修改成功")
+                    zui.Messager.show('修改课程信息成功！')
                     location.reload();
                 }else{
-                    errorToast("课程信息修改失败")
+                    zui.Messager.show('出错了，请稍后再试！')
                 }
             },
             error: function () {
@@ -223,21 +209,14 @@ $('#btnModifyCourseOkVerify').click(function () {
             }
         });
     }else{
-        errorToast("课程信息不能为空")
     }
 
 })
 
 $('#titleText').on('click', () => {
-    window.location.href = "http://111.230.253.94/"
+    window.open("/index")
 })
 
-$('#deleteProfile').on('click', () => {
-    deleteCourseModal = new bootstrap.Modal(document.getElementById('deleteCourseModal'), {
-        keyboard: true
-    });
-    deleteCourseModal.show()
-})
 
 $('#btnDeleteCourseOkVerify').on('click', () => {
     $.ajax({
@@ -249,17 +228,18 @@ $('#btnDeleteCourseOkVerify').on('click', () => {
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
-        success: function (result) {
-            if (result.code === "-1") {
-                errorToast("删除失败")
-            } else if (result.code === "0") {
-                successToast("课程删除成功")
-                deleteCourseModal.hide()
+        success: function (data) {
+            console.log(data)
+            let dataJSONData = JSON.parse(data)
+            if (dataJSONData.code === "-1") {
+                zui.Messager.show('删除失败')
+            } else if (dataJSONData.code === "0") {
+                zui.Messager.show('课程删除成功！')
                 window.location.href = "/hub"
-            } else if (result.code === "400") {
-                errorToast("安全验证失败，请重试")
+            } else if (dataJSONData.code === "400") {
+                zui.Messager.show('安全验证失败，请重试')
             } else {
-                errorToast("未知错误，请重试")
+                zui.Messager.show('未知错误，请重试')
             }
         }
     });

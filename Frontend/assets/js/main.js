@@ -379,14 +379,10 @@ $.ajax({
       $("#userName").text(data.data.uname);
       document.getElementById("userAvatar").addEventListener('click', () => {
         ////显示完整ID
-        window.location.href = "./user_center"
+        window.open("/user_center")
       })
       $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserScheduleList", // 后端 API 地址
-        headers:{
-          "Authorization": "Bearer " + login_token,
-          "Content-Type": "application/json"
-        },
+        url: "http://111.230.253.94:8081/user/getUserScheduleList?token="+login_token, // 后端 API 地址
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
         success: function (data) {
@@ -398,7 +394,7 @@ $.ajax({
             $("#timetableText").text("立即查看课程表");
             $("#timetableTips").text("使用课程表功能更直观地查看您在内网系统的课程");
             $("#timetableBtnText").text("查看");
-            $("#timetableBtn").attr('href','./timetable/index.html')
+            $("#timetableBtn").attr('href','./timetable/index')
             document.getElementById("reimportBtn").style.display = "inline";
           }else if(data.code == 429){
             errorToast("刷新过于频繁，请稍后再试")
@@ -430,6 +426,54 @@ $.ajax({
 
   }
 });
+
 $('#reimportBtn').click(function () {
-  window.location.href = "http://111.230.253.94/timetable_import"
+  window.open("/timetable_import")
 })
+
+
+$.ajax({
+  url: "http://111.230.253.94:8081/user/articles", // 后端 API 地址
+  headers:{
+    "Content-Type": "application/json"
+  },
+  method: "GET", // 请求类型
+  dataType: "json", // 返回的数据类型
+  success: function (data) {
+    // 将后端返回的数据填充到页面中
+    console.log(data);
+    if (data.code === "0") {
+      document.getElementById("homeArticleCMS").innerHTML = ""
+      for (let i=0;i<data.data.results.length;i++){
+        console.log("i:"+i+"\ndata.data.results[i]："+JSON.stringify(data.data.results[i]))
+        document.getElementById("homeArticleCMS").innerHTML += `
+       
+           <div class="col-lg-4">
+            <div class="box" data-aos="fade-up" data-aos-delay="200">
+              <img src="${data.data.results[i].cover.image}" class="img-fluid" alt="">
+              <h3>${data.data.results[i].title}
+              </h3>
+              <p>${data.data.results[i].content}</p>
+            </div>
+          </div>
+          
+        `
+
+      }
+
+    }else if(data.code == 429){
+
+
+    }else{
+
+
+    }
+
+  },
+  error: function (e) {
+    if (e.status == 403) {
+      errorToast("刷新过于频繁，请稍后再试")
+    }
+
+  }
+});

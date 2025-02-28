@@ -12,7 +12,9 @@ $(document).ready(function () {
         $("#success-toast-body").text(message)
         $("#success-toast").toast('show');
     }
-
+    $('#titleText').on('click', () => {
+        window.open("/index")
+    })
     const login_token = localStorage.getItem("intelli_campus_login_token");
     if (!login_token) {
         errorToast("您还未登录，请先登录")

@@ -1,73 +1,76 @@
-function errorToast(message) {
-    $("#error-toast-body").text(message)
-    $("#error-toast").toast('show');
+$(function () {
+    function errorToast(message) {
+        $("#error-toast-body").text(message)
+        $("#error-toast").toast('show');
 
-}
-
-function successToast(message) {
-    $("#success-toast-body").text(message)
-    $("#success-toast").toast('show');
-}
-
-let currentRole = "STUDENT",
-    currentUno = "",
-    teacherId = null,
-    teacherName = null,
-    login_token = localStorage.getItem("intelli_campus_login_token");
-// 从后端获取数据并更新页面
-$.ajax({
-    url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
-    method: "GET", // 请求类型
-    dataType: "json", // 返回的数据类型
-    headers:{
-        "Authorization": "Bearer " + login_token,
-        "Content-Type": "application/json"
-    },
-    success: function (data) {
-        if (data.code === "0") {
-            // 将后端返回的数据填充到页面中
-            if (data.data.role === "STUDENT"){
-                currentRole = "STUDENT";
-                initStudentPage();
-            }else{
-                teacherId = data.data.uname
-                teacherName = data.data.userName
-                initTeacherPage();
-            }
-        }else{
-            errorToast("登录已过期，请重新登录")
-            setRedirect("http://111.230.253.94/login")
-        }
-
-    },
-    error: function () {
-        console.log("加载学生信息失败");
-        alert("加载学生信息失败，请稍后重试！");
     }
-});
-function initStudentPage(){
+
+    function successToast(message) {
+        $("#success-toast-body").text(message)
+        $("#success-toast").toast('show');
+    }
+
+    let currentRole = "STUDENT",
+        currentUno = "",
+        teacherId = null,
+        teacherName = null
+       const login_token = localStorage.getItem("intelli_campus_login_token");
+// 从后端获取数据并更新页面
     $.ajax({
-        url: "http://111.230.253.94:8081/course/getClassroomList", // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
-        headers:{
+        headers: {
             "Authorization": "Bearer " + login_token,
             "Content-Type": "application/json"
         },
         success: function (data) {
-            if (data.code === "0" && data.data) {
+            if (data.code === "0") {
                 // 将后端返回的数据填充到页面中
-                document.getElementById("classroomList").innerHTML = ""
-                console.log(data)
-                if (data.data.length !== 0){
-                    for (let i = 0; i < data.data.length; i++) {
-                        let coverImgBase64 = null;
-                        if (!data.data[i].coverImageBase64) {
-                            coverImgBase64 = "./assets/img/values-1.png"
-                        } else {
-                            coverImgBase64 = 'data:image/jpeg;base64,' + data.data[i].coverImageBase64
-                        }
-                        document.getElementById("classroomList").innerHTML += `
+                if (data.data.role === "STUDENT") {
+                    currentRole = "STUDENT";
+                    initStudentPage();
+                } else {
+                    teacherId = data.data.uid
+                    teacherName = data.data.userName
+                    initTeacherPage();
+                }
+            } else {
+                errorToast("登录已过期，请重新登录")
+                setRedirect("http://111.230.253.94/login")
+            }
+
+        },
+        error: function (e) {
+            console.log("加载学生信息失败"+e);
+            alert("加载学生信息失败，请稍后重试！");
+        }
+    });
+
+    function initStudentPage() {
+        $.ajax({
+            url: "http://111.230.253.94:8081/classroom/getOngoingClassrooms", // 后端 API 地址
+            method: "GET", // 请求类型
+            dataType: "json", // 返回的数据类型
+            headers: {
+                "Authorization": "Bearer " + login_token,
+                "Content-Type": "application/json"
+            },
+
+            success: function (data) {
+                if (data.code === "0" && data.data) {
+                    // 将后端返回的数据填充到页面中
+                    document.getElementById("classroomList").innerHTML = ""
+                    console.log(data)
+                    if (data.data.length !== 0) {
+                        for (let i = 0; i < data.data.length; i++) {
+                            let coverImgBase64 = null;
+                            if (!data.data[i].coverImageBase64) {
+                                coverImgBase64 = "./assets/img/values-1.png"
+                            } else {
+                                coverImgBase64 = 'data:image/jpeg;base64,' + data.data[i].coverImageBase64
+                            }
+                            document.getElementById("classroomList").innerHTML += `
         <ul class="course-list">
         <li class="course-item">
             <div class="course-content">
@@ -92,30 +95,76 @@ function initStudentPage(){
                     `;
 
 
+                        }
+                    } else {
+                        document.getElementById("classroomList").innerHTML = "<h2 class=\"section-title\">还没有教师上课~</h2>"
                     }
-                }else{
-                    document.getElementById("classroomList").innerHTML = "<h2 class=\"section-title\">还没有教师上课~</h2>"
+
+                } else {
+                    // errorToast("登录已过期，请重新登录")
+                    // setRedirect("http://111.230.253.94/login")
                 }
 
-            }else{
-                // errorToast("登录已过期，请重新登录")
-                // setRedirect("http://111.230.253.94/login")
+            },
+            error: function () {
+                console.log("加载学生信息失败");
+                alert("加载学生信息失败，请稍后重试！");
             }
+        });
 
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
-        }
-    });
+    }
 
-}
+    function initTeacherPage() {
+        let selectedCourseId = null
+        $.ajax({
+            url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
+            method: "GET", // 请求类型
+            dataType: "json", // 返回的数据类型
+            headers:{
+                "Authorization": "Bearer " + login_token,
+                "Content-Type": "application/json"
+            },
+            success: function (data) {
+                if (data.code === "0" && data.data) {
+                    // 将后端返回的数据填充到页面中
+                    document.getElementById("selectClassroomCourse").innerHTML = ""
+                    console.log(data)
+                    if (data.data.length !== 0){
+                        for (let i = 0; i < data.data.length; i++) {
+                            let coverImgBase64 = null;
+                            document.getElementById("selectClassroomCourse").innerHTML += `
+<li class="menu-item" id="select-${i}">
+    <a>${data.data[i].courseName}</a>
+</li>
+                    `;
+document.getElementById("select-"+i).addEventListener('click', function () {
+    selectedCourseId = data.data[i].courseId
+    document.getElementById("selectCourses").innerHTML = data.data[i].courseName+"&nbsp;<span class=\"caret\"></span>"
+})
 
-function initTeacherPage(){
+                        }
+                    }else{
+                        document.getElementById("selectClassroomCourse").innerHTML = `
+                        <li class="menu-item">
+                            <a>暂无课程，请先创建课程</a>
+                        </li>
+                        `
+                    }
 
-    document.getElementById("classroomList").innerHTML = `
+                }else{
+                    // errorToast("登录已过期，请重新登录")
+                    // setRedirect("http://111.230.253.94/login")
+                }
+
+            },
+            error: function () {
+                console.log("加载学生信息失败");
+                alert("加载学生信息失败，请稍后重试！");
+            }
+        });
+        document.getElementById("classroomList").innerHTML = `
       <ul class="course-list" style="display: flex;justify-content: center;align-content: center;flex-direction: column;flex-wrap: wrap;">
-         <li class="selection-item-1" id="createClassroom" data-toggle="modal" data-target="#createClassroomModal"><!--修改了这里-->
+         <li class="selection-item-1" id="createClassroom" data-toggle="modal" data-target="#createClassroomInfoModal"><!--修改了这里-->
             <div class="course-content">
                 <div class="img-wrap">
                     <img src="../assets/img/teacher.svg" width="64">
@@ -140,37 +189,40 @@ function initTeacherPage(){
       </ul>
     
     `
-    $('#JoinClassroom').click(function () {
-        initStudentPage();
-    })
-let createClassroomModal = null;
-    // $('#createClassroom').click(function () {
-    //     createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'), {
-    //         keyboard: true
-    //     });
-    //     createClassroomModal.show()
-    // })
-
-    $('#btnCreateClassroomOkVerify').click(function () {
+        $('#JoinClassroom').on('click', () => {
+            initStudentPage();
+        });
+        let createClassroomModal = null;
+        // $('#createClassroom').click(function () {
+        //     createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'), {
+        //         keyboard: true
+        //     });
+        //     createClassroomModal.show()
+        // })
+        $('#btnCreateClassroomOkVerify').on('click', () => {
+            let classroom_name = $('#classroom-name').val()
             let postParam = {
-                "teacherId": teacherId
+                "teacherId": teacherId,
+                "classroomName": classroom_name,
+                "courseId":selectedCourseId
             }
             $.ajax({
                 url: "http://111.230.253.94:8081/classroom/beginClassroom",
                 method: "POST",
                 dataType: "json", // 返回的数据类型
-                headers:{
+                headers: {
                     "Authorization": "Bearer " + login_token,
                     "Content-Type": "application/json"
                 },
+                processData: false,
                 Cache: false,
                 data: JSON.stringify(postParam),
                 success: function (result) {
-                    if (result.code === "0"){
-                        createClassroomModal.hide()
-                        window.location.href = "/classroom"
-                    }else{
-                        errorToast("课程信息修改失败")
+                    if (result.code === "0") {
+                        // createClassroomModal.hide()
+                        window.location.href = "/class/classroom"
+                    } else {
+                        zui.Messager.show('课堂创建失败')
                     }
                 },
                 error: function () {
@@ -178,9 +230,11 @@ let createClassroomModal = null;
                     alert("修改课程信息失败，请稍后重试！");
                 }
             });
-    })
-}
+        })
+    }
+        });
 
 
-
-
+$('#titleText').on('click', () => {
+    window.open("/index")
+})

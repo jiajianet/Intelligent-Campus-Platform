@@ -7,7 +7,7 @@
     <!-- Favicons -->
     <link href="assets/img/logo_dark_32.png" rel="icon">
     <link href="assets/img/logo_dark_32.png" rel="apple-touch-icon">
-    <title>学生首页_智慧校园服务平台</title>
+    <title>选课退课_智慧校园服务平台</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -191,6 +191,14 @@
         .tab-content.active {
             display: block;
         }
+        .modal-footer {
+            align-items: center;
+            display: flex;
+            flex: none;
+            gap: .75rem;
+            padding: 1.25rem;
+            justify-content: flex-end!important;
+        }
     </style>
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
@@ -220,93 +228,46 @@
     <div class="nav-header">
         <a href="#" class="nav-logo">
             <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
-             <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
+             <span id="titleText">智慧校园服务平台</span>
         </a>
         <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
     </div>
-
-    <ul class="selection-list">
-        <li class="selection-item-1">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/teacher.svg" width="64">
+    <div class="modal" id="joinCourseModal">
+        <div class="modal-dialog shadow">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">加入课程</div>
                 </div>
-                <div class="information-wrap">
-                    <div class="course-title">在线课堂</div>
-                    <div class="course-instructor">在线上课、考勤、点评等</div>
+                <div class="modal-actions">
+                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
                 </div>
-            </div>
-        </li>
-        <li class="selection-item-2">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/assignment.svg" width="64">
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <span>确定要加入课程吗？<br />加入课程您需要完成课程主讲教师布置的学习任务，不按时完成可能会影响您的成绩！</span>
+                        </div>
+                    </form>
                 </div>
-                <div class="information-wrap">
-                    <div class="course-title">我的作业</div>
-                    <div class="course-instructor">查看、完成作业等</div>
-               </div>
-            </div>
-        </li>
-        <li class="selection-item-3">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/exam.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">我的考试</div>
-                    <div class="course-instructor">在线参加和完成考试</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn primary"  id="btnJoinCourseOkVerify">我确认加入该课程</button>
                 </div>
             </div>
-        </li>
-        <li class="selection-item-4">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/grade.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">我的成绩</div>
-                    <div class="course-instructor">查看测验及考试成绩</div>
-                </div>
-            </div>
-        </li>
-    </ul>
-    <div class="course-warn">
-        <div class="course-warn-title">课程提醒</div>
-        <ul class="course-warn-list">
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业1</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业2</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-            <li class="selection-item">
-                <div class="course-content">
-                    <div class="information-wrap">
-                        <div class="course-title">测试作业3</div>
-                        <div class="course-instructor">测试作业123</div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+        </div>
     </div>
-    <h2 class="section-title">我的课程</h2>
-    <ul class="course-list" id="courseHTMLArea">
-        <h2 class="section-title">还没有课程哦，快去选课吧~</h2>
-    </ul>
-<div class="section-title"><button class="btn primary" style="background-color: #4154f1;margin-left: auto" id="selectDropCourseBtn">选课退课</button></div>
+    <h2 class="section-title"><br/>选课</h2>
+    <div class="course-warn">
+        <div class="course-warn-title">
+            <span>全部课程</span>
+        </div>
+        <div id="courseArea">
+            <ul class="course-list" id="courseHTMLArea">
+                <h2 class="section-title">还没有任何老师开设课程~</h2>
+            </ul>
+        </div>
+    </div>
 </body>
 <script src="./assets/js/redirect_jump.js"></script>
 <script src="./assets/js/interval_verify.js"></script>
-<script type="text/javascript" src="./assets/js/student_hub.js"></script>
+<script type="text/javascript" src="./assets/js/select_course.js"></script>
 </html>

@@ -120,4 +120,6 @@ let createClassroomModal = null;
 
 
 
-
+$('#titleText').on('click', () => {
+    window.open("/index")
+})

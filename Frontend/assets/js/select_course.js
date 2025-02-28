@@ -45,6 +45,7 @@ $(document).ready(function () {
                     $("#userRole").text(data.role || "学生");
                     $("#userId").text(data.data.uno || "未知学号");
                     $("#userSchool").text(data.data.uschool || "未知学校");
+                    $("#titleText").text("智慧校园服务平台 | "+data.data.uschool ||"智慧校园服务平台");
                 }else{
                     errorToast("登录已过期，请重新登录")
                     setRedirect("http://111.230.253.94/login")
@@ -57,8 +58,9 @@ $(document).ready(function () {
             }
         });
 });
+let selectedCourseId = null
 $.ajax({
-    url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
+    url: "http://111.230.253.94:8081/course/getCourseListAll", // 后端 API 地址
     method: "GET", // 请求类型
     dataType: "json", // 返回的数据类型
     headers:{
@@ -91,16 +93,19 @@ $.ajax({
         <div class="information-wrap">
             <div class="course-title">${data.data[i].courseName}</div>
             <div class="course-instructor">${data.data[i].teacherName}</div>
-            <a href="./course?courseId=${data.data[i].courseId}" style="margin-left:auto;"><button class="btn primary" style="margin-left: auto">查看课程</button></a>
+            <a style="margin-left:auto;"><button class="btn primary" style="margin-left: auto" id="select-${i}">加入课程</button></a>
         </div>
     </div>
 </li>
                     `;
 
-
+                    document.getElementById("select-"+i).addEventListener('click', function () {
+                        selectedCourseId = data.data[i].courseId
+                        document.getElementById("joinCourseModal").style.display = "flex";
+                    })
                 }
             }else{
-                document.getElementById("courseHTMLArea").innerHTML = "<h2 class=\"section-title\">您还未创建任何课程~</h2>"
+                document.getElementById("courseHTMLArea").innerHTML = "<h2 class=\"section-title\">暂时没有找到您未加入的课程~</h2>"
             }
 
         }else{
@@ -120,3 +125,33 @@ $('#selectDropCourseBtn').on('click', () => {
 $('#titleText').on('click', () => {
     window.open("/index")
 })
+$('#btnJoinCourseOkVerify').on('click', () => {
+    let postParam = {
+        courseId: selectedCourseId,
+    }
+    $.ajax({
+        url: "http://111.230.253.94:8081/course/joinCourse",
+        method: "POST",
+        dataType: "json", // 返回的数据类型
+        headers: {
+            "Authorization": "Bearer " + login_token,
+            "Content-Type": "application/json"
+        },
+        processData: false,
+        Cache: false,
+        data: JSON.stringify(postParam),
+        success: function (result) {
+            if (result.code === "0") {
+                // createClassroomModal.hide()
+                zui.Messager.show('加入课程成功')
+                window.location.reload();
+            } else {
+                zui.Messager.show('加入课程失败')
+            }
+        },
+        error: function () {
+            console.log("修改课程信息失败");
+            alert("修改课程信息失败，请稍后重试！");
+        }
+    });
+});

@@ -102,6 +102,7 @@
         }
 
         .selection-list {
+            cursor: pointer;
             list-style: none;
             padding: 0;
             display: flex;
@@ -201,10 +202,29 @@
             max-width: 75%!important;
             max-height: 75%!important;
         }
+        .modal-footer {
+            align-items: center;
+            display: flex;
+            flex: none;
+            gap: .75rem;
+            padding: 1.25rem;
+            justify-content: flex-end!important;
+        }
+        .selection-item-1:hover{
+            color: white;
+        }
+        .selection-item-2:hover{
+            color: white;
+        }
+        .selection-item-3:hover{
+            color: white;
+        }
+        .selection-item-4:hover{
+            color: white;
+        }
+
     </style>
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
@@ -214,7 +234,6 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
     <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
     <script src="assets/vendor/aos/aos.js"></script>
     <script src="assets/vendor/php-email-form/validate.js"></script>
     <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
@@ -224,43 +243,39 @@
     <script src="assets/vendor/crypto-js/crypto-js.js"></script>
     <script src="assets/vendor/captcha/js/ase.js"></script>
     <script src="assets/vendor/captcha/js/verify.js" ></script>
-    <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="assets/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
-
-    <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./assets/vendor/zui/zui.css">
+    <script src="assets/vendor/zui/zui.js" ></script>
 </head>
 
 <body>
-    <!-- Add navigation header -->
-    <div class="nav-header">
-        <a href="#" class="nav-logo">
-            <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
-             <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
-        </a>
-        <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
-    </div>
-    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
-        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
-             aria-atomic="true" id="error-toast">
-            <div class="d-flex">
-                <div class="toast-body" id="error-toast-body">
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
-             aria-atomic="true" id="success-toast">
-            <div class="d-flex">
-                <div class="toast-body" id="success-toast-body">
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
+<!-- Add navigation header -->
+<div class="nav-header">
+    <a href="#" class="nav-logo">
+        <img src="./assets/img/logo_dark.png" alt="智慧校园服务平台">
+        <span id="titleText">智慧校园服务平台 | 广州软件学院</span>
+    </a>
+    <img src="./assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
+</div>
+<!--    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">-->
+<!--        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"-->
+<!--             aria-atomic="true" id="error-toast">-->
+<!--            <div class="d-flex">-->
+<!--                <div class="toast-body" id="error-toast-body">-->
+<!--                </div>-->
+<!--                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"-->
+<!--                        aria-label="Close"></button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"-->
+<!--             aria-atomic="true" id="success-toast">-->
+<!--            <div class="d-flex">-->
+<!--                <div class="toast-body" id="success-toast-body">-->
+<!--                </div>-->
+<!--                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"-->
+<!--                        aria-label="Close"></button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
 <!--    <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
 <!--        <div class="modal-dialog">-->
@@ -290,100 +305,94 @@
 <!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
-
-    <div class="modal" id="createCourseModal">
-        <div class="modal-dialog shadow">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="modal-title">创建课程</div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="course-name" class="col-form-label">请在下方输入课程信息<br/><br/>课程名：</label>
-                            <input type="text" class="form-control" id="course-name">
-                            <label for="course-intro" class="col-form-label"><br/>课程简介：</label>
-                            <textarea id="course-intro" class="form-control" cols="5" rows="10"></textarea>
-                            <label for="course-startDate" class="col-form-label"><br/>课程开始日期：</label>
-                            <input type="text" id="course-startDate" class="form-control">
-                            <label for="course-endDate" class="col-form-label"><br/>课程结束日期：</label>
-                            <input type="text" id="course-endDate" class="form-control">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn primary" id="btnCreateCourseOkVerify">创建课程</button>
-                </div>
+<div class="modal" id="createCourseModal">
+    <div class="modal-dialog shadow">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">创建课程</div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
+            </div>
+            <div class="modal-body">
+                <label for="course-name" class="col-form-label">请在下方输入课程信息<br/><br/>课程名：</label>
+                <input type="text" class="form-control" id="course-name">
+                <label for="course-intro" class="col-form-label"><br/>课程简介：</label>
+                <textarea id="course-intro" class="form-control" cols="5" rows="10"></textarea>
+                <label for="course-startDate" class="col-form-label"><br/>课程开始日期：</label>
+                <div id="course-startDate"></div>
+                <label for="course-endDate" class="col-form-label"><br/>课程结束日期：</label>
+                <div id="course-endDate"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">取消</button>
+                <button type="button" class="btn primary" id="btnCreateCourseOkVerify">创建课程</button>
             </div>
         </div>
     </div>
+</div>
 
 
 
 
-    <ul class="selection-list">
-        <li class="selection-item-1" id="online_classroom">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/teacher.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">课堂管理</div>
-                    <div class="course-instructor">在线上课、考勤、点评等</div>
-                </div>
+<ul class="selection-list">
+    <li class="selection-item-1" id="online_classroom">
+        <div class="course-content">
+            <div class="img-wrap">
+                <img src="./assets/img/teacher.svg" width="64">
             </div>
-        </li>
-        <li class="selection-item-2">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/assignment.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">作业管理</div>
-                    <div class="course-instructor">发布、管理、批改学生作业等</div>
-               </div>
+            <div class="information-wrap">
+                <div class="course-title no-hover">课堂管理</div>
+                <div class="course-instructor no-hover">在线上课、考勤、点评等</div>
             </div>
-        </li>
-        <li class="selection-item-3">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/exam.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">考试管理</div>
-                    <div class="course-instructor">发布、管理、批改学生考试等</div>
-                </div>
-            </div>
-        </li>
-        <li class="selection-item-4">
-            <div class="course-content">
-                <div class="img-wrap">
-                    <img src="./assets/img/grade.svg" width="64">
-                </div>
-                <div class="information-wrap">
-                    <div class="course-title">学生成绩</div>
-                    <div class="course-instructor">查看、发布及点评学生成绩</div>
-                </div>
-            </div>
-        </li>
-    </ul>
-    <div class="course-warn">
-        <div class="course-warn-title">
-            <span>课程管理</span>
-            <button class="btn btn-primary" id="createCourse" style="background: linear-gradient(41deg, #0067FF 25%,#2E79FF 75%);border:none;margin-left: auto">创建课程</button>
         </div>
-        <div id="courseArea">
-            <ul class="course-list" id="courseHTMLArea">
-                <h2 class="section-title">您还未创建任何课程~</h2>
-            </ul>
+    </li>
+    <li class="selection-item-2">
+        <div class="course-content">
+            <div class="img-wrap">
+                <img src="./assets/img/assignment.svg" width="64">
+            </div>
+            <div class="information-wrap">
+                <div class="course-title no-hover">作业管理</div>
+                <div class="course-instructor no-hover">发布、管理、批改学生作业等</div>
+            </div>
         </div>
-
+    </li>
+    <li class="selection-item-3">
+        <div class="course-content">
+            <div class="img-wrap">
+                <img src="./assets/img/exam.svg" width="64">
+            </div>
+            <div class="information-wrap">
+                <div class="course-title no-hover">考试管理</div>
+                <div class="course-instructor no-hover">发布、管理、批改学生考试等</div>
+            </div>
+        </div>
+    </li>
+    <li class="selection-item-4">
+        <div class="course-content">
+            <div class="img-wrap">
+                <img src="./assets/img/grade.svg" width="64">
+            </div>
+            <div class="information-wrap">
+                <div class="course-title no-hover">学生成绩</div>
+                <div class="course-instructor no-hover">查看、发布及点评学生成绩</div>
+            </div>
+        </div>
+    </li>
+</ul>
+<div class="course-warn">
+    <div class="course-warn-title">
+        <span>课程管理</span>
+        <button class="btn primary" id="createCourse" style="margin-left: auto;" data-toggle="modal" data-target="#createCourseModal">创建课程</button>
     </div>
+    <div id="courseArea">
+        <ul class="course-list" id="courseHTMLArea">
+            <h2 class="section-title">您还未创建任何课程~</h2>
+        </ul>
+    </div>
+
+</div>
 
 
 </body>

@@ -142,7 +142,7 @@
             display: inline-block;
             font-size: 14px;
         }
-        .avatar {
+        .avatar1 {
             width: 200px;
             height: 128px;
             border-radius: 10px;
@@ -215,11 +215,16 @@
                 flex-direction: column;
                 justify-content: flex-start;
         }
-
+        .modal-footer {
+            align-items: center;
+            display: flex;
+            flex: none;
+            gap: .75rem;
+            padding: 1.25rem;
+            justify-content: flex-end!important;
+        }
     </style>
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
@@ -229,7 +234,6 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <script defer src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
     <script defer src="https://s4.zstatic.net/ajax/libs/font-awesome/6.6.0/js/v4-shims.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
     <script src="assets/vendor/aos/aos.js"></script>
     <script src="assets/vendor/php-email-form/validate.js"></script>
     <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
@@ -239,12 +243,8 @@
     <script src="assets/vendor/crypto-js/crypto-js.js"></script>
     <script src="assets/vendor/captcha/js/ase.js"></script>
     <script src="assets/vendor/captcha/js/verify.js" ></script>
-    <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="assets/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
-
-    <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./assets/vendor/zui/zui.css">
+    <script src="assets/vendor/zui/zui.js" ></script>
 </head>
 
 <body>
@@ -256,29 +256,7 @@
         </a>
         <img src="/assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
     </div>
-    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
-        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
-             aria-atomic="true" id="error-toast">
-            <div class="d-flex">
-                <div class="toast-body" id="error-toast-body">
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
 
-    <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
-        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
-             aria-atomic="true" id="success-toast">
-            <div class="d-flex">
-                <div class="toast-body" id="success-toast-body">
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
 
 <!--    <div class="modal fade" id="modifyCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
 <!--        <div class="modal-dialog">-->
@@ -334,7 +312,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn primary"  id="btnModifyCourseOkVerify">提交修改</button>
+                    <button type="button" class="btn primary" id="btnModifyCourseOkVerify">提交修改</button>
                 </div>
             </div>
         </div>
@@ -367,7 +345,7 @@
         <div class="modal-dialog shadow">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="modal-title">修改课程信息</div>
+                    <div class="modal-title">删除课程</div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span></button>
@@ -391,7 +369,7 @@
     <div class="container">
         <div class="tabs">
             <span class="tab-link active" data-tab="basic-info">课程信息</span>
-            <span class="tab-link" data-tab="account-management">课程管理</span>
+            <span class="tab-link" data-tab="account-management" id="courseManagement">课程管理</span>
         </div>
 
         <main id="basic-info" class="tab-content active">
@@ -412,6 +390,12 @@
                         </div>
                     </div>
                     <div class="info-group">
+                        <div class="info-label" >主讲老师</div>
+                        <div class="info-value" id="courseTeacher">
+
+                        </div>
+                    </div>
+                    <div class="info-group">
                         <div class="info-label" >开始时间</div>
                         <div class="info-value" id="courseStartTime">
 
@@ -427,8 +411,8 @@
                         <!-- 添加头像 -->
                         <div class="info-label" >课程封面</div>
                         <div class="course-cover">
-                            <img src="/assets/img/avatar.png" alt="头像" class="avatar" id="profileImage">
-                            <button class="btn btn-primary" style="margin-left: 3%;background-color: #4154f1" onclick="editProfile(event)">修改封面</button>
+                            <img src="/assets/img/avatar.png" alt="头像" class="avatar1" id="profileImage" width="256px">
+                            <button class="btn primary" onclick="editProfile(event)">修改封面</button>
                             <input type="file" id="fileInput" style="display: none;" accept="image/*"
                                    onchange="previewImage(event)">
                         </div>
@@ -463,7 +447,7 @@
                     <div class="section-title" >修改课程信息</div>
                     <div class="section-description">修改所授课程的课程信息</div>
                 </div>
-                <button class="btn btn-primary" style="background-color: #4154f1" id="changeCourseInfo">修改</button>
+                <button class="btn primary" id="changeCourseInfo" data-toggle="modal" data-target="#modifyCourseModal">修改</button>
             </div>
 
             <div class="account-section">
@@ -471,7 +455,7 @@
                     <div class="section-title">删除课程</div>
                     <div class="section-description">注意，删除课程将丢失所有课程资料，包括但不限于参与学生、课程所属作业、考试、成绩信息、课堂记录等</div>
                 </div>
-                <button class="btn btn-danger" id="deleteProfile">删除课程</button>
+                <button class="btn danger" id="deleteProfile" data-toggle="modal" data-target="#deleteCourseModal">删除课程</button>
             </div>
         </main>
         <div id="mpanel1" style="margin-top:50px;"></div>

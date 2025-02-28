@@ -1,86 +1,64 @@
-function errorToast(message) {
-    $("#error-toast-body").text(message)
-    $("#error-toast").toast('show');
-
-}
-
-function successToast(message) {
-    $("#success-toast-body").text(message)
-    $("#success-toast").toast('show');
-}
-
 let currentUserEmail = "",
     currentUno = "",
     teacherId = null,
-    teacherName = null,
-    login_token = null
-$(document).ready(function () {
-    function errorToast(message) {
-        $("#error-toast-body").text(message)
-        $("#error-toast").toast('show');
+    teacherName = null
 
-    }
-
-    function successToast(message) {
-        $("#success-toast-body").text(message)
-        $("#success-toast").toast('show');
-    }
-    login_token = localStorage.getItem("intelli_campus_login_token");
-    console.log(login_token)
-        // 从后端获取数据并更新页面
-        $.ajax({
-            url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
-            method: "GET", // 请求类型
-            dataType: "json", // 返回的数据类型
-            headers:{
-                "Authorization": "Bearer " + login_token,
-                "Content-Type": "application/json"
-            },
-            success: function (data) {
-                if (data.code == 0) {
-                    // 将后端返回的数据填充到页面中
-                    if (data.data.role === "STUDENT"){
-                        errorToast("正在跳转...")
-                        setTimeout(function () {
-                            window.location.href = "./student_hub"
-                        },1000)
-                    }else{
-                        teacherId = data.data.uname
-                        teacherName = data.data.userName
-                    }
-                }else{
-                    errorToast("登录已过期，请重新登录")
-                    setRedirect("http://111.230.253.94/login")
-                }
-
-            },
-            error: function () {
-                console.log("加载学生信息失败");
-                alert("加载学生信息失败，请稍后重试！");
+const login_token = localStorage.getItem("intelli_campus_login_token");
+console.log(login_token)
+// 从后端获取数据并更新页面
+$.ajax({
+    url: "http://111.230.253.94:8081/user/getUserInfo", // 后端 API 地址
+    method: "GET", // 请求类型
+    dataType: "json", // 返回的数据类型
+    headers:{
+        "Authorization": "Bearer " + login_token,
+        "Content-Type": "application/json"
+    },
+    success: function (data) {
+        if (data.code === "0") {
+            // 将后端返回的数据填充到页面中
+            if (data.data.role === "STUDENT"){
+                errorToast("正在跳转...")
+                setTimeout(function () {
+                    window.location.href = "./student_hub"
+                },1000)
+            }else{
+                teacherId = data.data.uid
+                teacherName = data.data.userName
             }
-        });
-    $.ajax({
-        url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
-        method: "GET", // 请求类型
-        dataType: "json", // 返回的数据类型
-        headers:{
-            "Authorization": "Bearer " + login_token,
-            "Content-Type": "application/json"
-        },
-        success: function (data) {
-            if (data.code === "0" && data.data) {
-                // 将后端返回的数据填充到页面中
-                document.getElementById("courseHTMLArea").innerHTML = ""
-                console.log(data)
-                if (data.data.length !== 0){
-                    for (let i = 0; i < data.data.length; i++) {
-                        let coverImgBase64 = null;
-                        if (!data.data[i].coverImageBase64) {
-                            coverImgBase64 = "./assets/img/values-1.png"
-                        } else {
-                            coverImgBase64 = 'data:image/jpeg;base64,' + data.data[i].coverImageBase64
-                        }
-                        document.getElementById("courseHTMLArea").innerHTML += `
+        }else{
+            errorToast("登录已过期，请重新登录")
+            setRedirect("http://111.230.253.94/login")
+        }
+
+    },
+    error: function () {
+        console.log("加载学生信息失败");
+        alert("加载学生信息失败，请稍后重试！");
+    }
+});
+$.ajax({
+    url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
+    method: "GET", // 请求类型
+    dataType: "json", // 返回的数据类型
+    headers:{
+        "Authorization": "Bearer " + login_token,
+        "Content-Type": "application/json"
+    },
+    success: function (data) {
+        if (data.code === "0" && data.data) {
+            // 将后端返回的数据填充到页面中
+            document.getElementById("courseHTMLArea").innerHTML = ""
+            console.log(data)
+            if (data.data.length !== 0){
+                for (let i = 0; i < data.data.length; i++) {
+                    let coverImgBase64 = null;
+                    if (!data.data[i].coverImageBase64) {
+                        coverImgBase64 = "./assets/img/values-1.png"
+                    } else {
+                        coverImgBase64 = 'data:image/jpeg;base64,' + data.data[i].coverImageBase64
+                    }
+                    document.getElementById("courseHTMLArea").innerHTML += `
 <li class="course-item">
     <div class="progress" style="height: 3px;">
         <div class="progress-bar" role="progressbar" style="width: 6%;background-color: #4154f1" aria-valuenow="6"
@@ -92,79 +70,57 @@ $(document).ready(function () {
         </div>
         <div class="information-wrap">
             <div class="course-title">${data.data[i].courseName}</div>
-            <div class="course-instructor">${data.data[i].teacherId}</div>
-            <a href="./course?courseId=${data.data[i].courseId}" style="margin-left:auto;"><button class="btn btn-primary" style="background-color: #4154f1;margin-left: auto">查看课程</button></a>
+            <div class="course-instructor">${data.data[i].teacherName}</div>
+            <a href="./course?courseId=${data.data[i].courseId}" style="margin-left:auto;"><button class="btn primary" style="margin-left: auto">查看课程</button></a>
         </div>
     </div>
 </li>
                     `;
 
 
-                    }
-                }else{
-                    document.getElementById("courseHTMLArea").innerHTML = "<h2 class=\"section-title\">您还未创建任何课程~</h2>"
                 }
-
             }else{
-                // errorToast("登录已过期，请重新登录")
-                // setRedirect("http://111.230.253.94/login")
+                document.getElementById("courseHTMLArea").innerHTML = "<h2 class=\"section-title\">您还未创建任何课程~</h2>"
             }
 
-        },
-        error: function () {
-            console.log("加载学生信息失败");
-            alert("加载学生信息失败，请稍后重试！");
+        }else{
+            // errorToast("登录已过期，请重新登录")
+            // setRedirect("http://111.230.253.94/login")
         }
-    });
+
+    },
+    error: function () {
+        console.log("加载学生信息失败");
+        alert("加载学生信息失败，请稍后重试！");
+    }
 });
-let createCourseModal;
-$('#createCourse').click(function () {
-    // createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
-    //     keyboard: true
-    // });
-    // createCourseModal.show()
-    $('#createCourseModal').on('click', () => {
-        zui.Messager.show('创建课程成功！')
-    });
-    // createCourseModal = new bootstrap.Modal(document.getElementById('createCourseModal'), {
-    //     keyboard: true
-    // });
-    // createCourseModal.show()
-    $('#createCourseModal').on('click', () => {
-        zui.Messager.show('创建课程成功！')
-    });
-})
-$('#course-startDate').datepicker({
-    language: 'zh-CN', // 中文语言包
-    autoclose: 1, // 选中日期后自动关闭
-    format: 'yyyy-mm-dd', // 日期格式
-    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
-    todayBtn: 1, // 显示今天按钮
-    todayHighlight: 1, // 显示今天高亮
+const SDTDatetimePicker = new zui.DatetimePicker('#course-startDate',{
+    format: 'yyyy-MM-ddTHH:mm:ss+08:00',
 });
-$('#course-endDate').datepicker({
-    language: 'zh-CN', // 中文语言包
-    autoclose: 1, // 选中日期后自动关闭
-    format: 'yyyy-mm-dd', // 日期格式
-    minView: "month", // 最小日期显示单元，这里最小显示月份界面，即可以选择到日
-    todayBtn: 1, // 显示今天按钮
-    todayHighlight: 1, // 显示今天高亮
+const EDTDatetimePicker = new zui.DatetimePicker('#course-endDate',{
+    format: 'yyyy-MM-ddTHH:mm:ss+08:00',
 });
+
 $('#online_classroom').on('click', () => {
     window.open("/class/online_classroom")
 })
+$('#titleText').on('click', () => {
+    window.open("/index")
+})
+
+
 
 $('#btnCreateCourseOkVerify').on('click', () => {
+    console.log(SDTDatetimePicker._element.__k.props.children[0].ref.current.state.value);
     let courseName = $('#course-name').val()
     let courseIntro = $('#course-intro').val()
-    let startDate = $('#course-startDate').val()
-    let endDate = $('#course-endDate').val()
+    let startDate = SDTDatetimePicker._element.__k.props.children[0].ref.current.state.value
+    let endDate = EDTDatetimePicker._element.__k.props.children[0].ref.current.state.value
     if (courseName && courseIntro && startDate && endDate) {
         let postParam = {
             "courseName": courseName ,
             "courseDescription": courseIntro,
             "teacherId": teacherId,
-            "teacherName": teacherName,
             "startDate": startDate,
             "endDate": endDate,
             "progress": 0
@@ -176,13 +132,17 @@ $('#btnCreateCourseOkVerify').on('click', () => {
                 "Authorization": "Bearer " + login_token,
                 "Content-Type": "application/json"
             },
-            Cache: false,
-            data: JSON.stringify(postParam),
             dataType: "JSON",
+            contentType: "application/json",
+            Cache: false,
+            processData: false,
+            data: JSON.stringify(postParam),
             success: function (result) {
-                if (result.code === "0"){
-                    createCourseModal.hide()
-                    // location.reload()
+                let dataJSONData = JSON.parse(result)
+                console.log(dataJSONData)
+                if (dataJSONData.code === "0"){
+                    zui.Messager.show('创建课程成功！')
+                    window.location.reload()
                 }else{
                     errorToast("课程创建失败")
                 }
