@@ -114,10 +114,10 @@ $.ajax({
         }
 
     },
-    error: function () {
-        console.log("加载学生信息失败");
-        alert("加载学生信息失败，请稍后重试！");
-    }
+            error: function () {
+                errorToast("登录已过期，请重新登录")
+                setRedirect("http://111.230.253.94/login")
+            }
 });
 $('#selectDropCourseBtn').on('click', () => {
     window.open("/select_course")

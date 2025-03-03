@@ -27,15 +27,14 @@ $.ajax({
                 teacherName = data.data.userName
             }
         }else{
-            errorToast("登录已过期，请重新登录")
-            setRedirect("http://111.230.253.94/login")
+            errorToast("服务器繁忙，请稍后再试")
         }
 
     },
-    error: function () {
-        console.log("加载学生信息失败");
-        alert("加载学生信息失败，请稍后重试！");
-    }
+            error: function () {
+                errorToast("登录已过期，请重新登录")
+                setRedirect("http://111.230.253.94/login")
+            }
 });
 $.ajax({
     url: "http://111.230.253.94:8081/course/getCourseList", // 后端 API 地址
@@ -89,10 +88,10 @@ $.ajax({
         }
 
     },
-    error: function () {
-        console.log("加载学生信息失败");
-        alert("加载学生信息失败，请稍后重试！");
-    }
+            error: function () {
+                errorToast("登录已过期，请重新登录")
+                setRedirect("http://111.230.253.94/login")
+            }
 });
 const SDTDatetimePicker = new zui.DatetimePicker('#course-startDate',{
     format: 'yyyy-MM-ddTHH:mm:ss+08:00',
