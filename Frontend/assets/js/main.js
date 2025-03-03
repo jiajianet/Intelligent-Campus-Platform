@@ -11,7 +11,8 @@
   /**
    * Easy selector helper function
    */
-  const select = (el, all = false) => {
+
+    const select = (el, all = false) => {
     el = el.trim()
     if (all) {
       return [...document.querySelectorAll(el)]
@@ -19,6 +20,7 @@
       return document.querySelector(el)
     }
   }
+
 
   /**
    * Easy event listener function
@@ -382,7 +384,11 @@ $.ajax({
         window.open("/user_center")
       })
       $.ajax({
-        url: "http://111.230.253.94:8081/user/getUserScheduleList?token="+login_token, // 后端 API 地址
+        url: "http://111.230.253.94:8081/user/getUserScheduleList", // 后端 API 地址
+        headers:{
+          "Authorization": "Bearer " + login_token,
+          "Content-Type": "application/json"
+        },
         method: "GET", // 请求类型
         dataType: "json", // 返回的数据类型
         success: function (data) {
@@ -430,7 +436,12 @@ $.ajax({
 $('#reimportBtn').click(function () {
   window.open("/timetable_import")
 })
-
+$('#navForum').click(function () {
+  successToast("敬请期待")
+})
+$('#navForumQA').click(function () {
+  successToast("敬请期待")
+})
 
 $.ajax({
   url: "http://111.230.253.94:8081/user/articles", // 后端 API 地址

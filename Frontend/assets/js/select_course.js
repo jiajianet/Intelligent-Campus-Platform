@@ -125,6 +125,12 @@ $('#selectDropCourseBtn').on('click', () => {
 $('#titleText').on('click', () => {
     window.open("/index")
 })
+$('#cancelJoinModal').on('click', () => {
+    document.getElementById("joinCourseModal").style.display = "none";
+})
+$('#cancelJoinModalExit').on('click', () => {
+    document.getElementById("joinCourseModal").style.display = "none";
+})
 $('#btnJoinCourseOkVerify').on('click', () => {
     let postParam = {
         courseId: selectedCourseId,

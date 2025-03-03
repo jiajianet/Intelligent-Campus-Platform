@@ -13,6 +13,9 @@ let currentUserEmail = "",currentUno = ""
 const login_token = localStorage.getItem("intelli_campus_login_token");
 console.log(login_token)
 $(document).ready(function () {
+    $('#online_classroom').on('click', () => {
+        window.open("/class/online_classroom")
+    })
     function errorToast(message) {
         $("#error-toast-body").text(message)
         $("#error-toast").toast('show');

@@ -115,10 +115,13 @@ export default {
   },
   created() {
     const login_token = localStorage.getItem("intelli_campus_login_token");
-    console.log(login_token);
-    axios.get('http://111.230.253.94:8081/user/getUserScheduleList?token='+login_token)
+    axios.get('http://111.230.253.94:8081/user/getUserScheduleList',{
+      headers: {
+        'Authorization': 'Bearer ' + login_token
+      }
+    })
         .then(response => {
-          if (response.data.code == 0){
+          if (response.data.code === "0"){
             this.weekCourse = JSON.parse(response.data.data);
             console.log(this.weekCourse);
             this.colorList = colorList;

@@ -240,7 +240,17 @@
     </a>
     <img src="/assets/img/avatar.png" alt="用户头像" class="nav-user" id="nav-avatar">
 </div>
-<div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
+
+<div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set" style="z-index: 99999;">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+         aria-atomic="true" id="success-toast">
+        <div class="d-flex">
+            <div class="toast-body" id="success-toast-body">
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+        </div>
+    </div>
     <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
          aria-atomic="true" id="error-toast">
         <div class="d-flex">
@@ -252,17 +262,6 @@
     </div>
 </div>
 
-<div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x toast-set">
-    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
-         aria-atomic="true" id="success-toast">
-        <div class="d-flex">
-            <div class="toast-body" id="success-toast-body">
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-        </div>
-    </div>
-</div>
 <!-- Rest of your existing HTML content remains unchanged -->
 <div class="container">
     <div class="tabs">
