@@ -1,18 +1,17 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 
-import com.xiyanchenghong.backenduser.domain.EmailVerificationToken;
-import com.xiyanchenghong.backenduser.domain.EmailVerificationTokenRepository;
-import com.xiyanchenghong.backenduser.domain.User;
-import com.xiyanchenghong.backenduser.domain.PasswordResetToken;
-import com.xiyanchenghong.backenduser.forgotpassword.PasswordResetTokenRepository;
+import com.xiyanchenghong.backenduser.domain.*;
+import com.xiyanchenghong.backenduser.mapper.PasswordResetTokenMapper;
+import com.xiyanchenghong.backenduser.mapper.EmailVerificationTokenMapper;
+import com.xiyanchenghong.backenduser.mapper.UserMapper;
 import com.xiyanchenghong.backenduser.model.BizException;
-import com.xiyanchenghong.backenduser.repository.UserDao;
 import com.xiyanchenghong.backenduser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,32 +20,49 @@ import java.time.ZoneId;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+
 @Service
-public class UserServicelmpl implements UserService {
+public class UserServiceImpl implements UserService {
     @Resource
-    private UserDao userDao;
+    private UserMapper userDao;
+
+    @Autowired
+    private PasswordResetTokenMapper tokenRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmailVerificationTokenMapper emailVerificationTokenRepository;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    private Map<String, String> captchaStore = new HashMap<>();
 
     @Override
     public User loginService(String uno, String password) {
-        User user = userDao.findByUnoAndPassword(uno, password);
-        if (user != null) {
-            user.setPassword("");
-        }
         if (uno == null || password == null) {
             throw new BizException(400, "学号或密码不能为空");
+        }
+        User user = userDao.getUserByUnoAndPassword(uno, password);
+        if (user != null) {
+            user.setPassword("");
         }
         return user;
     }
 
     @Override
     public User registService(User user) {
-        if (userDao.findByUno(user.getUno()) != null) {
+        if (userDao.getUserByUno(user.getUno()) != null) {
             return null;
         } else {
             if (user.getUpic() == null || user.getUpic().isEmpty()) {
                 user.setUpic("/www/jars/avatars/default_avatar.png"); // 设置默认头像
             }
-            User newUser = userDao.save(user);
+            user.setRole(User.Role.STUDENT);
+            userDao.insertUser(user);
+            User newUser = userDao.getUserByUno(user.getUno());
             if (newUser != null) {
                 newUser.setPassword("");
             }
@@ -62,17 +78,10 @@ public class UserServicelmpl implements UserService {
         return userDao.findById(uid).orElse(null);
     }
 
-    // 实现 getUserById 方法
     @Override
     public User getUserById(Long userId) {
         return userDao.findById(userId).orElse(null);
     }
-
-    @Autowired
-    private PasswordResetTokenRepository tokenRepository;
-
-    @Autowired
-    private EmailService emailService;
 
     @Override
     public User findUserByEmail(String email) {
@@ -105,7 +114,7 @@ public class UserServicelmpl implements UserService {
     public void createPasswordResetTokenForUser(User user, String token) {
         PasswordResetToken myToken = new PasswordResetToken();
         myToken.setToken(token);
-        myToken.setUser(user);
+        myToken.setUserId(user.getUid());
         ZonedDateTime expiryDateTime = ZonedDateTime.now(ZoneId.of("Asia/Shanghai")).plusHours(1); // 设置为北京时间
         myToken.setExpiryDateWithZone(expiryDateTime);
         tokenRepository.save(myToken);
@@ -136,7 +145,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public User findUserByPasswordResetToken(String token) {
         PasswordResetToken passToken = tokenRepository.findByToken(token);
-        return passToken != null ? passToken.getUser() : null;
+        return passToken != null ? userDao.findById(passToken.getUserId()).orElse(null) : null;
     }
 
     @Override
@@ -147,14 +156,11 @@ public class UserServicelmpl implements UserService {
         }
     }
 
-    @Autowired
-    private EmailVerificationTokenRepository emailVerificationTokenRepository;
-
     @Override
     public void createEmailVerificationTokenForUser(User user, String token) {
         EmailVerificationToken myToken = new EmailVerificationToken();
         myToken.setToken(token);
-        myToken.setUser(user);
+        myToken.setUserId(user.getUid());
         ZonedDateTime expiryDateTime = ZonedDateTime.now(ZoneId.of("Asia/Shanghai")).plusHours(24); // 设置为24小时有效
         myToken.setExpiryDateWithZone(expiryDateTime);
         emailVerificationTokenRepository.save(myToken);
@@ -174,13 +180,13 @@ public class UserServicelmpl implements UserService {
         if (verificationToken == null || verificationToken.getExpiryDate().before(new Date())) {
             return "invalidToken";
         }
-        User user = verificationToken.getUser();
-        user.setEmailVerified(false);
-        userDao.save(user);
+        User user = userDao.findById(verificationToken.getUserId()).orElse(null);
+        if (user != null) {
+            user.setEmailVerified(true);
+            userDao.save(user);
+        }
         return null;
     }
-
-    private Map<String, String> captchaStore = new HashMap<>();
 
     @Override
     public void sendEmailVerificationEmail(String email, String captchaVerification) {
@@ -188,9 +194,6 @@ public class UserServicelmpl implements UserService {
         String text = "您的验证码是：" + captchaVerification + "。请在10分钟内完成验证。";
         emailService.sendEmail(email, subject, text);
     }
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void storeCaptchaVerification(String email, String captchaVerification) {

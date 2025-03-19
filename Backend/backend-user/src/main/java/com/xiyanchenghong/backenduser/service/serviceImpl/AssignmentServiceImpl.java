@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.Assignment;
-import com.xiyanchenghong.backenduser.repository.AssignmentRepository;
+import com.xiyanchenghong.backenduser.mapper.AssignmentMapper;
 import com.xiyanchenghong.backenduser.service.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,35 +10,34 @@ import org.springframework.stereotype.Service;
 public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
-    private AssignmentRepository assignmentRepository;
+    private AssignmentMapper assignmentMapper;
 
     @Override
     public void addAssignment(Assignment assignment) {
-        assignmentRepository.save(assignment);
+        assignmentMapper.insertAssignment(assignment);
     }
 
     @Override
     public void deleteAssignment(Long assignmentId, Long teacherId) {
-        Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
+        Assignment assignment = assignmentMapper.getAssignmentById(assignmentId);
         if (assignment != null && assignment.getTeacherId().equals(teacherId)) {
-            assignmentRepository.delete(assignment);
+            assignmentMapper.deleteAssignment(assignmentId);
         }
     }
 
     @Override
     public void modifyAssignment(Assignment assignment) {
-        Assignment existingAssignment = assignmentRepository.findById(assignment.getAssignmentId()).orElse(null);
-        //通过 assignmentId 查找作业。如果找不到，assignment 为 null。
+        Assignment existingAssignment = assignmentMapper.getAssignmentById(assignment.getAssignmentId());
         if (existingAssignment != null && existingAssignment.getTeacherId().equals(assignment.getTeacherId())) {
             existingAssignment.setTitle(assignment.getTitle());
             existingAssignment.setDescription(assignment.getDescription());
             existingAssignment.setDueDate(assignment.getDueDate());
-            assignmentRepository.save(existingAssignment);
+            assignmentMapper.updateAssignment(existingAssignment);
         }
     }
 
     @Override
     public Assignment getAssignmentInfo(Long assignmentId) {
-        return assignmentRepository.findById(assignmentId).orElse(null);
+        return assignmentMapper.getAssignmentById(assignmentId);
     }
 }

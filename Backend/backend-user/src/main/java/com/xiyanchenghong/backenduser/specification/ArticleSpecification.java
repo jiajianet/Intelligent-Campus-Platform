@@ -1,14 +1,8 @@
 package com.xiyanchenghong.backenduser.specification;
 
-
-import com.xiyanchenghong.backenduser.domain.Article;
-import org.springframework.data.jpa.domain.Specification;
-
 import java.time.LocalDateTime;
 
-import jakarta.persistence.criteria.*;
-
-public class ArticleSpecification{
+public class ArticleSpecification {
 
     private final Integer status;
     private final Long channelId;
@@ -22,26 +16,40 @@ public class ArticleSpecification{
         this.endDate = endDate;
     }
 
-    public Specification<Article> toSpecification() {
-        return (root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction(); // 创建一个初始的“且”条件
+    public String toSqlCondition() {
+        StringBuilder condition = new StringBuilder("WHERE 1=1");
 
-            if (status != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("status"), status));
-            }
-            if (channelId != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("channelId"), channelId));
-            }
-            if (beginDate != null) {
-                predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.greaterThanOrEqualTo(root.get("pubDate"), beginDate));
-            }
-            if (endDate != null) {
-                predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.lessThanOrEqualTo(root.get("pubDate"), endDate));
-            }
+        if (status != null) {
+            condition.append(" AND status = ").append(status);
+        }
+        if (channelId != null) {
+            condition.append(" AND channel_id = ").append(channelId);
+        }
+        if (beginDate != null) {
+            condition.append(" AND pub_date >= '").append(beginDate).append("'");
+        }
+        if (endDate != null) {
+            condition.append(" AND pub_date <= '").append(endDate).append("'");
+        }
 
-            return predicate;
-        };
+        return condition.toString();
+    }
+
+    // Getters and setters
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public Long getChannelId() {
+        return channelId;
+    }
+
+    public LocalDateTime getBeginDate() {
+        return beginDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 }

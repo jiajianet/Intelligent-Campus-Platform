@@ -1,59 +1,29 @@
 package com.xiyanchenghong.backenduser.domain;
 
-import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.time.ZonedDateTime;
-import java.time.ZoneId;
 
-@Entity
+@Getter
+@Setter
 public class PasswordResetToken {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String token;
-
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
-    private User user;
-
+    private Long userId;
     private Date expiryDate;
+    private ZonedDateTime expiryDateWithZone;
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
+    /**
+     * 使用 ZonedDateTime 实例设置到期日期
+     * 此方法将 ZonedDateTime 转换为 Date 并将其设置为 expiryDate，同时将 expiryDateWithZone 设置为该 ZonedDateTime
+     *
+     * @param expiryDateTime 要设置为到期日期的 ZonedDateTime 实例
+     */
     public void setExpiryDateWithZone(ZonedDateTime expiryDateTime) {
         this.expiryDate = Date.from(expiryDateTime.toInstant());
+        this.expiryDateWithZone = expiryDateTime.withZoneSameInstant(ZoneOffset.UTC);
     }
 }

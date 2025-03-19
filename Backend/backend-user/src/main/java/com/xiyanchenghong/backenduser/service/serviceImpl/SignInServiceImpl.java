@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.SignIn;
-import com.xiyanchenghong.backenduser.repository.SignInRepository;
+import com.xiyanchenghong.backenduser.mapper.SignInMapper;
 import com.xiyanchenghong.backenduser.service.SignInService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,25 +10,25 @@ import org.springframework.stereotype.Service;
 public class SignInServiceImpl implements SignInService {
 
     @Autowired
-    private SignInRepository signInRepository;
+    private SignInMapper signInMapper;
 
     @Override
     public void beginSignIn(SignIn signIn) {
-        signInRepository.save(signIn);
+        signInMapper.save(signIn);
     }
 
     @Override
     public void endSignIn(SignIn signIn) {
         // 假设结束签到的逻辑是更新签到记录的状态
-        SignIn existingSignIn = signInRepository.findById(signIn.getSignInId()).orElse(null);
+        SignIn existingSignIn = signInMapper.findById(signIn.getSignInId());
         if (existingSignIn != null) {
             existingSignIn.setStatus(false); // 设置状态为false表示签到结束
-            signInRepository.save(existingSignIn);
+            signInMapper.updateStatus(existingSignIn.getSignInId(), existingSignIn.getStatus());
         }
     }
 
     @Override
     public void studentSignIn(SignIn signIn) {
-        signInRepository.save(signIn);
+        signInMapper.save(signIn);
     }
 }
