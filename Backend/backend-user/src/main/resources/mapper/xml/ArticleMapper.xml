@@ -53,6 +53,6 @@
     </select>
 
     <select id="selectCoverByArticleId" resultType="com.xiyanchenghong.backenduser.domain.Cover">
-        SELECT type, image FROM cover WHERE article_id = #{articleId}
+        SELECT type, image FROM article WHERE id = #{articleId}
     </select>
 </mapper>
