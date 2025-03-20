@@ -44,7 +44,6 @@ public class ArticleController {
         }
     }
 
-    //TODO: 文章更新时间未实现
     // 更新文章
     @PutMapping("/articles/{id}")
     public ResponseEntity<Object> updateArticle(@PathVariable("id") Long id, @RequestBody Article article) {
@@ -112,15 +111,15 @@ public class ArticleController {
             if (article != null) {
                 // 构建单个文章返回数据
                 Result.Data data = new Result.Data();
-                data.setId(String.valueOf(article.getId())); // Convert Long to String as per your desired format
+                data.setId(String.valueOf(article.getId()));
                 data.setTitle(article.getTitle());
                 data.setChannelId(article.getChannelId());
                 data.setContent(article.getContent());
                 data.setPubDate(article.getPubDate().toString());
 
-                // 设置封面信息（示例占位符，需要调整为实际数据）
+                // 设置封面信息
                 Result.Data.Cover cover = new Result.Data.Cover();
-                cover.setType(article.getCover().getType()); // 假设为类型1，按实际数据调整
+                cover.setType(article.getCover().getType());
                 cover.setImage(article.getCover().getImage());
                 data.setCover(cover);
 

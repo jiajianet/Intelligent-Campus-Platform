@@ -1,6 +1,7 @@
 package com.xiyanchenghong.backenduser.mapper;
 
 import com.xiyanchenghong.backenduser.domain.Article;
+import com.xiyanchenghong.backenduser.domain.Cover;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface ArticleMapper {
     List<Article> getArticles(@Param("spec") String spec, @Param("offset") int offset, @Param("perPage") int perPage);
 
     long countArticles(@Param("spec") String spec);
+
+    Cover selectCoverByArticleId(Long articleId);
 }

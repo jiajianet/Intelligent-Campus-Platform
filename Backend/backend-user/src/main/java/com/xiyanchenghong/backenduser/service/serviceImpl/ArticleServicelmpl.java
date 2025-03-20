@@ -69,7 +69,12 @@ public class ArticleServicelmpl implements ArticleService {
 
     // 查找文章
     public Article getArticleById(Long id) {
-        return articleMapper.getArticleById(id);
+        Article article = articleMapper.getArticleById(id);
+        if (article != null) {
+            Cover cover = articleMapper.selectCoverByArticleId(id);
+            article.setCover(cover);
+        }
+        return article;
     }
 
     // 获取分页数据
@@ -81,6 +86,12 @@ public class ArticleServicelmpl implements ArticleService {
         // 分页请求
         int offset = (page - 1) * perPage;
         List<Article> articles = articleMapper.getArticles(spec.toSqlCondition(), offset, perPage);
+
+        // 获取封面数据
+        for (Article article : articles) {
+            Cover cover = articleMapper.selectCoverByArticleId(article.getId());
+            article.setCover(cover);
+        }
 
         return articles;
     }
