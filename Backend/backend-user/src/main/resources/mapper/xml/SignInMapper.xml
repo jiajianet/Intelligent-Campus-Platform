@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.SignInMapper">
+
+    <resultMap id="SignInResultMap" type="com.xiyanchenghong.backenduser.domain.SignIn">
+        <id property="signInId" column="sign_in_id"/>
+        <result property="classroomId" column="classroom_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="signInTime" column="sign_in_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="getSignInById" resultMap="SignInResultMap">
+        SELECT * FROM sign_in WHERE sign_in_id = #{signInId}
+    </select>
+
+    <select id="getAllSignIns" resultMap="SignInResultMap">
+        SELECT * FROM sign_in
+    </select>
+
+    <insert id="insertSignIn" useGeneratedKeys="true" keyProperty="signInId">
+        INSERT INTO sign_in(classroom_id, teacher_id, student_id, sign_in_time, status)
+        VALUES(#{classroomId}, #{teacherId}, #{studentId}, #{signInTime}, #{status})
+    </insert>
+
+    <update id="updateSignIn">
+        UPDATE sign_in
+        SET classroom_id=#{classroomId}, teacher_id=#{teacherId}, student_id=#{studentId}, sign_in_time=#{signInTime}, status=#{status}
+        WHERE sign_in_id=#{signInId}
+    </update>
+
+    <delete id="deleteSignIn">
+        DELETE FROM sign_in WHERE sign_in_id=#{signInId}
+    </delete>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="signInId">
+        INSERT INTO sign_in (classroom_id, teacher_id, student_id, sign_in_time, status)
+        VALUES (#{classroomId}, #{teacherId}, #{studentId}, #{signInTime}, #{status})
+    </insert>
+
+    <select id="findById" resultMap="SignInResultMap">
+        SELECT * FROM sign_in WHERE sign_in_id = #{signInId}
+    </select>
+
+    <update id="updateStatus">
+        UPDATE sign_in
+        SET status = #{status}
+        WHERE sign_in_id = #{signInId}
+    </update>
+
+</mapper>

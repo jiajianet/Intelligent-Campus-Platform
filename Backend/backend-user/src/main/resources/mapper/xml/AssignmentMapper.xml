@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.AssignmentMapper">
+
+    <resultMap id="AssignmentResultMap" type="com.xiyanchenghong.backenduser.domain.Assignment">
+        <id property="assignmentId" column="assignment_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="classroomId" column="classroom_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="dueDate" column="due_date"/>
+    </resultMap>
+
+    <select id="getAssignmentById" resultMap="AssignmentResultMap">
+        SELECT * FROM assignment WHERE assignment_id = #{assignmentId}
+    </select>
+
+    <select id="getAllAssignments" resultMap="AssignmentResultMap">
+        SELECT * FROM assignment
+    </select>
+
+    <insert id="insertAssignment" useGeneratedKeys="true" keyProperty="assignmentId">
+        INSERT INTO assignment(teacher_id, classroom_id, title, description, due_date)
+        VALUES (#{teacherId}, #{classroomId}, #{title}, #{description}, #{dueDate})
+    </insert>
+
+    <update id="updateAssignment">
+        UPDATE assignment
+        SET teacher_id = #{teacherId}, classroom_id = #{classroomId}, title = #{title}, description = #{description}, due_date = #{dueDate}
+        WHERE assignment_id = #{assignmentId}
+    </update>
+
+    <delete id="deleteAssignment">
+        DELETE FROM assignment WHERE assignment_id = #{assignmentId}
+    </delete>
+</mapper>

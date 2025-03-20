@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ExamSubmissionMapper">
+
+    <resultMap id="ExamSubmissionResultMap" type="com.xiyanchenghong.backenduser.domain.ExamSubmission">
+        <id property="id" column="id"/>
+        <result property="examId" column="exam_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="submissionData" column="submission_data"/>
+        <result property="submissionDate" column="submission_date"/>
+    </resultMap>
+
+    <select id="getExamSubmissionById" resultMap="ExamSubmissionResultMap">
+        SELECT * FROM exam_submission WHERE id = #{id}
+    </select>
+
+    <select id="getAllExamSubmissions" resultMap="ExamSubmissionResultMap">
+        SELECT * FROM exam_submission
+    </select>
+
+    <insert id="insertExamSubmission" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam_submission(exam_id, student_id, submission_data, submission_date)
+        VALUES(#{examId}, #{studentId}, #{submissionData}, #{submissionDate})
+    </insert>
+
+    <update id="updateExamSubmission">
+        UPDATE exam_submission
+        SET exam_id=#{examId}, student_id=#{studentId}, submission_data=#{submissionData}, submission_date=#{submissionDate}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteExamSubmission">
+        DELETE FROM exam_submission WHERE id=#{id}
+    </delete>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam_submission (id, exam_id, student_id, submission_data, submission_date)
+        VALUES (#{id}, #{examId}, #{studentId}, #{submissionData}, #{submissionDate})
+    </insert>
+</mapper>

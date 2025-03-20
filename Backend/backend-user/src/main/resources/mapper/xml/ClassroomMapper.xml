@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ClassroomMapper">
+
+    <resultMap id="ClassroomResultMap" type="com.xiyanchenghong.backenduser.domain.Classroom">
+        <id property="classroomId" column="classroom_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="classroomName" column="classroom_name"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+    </resultMap>
+
+    <select id="getClassroomById" resultMap="ClassroomResultMap">
+        SELECT * FROM classroom WHERE classroom_id = #{classroomId}
+    </select>
+
+    <select id="getAllClassrooms" resultMap="ClassroomResultMap">
+        SELECT * FROM classroom
+    </select>
+
+    <select id="getClassroomByTeacherId" resultMap="ClassroomResultMap">
+        SELECT * FROM classroom WHERE teacher_id = #{teacherId}
+    </select>
+
+    <select id="getOngoingClassrooms" resultMap="ClassroomResultMap">
+        SELECT * FROM classroom WHERE end_time IS NULL
+    </select>
+
+    <select id="getOngoingClassroomsByTeacherId" resultMap="ClassroomResultMap">
+        SELECT * FROM classroom WHERE teacher_id = #{teacherId} AND end_time IS NULL
+    </select>
+
+    <insert id="insertClassroom" useGeneratedKeys="true" keyProperty="classroomId">
+        INSERT INTO classroom(course_id, teacher_id, classroom_name, start_time, end_time)
+        VALUES(#{courseId}, #{teacherId}, #{classroomName}, #{startTime}, #{endTime})
+    </insert>
+
+    <update id="updateClassroom">
+        UPDATE classroom
+        SET course_id=#{courseId}, teacher_id=#{teacherId}, classroom_name=#{classroomName}, start_time=#{startTime}, end_time=#{endTime}
+        WHERE classroom_id=#{classroomId}
+    </update>
+
+    <delete id="deleteClassroom">
+        DELETE FROM classroom WHERE classroom_id=#{classroomId}
+    </delete>
+</mapper>
