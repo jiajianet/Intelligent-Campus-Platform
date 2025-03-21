@@ -1,5 +1,3 @@
-import LineChart from "./components/LineChart";
-import './index.scss'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -26,12 +24,12 @@ const salesCategoryData = [
 ];
 
 
-const Home = () => {
+const User = () => {
     return (
         <div style={{ padding: 24, background: 'white' }}>
             {/* 头部标题 */}
             <div style={{ marginBottom: 24 }}>
-                <h1>文章仪表盘</h1>
+                <h1>用户中心</h1>
                 <RangePicker
                     locale={locale}
                     style={{ width: 256 }}
@@ -165,11 +163,11 @@ const Home = () => {
                 title="文章各月份阅读量"
                 style={{ marginTop: 24,height: '100%' }
 
-            }>
-                <LineChart />
+                }>
             </Card>
+
         </div>
     );
 };
 
-export default Home;
+export default User;

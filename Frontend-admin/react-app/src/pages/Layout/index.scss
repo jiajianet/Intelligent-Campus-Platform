@@ -1,3 +1,4 @@
+
 .ant-layout {
   height: 100%;
 }
@@ -45,18 +46,13 @@
   }
 }
 
-.layout-content {
-  background: #fff;
-  border-radius: 4px;
-}
-
 .ant-layout-header {
   padding: 0 !important;
 
 }
 
 .ant-menu-dark .ant-menu-item-selected,
-.ant-menu-dark>.ant-menu .ant-menu-item-selected {
+.ant-menu-dark > .ant-menu .ant-menu-item-selected {
   background-color: #4154f1;
 }
 
@@ -65,5 +61,19 @@
 
   &:hover {
     background-color: #6371f2;
+  }
+}
+
+.Menu {
+  height: 100%;
+  borderRight: 0
+}
+
+.ant-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Layout, Menu, Popconfirm, Button } from 'antd'
+import {useState, useEffect} from 'react';
+import {Layout, Menu, Popconfirm, Button} from 'antd'
 import {
     HomeOutlined,
     DiffOutlined,
@@ -9,14 +9,26 @@ import {
     MenuUnfoldOutlined,
     PieChartOutlined,
     AreaChartOutlined,
-    FormOutlined
+    FormOutlined,
+    UserOutlined,
+    UserAddOutlined,
+    SolutionOutlined,
+    BugOutlined,
+    BulbOutlined,
+    BarsOutlined,
+    FileOutlined,
+    IdcardOutlined,
+    WindowsOutlined,
+    AppstoreOutlined,
+    FileTextOutlined,
+    QuestionOutlined
 } from '@ant-design/icons'
 import './index.scss'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { clearUserInfo, fetchUserInfo } from '@/store/modules/user'
-import { useDispatch, useSelector } from 'react-redux'
-
-const { Header, Sider, Content } = Layout
+import {Outlet, useLocation, useNavigate} from 'react-router-dom'
+import {clearUserInfo, fetchUserInfo} from '@/store/modules/user'
+import {useDispatch, useSelector} from 'react-redux'
+//TODO <CommentOutlined /> 加侧边弹窗添加大模型<MessageOutlined /> <QuestionCircleOutlined />
+const {Header, Sider, Content} = Layout
 
 const items = [
     {
@@ -29,15 +41,20 @@ const items = [
                 key: '/',
                 icon: <HomeOutlined/>,
             },
+            {
+                label: '用户中心',
+                key: '/user',
+                icon: <IdcardOutlined />,
+            }
         ]
     },
     {
         label: '文章管理',
-        key: '/',
-        icon: <HomeOutlined/>,
+        key: '/articles',
+        icon: <FileOutlined />,
         children: [
             {
-                label: '文章管理',
+                label: '文章列表',
                 key: '/article',
                 icon: <DiffOutlined/>,
             },
@@ -48,7 +65,7 @@ const items = [
             },
             {
                 label: '主页轮廓图',
-                key: '/homePage',
+                key: '/homePageCarousel',
                 icon: <FormOutlined/>
             },
         ]
@@ -56,29 +73,29 @@ const items = [
     {
         label: '用户管理',
         key: '/user',
-        icon: <HomeOutlined/>,
+        icon: <UserOutlined/>,
         children: [
             {
                 label: '用户列表',
                 key: '/userList',
-                icon: <DiffOutlined/>,
+                icon: <SolutionOutlined />,
             },
             {
                 label: '创建用户',
                 key: '/createUser',
-                icon: <EditOutlined/>,
+                icon: <UserAddOutlined/>,
             },
         ]
     },
     {
         label: '系统管理',
         key: '/system',
-        icon: <HomeOutlined/>,
+        icon: <WindowsOutlined />,
         children: [
             {
                 label: '系统设置',
                 key: '/systemSetting',
-                icon: <DiffOutlined/>,
+                icon: <AppstoreOutlined />,
             },
             {
                 label: '角色管理',
@@ -90,7 +107,7 @@ const items = [
     {
         label: '菜单管理',
         key: '/menu',
-        icon: <MenuFoldOutlined/>,
+        icon: <BarsOutlined />,
         children: [
             {
                 label: '菜单列表',
@@ -107,7 +124,7 @@ const items = [
     {
         label: '运维管理',
         key: '/operation',
-        icon: <MenuFoldOutlined/>,
+        icon: <BugOutlined />,
         children: [
             {
                 label: '日志管理',
@@ -124,24 +141,25 @@ const items = [
     {
         label: '帮助中心',
         key: '/help',
-        icon: <MenuFoldOutlined/>,
+        icon: <BulbOutlined />,
         children: [
             {
                 label: '使用文档',
                 key: '/document',
-                icon: <MenuUnfoldOutlined/>,
+                icon: <FileTextOutlined />,
             },
             {
                 label: '常见问题',
                 key: '/question',
-                icon: <MenuUnfoldOutlined/>,
+                icon: <QuestionOutlined />,
             },
         ]
     },
     {
         label: '更新日志',
         key: '/update',
-        icon: <AreaChartOutlined />
+        icon: <AreaChartOutlined/>,
+        // children: [],
     }
 ]
 
@@ -177,14 +195,13 @@ const XychLayout = () => {
                 width={200}
                 className="site-layout-background"
             >
-                <div className="logo" />
+                <div className="logo"/>
                 <Menu
                     mode="inline"
                     theme="dark"
                     selectedKeys={[location.pathname]}
                     onClick={onMenuClick}
                     items={items}
-                    style={{ height: '100%', borderRight: 0 }}
                 />
             </Sider>
             <Layout>
@@ -199,7 +216,7 @@ const XychLayout = () => {
                 >
                     <Button
                         type="text"
-                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        icon={collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
                         onClick={() => setCollapsed(!collapsed)}
                         style={{
                             fontSize: '16px',
@@ -216,7 +233,7 @@ const XychLayout = () => {
                                 cancelText="取消"
                                 onConfirm={onConfirm}
                             >
-                                <LogoutOutlined /> 退出
+                                <LogoutOutlined/> 退出
                             </Popconfirm>
                         </span>
                     </div>
@@ -224,13 +241,12 @@ const XychLayout = () => {
                 <Content
                     className="layout-content"
                     style={{
-                        margin: '24px 16px',
                         padding: 24,
                         minHeight: 280,
                     }}
                 >
                     {/* 二级路由出口 */}
-                    <Outlet />
+                    <Outlet/>
                 </Content>
             </Layout>
         </Layout>
