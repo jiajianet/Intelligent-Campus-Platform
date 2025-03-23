@@ -151,7 +151,8 @@ const Publish = () => {
                     {imageType > 0 && <Upload
                         listType="picture-card"
                         showUploadList
-                        action={'http://111.230.253.94:8081/user/upload'}
+                        // action={'http://111.230.253.94:8081/user/upload'}
+                        action={'http://localhost:8081/user/upload'}
                         name='image'
                         onChange={onChange}
                         maxCount={imageType}

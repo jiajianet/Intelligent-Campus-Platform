@@ -21,7 +21,7 @@ const Task = lazy(() => import('@/pages/Layout/Task'));
 const Document = lazy(() => import('@/pages/Layout/Document'));
 const Question = lazy(() => import('@/pages/Layout/Question'));
 const Update = lazy(() => import('@/pages/Layout/Update'));
-const User = lazy(() => import('@/pages/Layout/User'));
+const UserCenter = lazy(() => import('src/pages/Layout/UserCenter'));
 const HomePageCarousel = lazy(() => import('@/pages/Layout/HomePageCarousel'));
 
 const router = createBrowserRouter([
@@ -46,8 +46,8 @@ const router = createBrowserRouter([
                 element: <Suspense fallback={<div>加载中...<Spin/></div>}><HomePageCarousel/></Suspense>
             },
             {
-                path: 'user',
-                element: <Suspense fallback={<div>加载中...<Spin/></div>}><User/></Suspense>
+                path: 'userCenter',
+                element: <Suspense fallback={<div>加载中...<Spin/></div>}><UserCenter/></Suspense>
             },
             {
                 path: 'userList',

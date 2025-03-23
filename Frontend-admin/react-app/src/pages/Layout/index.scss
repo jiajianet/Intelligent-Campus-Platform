@@ -51,9 +51,18 @@
 
 }
 
+.ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title{
+  color: black;
+}
+
 .ant-menu-dark .ant-menu-item-selected,
 .ant-menu-dark > .ant-menu .ant-menu-item-selected {
   background-color: #4154f1;
+}
+
+.ant-menu-light .ant-menu-item-selected,
+.ant-menu-light>.ant-menu .ant-menu-item-selected {
+  background-color: #ebebff
 }
 
 .ant-btn-variant-solid {
