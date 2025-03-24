@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {Layout, Menu, Popconfirm, Button, Breadcrumb} from 'antd'
+import {Layout, Menu, Popconfirm, Button, Breadcrumb, Avatar} from 'antd'
 import {
     HomeOutlined,
     DiffOutlined,
@@ -175,6 +175,7 @@ const items = [
     }
 ]
 
+
 const XychLayout = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [openKeys, setOpenKeys] = useState([])
@@ -182,7 +183,8 @@ const XychLayout = () => {
     const location = useLocation()
     const dispatch = useDispatch()
     const name = useSelector(state => state.user.userInfo.uname)
-
+    const url = useSelector(state => state.user.userInfo.avatarBase64) || '';
+    // const avatarUrl = url.startsWith('data:image') ? url : `data:image/png;base64,${url}`;
 
     // 获取用户信息
     useEffect(() => {
@@ -313,16 +315,25 @@ const XychLayout = () => {
 
                     {/* 面包屑 */}
                     <Breadcrumb items={getBreadcrumbItems()}
-                                style={{flex: 1,
+                                style={{
+                                    flex: 1,
                                     overflow: 'hidden',
                                     whiteSpace: 'nowrap',
                                     fontSize: '12px',
                                     fontWeight: 'bold',
-                    }}
+                                }}
                     />
 
                     <div className="user-info">
                         <span className="user-name">{name}</span>
+                        <Avatar className="avatar"
+                                src={url || "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"}
+                                onError={() => {
+                                    // 如果图片加载失败，可以在这里处理
+                                    console.log("头像加载失败");
+                                }}
+                                draggable="false"
+                        />
                         <span className="user-logout">
                             <Popconfirm
                                 title="是否确认退出？"
@@ -337,10 +348,6 @@ const XychLayout = () => {
                 </Header>
                 <Content
                     className="layout-content"
-                    style={{
-                        padding: 24,
-                        minHeight: 280,
-                    }}
                 >
                     {/* 二级路由出口 */}
                     <Outlet/>

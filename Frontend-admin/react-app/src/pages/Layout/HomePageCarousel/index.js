@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
-import {Divider} from "antd";
+import {Carousel, Divider, Image} from "antd";
 
 /**
  * @typedef {Object} FileItem
@@ -22,17 +22,49 @@ import {Divider} from "antd";
 /**
  * @type {FileItem[]}
  */
-const initialFileList = [{
-    uid: '0', name: 'xxx.png', status: 'uploading', percent: 33,
-}, {
-    uid: '-1',
-    name: 'yyy.png',
-    status: 'done',
-    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-}, {
-    uid: '-2', name: 'zzz.png', status: 'error',
-},];
+
+const initialFileList = [
+    {
+        uid: '0', name: 'xxx.png', status: 'uploading', percent: 33,
+    },
+    {
+        uid: '1',
+        name: 'yyy.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '2',
+        name: 'yyy.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '3',
+        name: 'yyy.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+
+    {
+        uid: '-2', name: 'zzz.png', status: 'error',
+    },];
+
+// 判断文件类型
+const isVideo = (file) => {
+    return file.type?.startsWith('video/') ||
+        file.name?.endsWith('.mp4') ||
+        file.name?.endsWith('.webm') ||
+        file.name?.endsWith('.mov');
+};
+
+// // 判断文件大小
+// const isTooLarge = (file) => {
+//     return file.size > 10 * 1024 * 1024; // 10MB
+// };
 
 /**
  * 可拖拽的上传列表项组件
@@ -59,6 +91,7 @@ const DraggableUploadListItem = ({originNode, file}) => {
         {file.status === 'error' && isDragging ? originNode.props.children : originNode}
     </div>);
 };
+
 
 const HomePageCarousel = () => {
     const [fileList, setFileList] = useState(initialFileList);
@@ -108,6 +141,9 @@ const HomePageCarousel = () => {
         },
     };
 
+    // 过滤出已上传的文件`
+    const uploadedFiles = fileList.filter(file => file.status === 'done');
+
     return (
         <div>
             <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
@@ -124,13 +160,77 @@ const HomePageCarousel = () => {
                 </SortableContext>
             </DndContext>
             {fileList.length === 0 ? (
-                <Divider variant="dashed" style={{ borderColor: '#6d7aea' }} dashed>
+                <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
                     请上传图片/视频
                 </Divider>
             ) : (
-                <Divider variant="dashed" style={{ borderColor: '#6d7aea' }} dashed>
-                    以上是上传的文件列表，可支持拖拽排序
-                </Divider>
+                <>
+                    <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
+                        以上是上传的文件列表，可支持拖拽排序
+                    </Divider>
+
+                    <Carousel
+                        arrows
+                        autoplay
+                        autoplaySpeed={1500}
+                        infinite
+                        style={{
+                            maxWidth: '1200px',
+                            margin: '0 auto',
+                            borderRadius: '8px',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {uploadedFiles.map((file) => (
+                            <div key={file.uid}>
+                                <div className="carousel-item">
+                                    <div className="media-container">
+                                        {isVideo(file) ? (
+                                            <>
+                                                <span className="type-badge">视频</span>
+                                                <video
+                                                    controls
+                                                    style={{
+                                                        maxHeight: '100%',
+                                                        maxWidth: '100%',
+                                                        filter: 'brightness(0.95)'
+                                                    }}
+                                                    poster={file.poster}
+                                                >
+                                                    <source src={file.url} type={file.type || 'video/mp4'}/>
+                                                    <div className="error-placeholder">无法播放视频</div>
+                                                </video>
+                                            </>
+
+                                        ) : (
+                                            <>
+                                                <span className="type-badge">图片</span>
+                                                <Image
+                                                    src={file.url || file.thumbUrl}
+                                                    alt={file.name}
+                                                    style={{
+                                                        maxHeight: '100%',
+                                                        maxWidth: '100%',
+                                                        objectFit: 'contain'
+                                                    }}
+                                                    preview={{
+                                                        mask: <span style={{
+                                                            color: '#fff',
+                                                            fontSize: '16px',
+                                                            letterSpacing: '0.1em'
+                                                        }}>点击预览</span>
+                                                    }}
+                                                />
+                                            </>
+
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </Carousel>
+                </>
+
             )}
         </div>
     );
