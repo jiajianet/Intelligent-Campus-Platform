@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
-public class FileUploadController {
+public class ArticleImageUploadController {
 
     // 上传目录，这里用 uploads 文件夹，注意最好确保生成的路径正确
     // 从 application.properties 中读取上传目录配置
@@ -43,7 +43,7 @@ public class FileUploadController {
     }
     //上传
     @PostMapping("/upload")
-    public ResponseEntity<Result<?>> handleFileUpload(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Object> handleFileUpload(@RequestParam("image") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Result.error(500,"文件为空"));
         }

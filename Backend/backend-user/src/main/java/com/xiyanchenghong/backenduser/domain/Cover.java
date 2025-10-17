@@ -2,8 +2,12 @@ package com.xiyanchenghong.backenduser.domain;
 
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Setter
+@Getter
 @Embeddable
 public class Cover {
 
@@ -19,19 +23,4 @@ public class Cover {
         this.image = image;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
 }

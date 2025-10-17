@@ -41,16 +41,8 @@ public class Article {
     @Lob
     private String content;
 
+    // Getters and Setters
     @Embedded
     private Cover cover;
-
-    // Getters and Setters
-    public Cover getCover() {
-        return cover;
-    }
-
-    public void setCover(Cover cover) {
-        this.cover = cover;
-    }
 
 }

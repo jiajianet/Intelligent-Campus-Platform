@@ -6,7 +6,8 @@ import com.xiyanchenghong.backenduser.domain.Cover;
 import com.xiyanchenghong.backenduser.repository.ArticleRepository;
 import com.xiyanchenghong.backenduser.service.ArticleService;
 import com.xiyanchenghong.backenduser.specification.ArticleSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.xiyanchenghong.backenduser.utils.ArticleImageUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ArticleServicelmpl implements ArticleService {
+public class ArticleServiceImpl implements ArticleService {
 
-    @Autowired
-    private ArticleRepository articleRepository;
+    @Value("${upload.dir}")
+    private String uploadDir;
+
+    private final ArticleRepository articleRepository;
+
+    public ArticleServiceImpl(ArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
+    }
 
     // 保存文章
     public Article saveArticle(Article article) {
@@ -30,17 +37,43 @@ public class ArticleServicelmpl implements ArticleService {
         return articleRepository.save(article);
     }
 
-    // 删除文章
+    // 删除文章同时删除图片
     public void deleteArticle(Long id) {
-        articleRepository.deleteById(id);
+        Article article = articleRepository.findById(id).orElse(null);
+        if (article != null){
+            Cover cover = article.getCover();
+            if (cover != null && cover.getImage() != null){
+                ArticleImageUtils.deleteImage(uploadDir, cover.getImage());
+            }
+            articleRepository.deleteById(id);
+        }
+
     }
 
-    // 更新文章
+    // 更新文章同时删除图片
     public Article updateArticle(Long id, Article article) {
         // 查找原文章
         Article existingArticle = articleRepository.findById(id).orElse(null);
         if (existingArticle == null) {
             return null; // 文章不存在
+        }
+
+        Cover newCover = article.getCover();
+        Cover oldCover = existingArticle.getCover();
+
+        //新封面不同时处理图片更新
+        if(newCover != null && oldCover != null && !newCover.getImage().equals(oldCover.getImage())){
+            //删除旧照片
+            ArticleImageUtils.deleteImage(uploadDir, oldCover.getImage());
+        }
+
+        //当从有图变为无图的时候
+        if(oldCover != null && oldCover.getType() > 0 && newCover != null && newCover.getType() == 0){
+            if(oldCover.getImage() != null){
+                ArticleImageUtils.deleteImage(uploadDir, oldCover.getImage());
+            }
+            //清除数据库图片路径
+            newCover.setImage(null);
         }
 
         // 更新字段（避免 `null` 覆盖已有值）
