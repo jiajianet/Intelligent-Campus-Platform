@@ -1,6 +1,6 @@
 import './index.scss'
 import React, {useState} from 'react';
-import {DeleteTwoTone, InboxOutlined} from '@ant-design/icons';
+import {DeleteTwoTone, EyeOutlined, InboxOutlined} from '@ant-design/icons';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import {
     arrayMove, SortableContext, useSortable, verticalListSortingStrategy,
@@ -123,7 +123,7 @@ const HomePageCarousel = () => {
     const props = {
         name: 'file',
         multiple: true,
-        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+        action: 'http://localhost:8081/user/files/upload',
         listType: 'picture',
         fileList,
         onChange,
@@ -133,9 +133,7 @@ const HomePageCarousel = () => {
           ({(size / 1024 / 1024).toFixed(2)}MB)
         </span>),
             showPreviewIcon: true,
-            previewIcon: 'eye-o',
-            // showDownloadIcon: true,
-            // downloadIcon: 'Download',
+            previewIcon: <EyeOutlined />,
             showRemoveIcon: true,
             removeIcon: <DeleteTwoTone onClick={(e) => console.log(e, '删除成功')}/>,
         },

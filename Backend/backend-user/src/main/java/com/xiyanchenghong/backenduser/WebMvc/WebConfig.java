@@ -71,6 +71,9 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/articles/{id}",
                         "/user/upload",
                         "/user/images/{imageName}",
+                        "/user/files/upload",
+                        "/user/files/reorder",
+                        "/user/files/getFiles",
                         "/captcha/get",
                         "/captcha/check",
                         "/user/forgotPassword",
@@ -133,5 +136,8 @@ public class WebConfig implements WebMvcConfigurer {
         // 映射 /images/** 到本地的 uploads 目录
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:uploads/"); // 确保图片目录能通过 HTTP 访问
+
+        registry.addResourceHandler("/files/**")
+                .addResourceLocations("file:uploads/");
     }
 }
