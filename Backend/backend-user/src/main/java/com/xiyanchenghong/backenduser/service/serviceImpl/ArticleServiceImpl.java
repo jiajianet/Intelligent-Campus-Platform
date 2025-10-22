@@ -6,7 +6,7 @@ import com.xiyanchenghong.backenduser.domain.Cover;
 import com.xiyanchenghong.backenduser.repository.ArticleRepository;
 import com.xiyanchenghong.backenduser.service.ArticleService;
 import com.xiyanchenghong.backenduser.specification.ArticleSpecification;
-import com.xiyanchenghong.backenduser.utils.ArticleImageUtils;
+import com.xiyanchenghong.backenduser.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (article != null){
             Cover cover = article.getCover();
             if (cover != null && cover.getImage() != null){
-                ArticleImageUtils.deleteImage(uploadDir, cover.getImage());
+                FileUtils.deleteFile(uploadDir, cover.getImage());
             }
             articleRepository.deleteById(id);
         }
@@ -64,13 +64,13 @@ public class ArticleServiceImpl implements ArticleService {
         //新封面不同时处理图片更新
         if(newCover != null && oldCover != null && !newCover.getImage().equals(oldCover.getImage())){
             //删除旧照片
-            ArticleImageUtils.deleteImage(uploadDir, oldCover.getImage());
+            FileUtils.deleteFile(uploadDir, oldCover.getImage());
         }
 
         //当从有图变为无图的时候
         if(oldCover != null && oldCover.getType() > 0 && newCover != null && newCover.getType() == 0){
             if(oldCover.getImage() != null){
-                ArticleImageUtils.deleteImage(uploadDir, oldCover.getImage());
+                FileUtils.deleteFile(uploadDir, oldCover.getImage());
             }
             //清除数据库图片路径
             newCover.setImage(null);

@@ -8,6 +8,7 @@ import {
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
 import {Carousel, Divider, Image} from "antd";
+import {uploadFileAPI} from "@/apis/file";
 
 /**
  * @typedef {Object} FileItem
@@ -23,36 +24,6 @@ import {Carousel, Divider, Image} from "antd";
  * @type {FileItem[]}
  */
 
-const initialFileList = [
-    {
-        uid: '0', name: 'xxx.png', status: 'uploading', percent: 33,
-    },
-    {
-        uid: '1',
-        name: 'yyy.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-        uid: '2',
-        name: 'yyy.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-        uid: '3',
-        name: 'yyy.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-
-    {
-        uid: '-2', name: 'zzz.png', status: 'error',
-    },];
-
 // 判断文件类型
 const isVideo = (file) => {
     return file.type?.startsWith('video/') ||
@@ -60,11 +31,6 @@ const isVideo = (file) => {
         file.name?.endsWith('.webm') ||
         file.name?.endsWith('.mov');
 };
-
-// // 判断文件大小
-// const isTooLarge = (file) => {
-//     return file.size > 10 * 1024 * 1024; // 10MB
-// };
 
 /**
  * 可拖拽的上传列表项组件
@@ -94,7 +60,7 @@ const DraggableUploadListItem = ({originNode, file}) => {
 
 
 const HomePageCarousel = () => {
-    const [fileList, setFileList] = useState(initialFileList);
+    const [fileList, setFileList] = useState([]);
 
     // 初始化拖拽传感器
     const sensor = useSensor(PointerSensor, {
@@ -119,11 +85,21 @@ const HomePageCarousel = () => {
         setFileList(newFileList);
     };
 
+    const customRequest = async ({file,onSuccess,onError}) => {
+        try{
+            const response = await uploadFileAPI(file);
+            onSuccess(response.data,file);
+        }catch(error){
+            onError(error);
+        }
+    }
+
     // 上传组件的配置
     const props = {
         name: 'file',
         multiple: true,
-        action: 'http://localhost:8081/user/files/upload',
+        //通过覆盖默认的上传行为，可以自定义自己的上传实现
+        customRequest,
         listType: 'picture',
         fileList,
         onChange,
@@ -133,9 +109,10 @@ const HomePageCarousel = () => {
           ({(size / 1024 / 1024).toFixed(2)}MB)
         </span>),
             showPreviewIcon: true,
-            previewIcon: <EyeOutlined />,
+            previewIcon: <EyeOutlined/>,
             showRemoveIcon: true,
-            removeIcon: <DeleteTwoTone onClick={(e) => console.log(e, '删除成功')}/>,
+            removeIcon: <DeleteTwoTone
+                onClick={(e) => console.log(e, '删除成功')}/>
         },
     };
 

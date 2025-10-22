@@ -20,9 +20,6 @@ import java.util.*;
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-
     @Value("${file.base-url}")
     private String fileBaseUrl;
 
