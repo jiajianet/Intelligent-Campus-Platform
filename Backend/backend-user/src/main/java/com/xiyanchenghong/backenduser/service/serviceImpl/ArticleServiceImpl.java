@@ -8,17 +8,28 @@ import com.xiyanchenghong.backenduser.service.ArticleService;
 import com.xiyanchenghong.backenduser.specification.ArticleSpecification;
 import com.xiyanchenghong.backenduser.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
-
+    // 上传目录，这里用 uploads 文件夹，注意最好确保生成的路径正确
+    // 从 application.properties 中读取上传目录配置
     @Value("${upload.dir}")
     private String uploadDir;
+
+    @Value("${image.base-url}")
+    private String imageBaseUrl;
 
     private final ArticleRepository articleRepository;
 
@@ -125,6 +136,38 @@ public class ArticleServiceImpl implements ArticleService {
 
         // 返回符合条件的总记录数
         return articleRepository.count(spec.toSpecification());
+    }
+
+    //保存图片
+    public String saveImage(MultipartFile file) throws IOException {
+        // 创建上传目录（如果不存在）
+        // File uploadDir = new File(UPLOAD_DIR);
+        File uploadDirectory = new File(uploadDir);
+        if (!uploadDirectory.exists() && !uploadDirectory.mkdirs()) {
+            throw new IOException("无法创建上传目录！");
+        }
+
+        // 生成唯一的文件名，这里截取 UUID 的前8位
+        String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
+        // 生成目标文件，推荐使用 File 的构造函数进行拼接
+        fileName = fileName.replace(" ", "_");
+
+        File dest = new File(uploadDirectory, fileName);
+        // 保存文件到本地磁盘
+        file.transferTo(dest);
+
+        // 构造文件访问路径，注意根据实际情况修改 URL 前缀
+
+        return imageBaseUrl + fileName;
+    }
+
+    //访问图片
+    public Resource getImageResource(String imageName) throws IOException{
+        File file = new File(uploadDir, imageName);
+        if(!file.exists()){
+            throw new FileNotFoundException("图片不存在");
+        }
+        return new FileSystemResource(file);
     }
 
 }
