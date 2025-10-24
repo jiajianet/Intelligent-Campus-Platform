@@ -12,3 +12,17 @@ export const uploadFileAPI = (file) => {
     });
 
 };
+
+export const deleteFileAPI = (uid) => {
+    return request({
+        url: `/user/files/delete/${uid}`,
+        method: 'DELETE',
+    })
+}
+
+export const getFilesAPI = () => {
+    return request({
+        url: "/user/files/getFiles",
+        method: "GET",
+    });
+};

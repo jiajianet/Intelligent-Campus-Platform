@@ -6,6 +6,11 @@ import com.xiyanchenghong.backenduser.service.FileStorageService;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 @RestController
@@ -23,13 +32,14 @@ public class FileController {
     @Value("${file.base-url}")
     private String fileBaseUrl;
 
-    @Autowired
-    private FileRepository fileRepository;
+
+    private final FileRepository fileRepository;
 
     private final FileStorageService fileStorageService;
 
     @Autowired
-    public FileController(FileStorageService fileStorageService) {
+    public FileController(FileStorageService fileStorageService, FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
         this.fileStorageService = fileStorageService;
     }
 
@@ -52,7 +62,6 @@ public class FileController {
                 fileEntity.setUid(uid);
                 fileEntity.setName(file.getOriginalFilename());
                 fileEntity.setStatus("done");
-                fileEntity.setUrl(file.getOriginalFilename());
                 fileEntity.setUrl(fileUrl);
                 fileEntity.setThumbUrl(fileUrl);
                 fileEntity.setType(file.getContentType());
@@ -81,11 +90,50 @@ public class FileController {
         return ResponseEntity.ok(Result.success(responseList));
     }
 
+    @GetMapping("/upload/{fileName:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String fileName) {
+        logger.info("访问文件资源: {}", fileName);
+        Resource resource;
+        try {
+            Path filePath = fileStorageService.loadFile(fileName);
+
+            if (!Files.exists(filePath)) {
+                logger.warn("文件不存在: {}", fileName);
+                //文件不存在，返回404
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            //将 Path 转换为 Spring 的 Resource
+            resource = new UrlResource(filePath.toUri());
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    // Content-Disposition: 'inline' 表示浏览器应尝试直接显示文件
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                    .body(resource);
+
+        } catch (MalformedURLException e) {
+            //捕获道路路径便利攻击或者非法访问（来自 service.loadFile)
+            logger.error("非法文件访问尝试：{}", fileName, e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();// 403 Forbidden
+
+        } catch (IOException e) {
+            //捕获 IO 错误或者资源加载错误
+            logger.error("文件资源房屋内失败：{}", fileName, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();// 500 Internal Server Error
+        }
+
+    }
+
     @GetMapping("/getFiles")
     public ResponseEntity<Result<List<FileEntity>>> getFiles() {
         logger.debug("查询所以状态为done的文件");
         List<FileEntity> files = fileRepository.findByStatus("done");
-        logger.info("查询到{}个有效文件",files.size());
+        logger.info("查询到{}个有效文件", files.size());
         return ResponseEntity.ok(Result.success(files));
     }
 
@@ -105,6 +153,51 @@ public class FileController {
         fileRepository.saveAll(files);
 
         return ResponseEntity.ok(Result.success("文件顺序已更新"));
+    }
+
+    //TODO可能会重复（概率小）？
+    @DeleteMapping("/delete/{uid}")
+    public ResponseEntity<Object> deleteFile(@PathVariable String uid) {
+        logger.info("删除文件，UID：{}", uid);
+        //使用Java 8 引入的容器类避免空指针异常
+        Optional<FileEntity> fileEntityOptional = Optional.ofNullable(fileRepository.findByUid(uid));
+
+        if (fileEntityOptional.isPresent()) {
+            FileEntity fileEntity = fileEntityOptional.get();
+
+            try {
+
+                String fullUrl = fileEntity.getUrl();
+                //假如文件名时URL的最后一部分，并且前面有fileBaseUrl
+                //假如fileBaseUrl时正确定，是以/结尾
+                if(fullUrl == null || !fullUrl.startsWith(fileBaseUrl)) {
+                    logger.warn("文件URL格式不正确或者为空：{}",fullUrl);
+                    return ResponseEntity.ok(Result.success("文件记录已删除，物理文件跳过处理"));
+                }
+
+                //提取文件名(例如：从 'http://xxx/uuid_name.jpg' 得到 'uuid_name.jpg')
+                String fileNameToDelete = fullUrl.substring(fileBaseUrl.length());
+
+                //删除物理文件
+                boolean isFileDeleted = fileStorageService.deleteFile(fileNameToDelete);
+                if (isFileDeleted) {
+                    //删除数据库记录
+                    fileRepository.delete(fileEntity);
+                    return ResponseEntity.ok(Result.success("文件删除成功"));
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.error(500, "文件删除失败"));
+                }
+
+            } catch (Exception e) {
+                logger.error("文件删除失败: {}", uid, e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Result.error(500, "文件删除失败"));
+            }
+
+
+        }
+        //Result的error不是泛类，会有警告
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.error(404, "文件不存在"));
     }
 
 }

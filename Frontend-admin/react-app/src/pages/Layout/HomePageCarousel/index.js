@@ -1,5 +1,5 @@
 import './index.scss'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {DeleteTwoTone, EyeOutlined, InboxOutlined} from '@ant-design/icons';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import {
@@ -7,24 +7,9 @@ import {
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
-import {Carousel, Divider, Image} from "antd";
-import {uploadFileAPI} from "@/apis/file";
+import {Carousel, Divider, Image, message} from "antd";
+import {deleteFileAPI, uploadFileAPI, getFilesAPI} from "@/apis/file";
 
-/**
- * @typedef {Object} FileItem
- * @property {string} uid - 文件的唯一标识
- * @property {string} name - 文件名
- * @property {string} status - 文件的上传状态（如 'uploading', 'done', 'error'）
- * @property {number} [percent] - 文件上传进度百分比（仅当 status 为 'uploading' 时存在）
- * @property {string} [url] - 文件上传成功后的访问 URL（仅当 status 为 'done' 时存在）
- * @property {string} [thumbUrl] - 文件的缩略图 URL（仅当 status 为 'done' 时存在）
- */
-
-/**
- * @type {FileItem[]}
- */
-
-// 判断文件类型
 const isVideo = (file) => {
     return file.type?.startsWith('video/') ||
         file.name?.endsWith('.mp4') ||
@@ -32,12 +17,6 @@ const isVideo = (file) => {
         file.name?.endsWith('.mov');
 };
 
-/**
- * 可拖拽的上传列表项组件
- * @param {Object} props - 组件属性
- * @param {React.ReactNode} props.originNode - 原始的上传列表项
- * @param {FileItem} props.file - 文件对象
- */
 const DraggableUploadListItem = ({originNode, file}) => {
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
         id: file.uid,
@@ -45,78 +24,106 @@ const DraggableUploadListItem = ({originNode, file}) => {
     const style = {
         transform: CSS.Translate.toString(transform), transition, cursor: 'move',
     };
-    return (<div
-        ref={setNodeRef}
-        style={style}
-        // 防止拖拽结束时触发预览事件
-        className={isDragging ? 'is-dragging' : ''}
-        {...attributes}
-        {...listeners}
-    >
-        {/* 拖拽时隐藏错误提示 */}
-        {file.status === 'error' && isDragging ? originNode.props.children : originNode}
-    </div>);
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={isDragging ? 'is-dragging' : ''}
+            {...attributes}
+            {...listeners}
+        >
+            {file.status === 'error' && isDragging ? originNode.props.children : originNode}
+        </div>
+    );
 };
-
 
 const HomePageCarousel = () => {
     const [fileList, setFileList] = useState([]);
 
-    // 初始化拖拽传感器
-    const sensor = useSensor(PointerSensor, {
-        activationConstraint: {
-            distance: 10, // 拖拽触发的最小距离
-        },
-    });
+    // 封装一个统一的“从服务器获取文件列表”方法
+    const getFilesFromServer = async () => {
+        try {
+            const res = await getFilesAPI();
+            if (res.data?.data) {
+                const formatted = res.data.data.map((file) => ({
+                    uid: file.uid || file.id || file.name,
+                    name: file.name,
+                    status: 'done',
+                    url: file.url,
+                    type: file.type,
+                    thumbUrl: file.thumbUrl,
+                }));
+                setFileList(formatted);
+            }
+        } catch (err) {
+            console.error("获取文件失败:", err);
+        }
+    };
 
-    // 拖拽结束时的回调
+    // ✅ 页面加载时先拉取一次
+    useEffect(() => {
+        getFilesFromServer();
+    }, []);
+
+    const sensor = useSensor(PointerSensor, {activationConstraint: {distance: 10}});
+
     const onDragEnd = ({active, over}) => {
         if (active.id !== over?.id) {
             setFileList((prev) => {
                 const activeIndex = prev.findIndex((i) => i.uid === active.id);
                 const overIndex = prev.findIndex((i) => i.uid === over?.id);
-                return arrayMove(prev, activeIndex, overIndex); // 重新排序文件列表
+                return arrayMove(prev, activeIndex, overIndex);
             });
         }
     };
 
-    // 文件列表变化的回调
-    const onChange = ({fileList: newFileList}) => {
-        setFileList(newFileList);
+    const onChange = ({fileList: newFileList}) => setFileList(newFileList);
+
+    const customRequest = async ({file, onSuccess, onError}) => {
+        try {
+            await uploadFileAPI(file);
+            message.success(`${file.name} 上传成功`);
+            onSuccess({}, file);
+            // 上传成功后重新从数据库获取最新列表
+            await getFilesFromServer();
+        } catch (err) {
+            console.error("上传失败:", err);
+            message.error(`${file.name} 上传失败`);
+            onError(err);
+        }
     };
 
-    const customRequest = async ({file,onSuccess,onError}) => {
-        try{
-            const response = await uploadFileAPI(file);
-            onSuccess(response.data,file);
-        }catch(error){
-            onError(error);
-        }
-    }
-
-    // 上传组件的配置
     const props = {
         name: 'file',
         multiple: true,
-        //通过覆盖默认的上传行为，可以自定义自己的上传实现
         customRequest,
         listType: 'picture',
         fileList,
         onChange,
+        onRemove: async (file) => {
+            try {
+                await deleteFileAPI(file.uid);
+                setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
+                message.success(`删除成功: ${file.name}`);
+                // 删除后也刷新数据库
+                await getFilesFromServer();
+            } catch (err) {
+                console.error('删除失败:', err);
+                message.error('删除失败');
+            }
+        },
         itemRender: (originNode, file) => (<DraggableUploadListItem originNode={originNode} file={file}/>),
         showUploadList: {
-            extra: ({size = 0}) => (<span style={{color: '#cccccc'}}>
-          ({(size / 1024 / 1024).toFixed(2)}MB)
-        </span>),
+            extra: ({size = 0}) => (
+                <span style={{color: '#cccccc'}}>({(size / 1024 / 1024).toFixed(2)}MB)</span>
+            ),
             showPreviewIcon: true,
             previewIcon: <EyeOutlined/>,
             showRemoveIcon: true,
-            removeIcon: <DeleteTwoTone
-                onClick={(e) => console.log(e, '删除成功')}/>
+            removeIcon: <DeleteTwoTone/>,
         },
     };
 
-    // 过滤出已上传的文件`
     const uploadedFiles = fileList.filter(file => file.status === 'done');
 
     return (
@@ -134,6 +141,7 @@ const HomePageCarousel = () => {
                     </Dragger>
                 </SortableContext>
             </DndContext>
+
             {fileList.length === 0 ? (
                 <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
                     请上传图片/视频
@@ -141,19 +149,19 @@ const HomePageCarousel = () => {
             ) : (
                 <>
                     <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
-                        以上是上传的文件列表，可支持拖拽排序
+                        以下是上传的文件，可拖拽排序
                     </Divider>
 
                     <Carousel
                         arrows
                         autoplay
-                        autoplaySpeed={1500}
+                        autoplaySpeed={2000}
                         infinite
                         style={{
                             maxWidth: '1200px',
                             margin: '0 auto',
                             borderRadius: '8px',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
                         }}
                     >
                         {uploadedFiles.map((file) => (
@@ -168,7 +176,7 @@ const HomePageCarousel = () => {
                                                     style={{
                                                         maxHeight: '100%',
                                                         maxWidth: '100%',
-                                                        filter: 'brightness(0.95)'
+                                                        filter: 'brightness(0.95)',
                                                     }}
                                                     poster={file.poster}
                                                 >
@@ -176,7 +184,6 @@ const HomePageCarousel = () => {
                                                     <div className="error-placeholder">无法播放视频</div>
                                                 </video>
                                             </>
-
                                         ) : (
                                             <>
                                                 <span className="type-badge">图片</span>
@@ -186,18 +193,19 @@ const HomePageCarousel = () => {
                                                     style={{
                                                         maxHeight: '100%',
                                                         maxWidth: '100%',
-                                                        objectFit: 'contain'
+                                                        objectFit: 'contain',
                                                     }}
                                                     preview={{
-                                                        mask: <span style={{
-                                                            color: '#fff',
-                                                            fontSize: '16px',
-                                                            letterSpacing: '0.1em'
-                                                        }}>点击预览</span>
+                                                        mask: (
+                                                            <span style={{
+                                                                color: '#fff',
+                                                                fontSize: '16px',
+                                                                letterSpacing: '0.1em',
+                                                            }}>点击预览</span>
+                                                        ),
                                                     }}
                                                 />
                                             </>
-
                                         )}
                                     </div>
                                 </div>
@@ -205,7 +213,6 @@ const HomePageCarousel = () => {
                         ))}
                     </Carousel>
                 </>
-
             )}
         </div>
     );
