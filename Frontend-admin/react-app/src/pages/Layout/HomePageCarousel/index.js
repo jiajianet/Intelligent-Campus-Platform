@@ -1,5 +1,5 @@
 import './index.scss'
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {DeleteTwoTone, EyeOutlined, InboxOutlined} from '@ant-design/icons';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import {
@@ -8,7 +8,8 @@ import {
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
 import {Carousel, Divider, Image, message} from "antd";
-import {deleteFileAPI, uploadFileAPI, getFilesAPI} from "@/apis/file";
+import {deleteFileAPI, uploadFileAPI} from "@/apis/file";
+import {useHomePageCarouselList} from "@/hooks/useHomePageCarouselList";
 
 const isVideo = (file) => {
     return file.type?.startsWith('video/') ||
@@ -31,39 +32,16 @@ const DraggableUploadListItem = ({originNode, file}) => {
             className={isDragging ? 'is-dragging' : ''}
             {...attributes}
             {...listeners}
-        >
+            >
             {file.status === 'error' && isDragging ? originNode.props.children : originNode}
         </div>
     );
 };
 
 const HomePageCarousel = () => {
-    const [fileList, setFileList] = useState([]);
 
     // 封装一个统一的“从服务器获取文件列表”方法
-    const getFilesFromServer = async () => {
-        try {
-            const res = await getFilesAPI();
-            if (res.data?.data) {
-                const formatted = res.data.data.map((file) => ({
-                    uid: file.uid || file.id || file.name,
-                    name: file.name,
-                    status: 'done',
-                    url: file.url,
-                    type: file.type,
-                    thumbUrl: file.thumbUrl,
-                }));
-                setFileList(formatted);
-            }
-        } catch (err) {
-            console.error("获取文件失败:", err);
-        }
-    };
-
-    // ✅ 页面加载时先拉取一次
-    useEffect(() => {
-        getFilesFromServer();
-    }, []);
+    const { fileList, setFileList,refreshFileList } = useHomePageCarouselList();
 
     const sensor = useSensor(PointerSensor, {activationConstraint: {distance: 10}});
 
@@ -85,7 +63,7 @@ const HomePageCarousel = () => {
             message.success(`${file.name} 上传成功`);
             onSuccess({}, file);
             // 上传成功后重新从数据库获取最新列表
-            await getFilesFromServer();
+            await refreshFileList();
         } catch (err) {
             console.error("上传失败:", err);
             message.error(`${file.name} 上传失败`);
@@ -106,7 +84,7 @@ const HomePageCarousel = () => {
                 setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
                 message.success(`删除成功: ${file.name}`);
                 // 删除后也刷新数据库
-                await getFilesFromServer();
+                await refreshFileList();
             } catch (err) {
                 console.error('删除失败:', err);
                 message.error('删除失败');
