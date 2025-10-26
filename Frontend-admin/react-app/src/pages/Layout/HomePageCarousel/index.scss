@@ -1,3 +1,37 @@
+.draggable-upload-list-item {
+
+}
+
+.is-dragging {
+  opacity: 0.7;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.draggable-item-content {
+  display: flex;
+  align-items: center;
+}
+
+.drag-handle {
+  margin-right: 8px;
+  cursor: move;
+  color: #888;
+  flex-shrink: 0; // 防止图标被压缩
+  width: 3%;
+  font-size: 40px;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.home-carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 /* 上传区域样式 */
 .upload-area {
   border: 2px dashed #4a90e2;
@@ -106,6 +140,14 @@
 }
 
 /* 轮播图样式 */
+.carousel-item {
+  // 确保走马灯项内部有合适的填充或对齐
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
 .carousel-container {
   background: white;
   border-radius: 8px;
@@ -119,10 +161,41 @@
   font-size: 20px;
 }
 
+.media-container {
+  max-height: 70vh;
+
+  video, img {
+    max-height: 100%;
+    max-width: 100%;
+    filter: brightness(0.95);
+    object-fit: contain;
+  }
+}
+
+.type-badge {
+
+}
+
 .empty-carousel {
   text-align: center;
   padding: 40px;
   color: #7f8c8d;
+}
+
+// Ant Design 预览蒙版文字颜色
+.ant-image-mask-info {
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+}
+
+.error-placeholder{
+  color: #fff;
+}
+
+// 分割线样式
+.dashed-divider {
+  border-color: #6d7aea !important;
 }
 
 .carousel {

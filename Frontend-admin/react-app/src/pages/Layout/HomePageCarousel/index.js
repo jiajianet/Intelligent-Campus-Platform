@@ -1,6 +1,6 @@
 import './index.scss'
 import React from 'react';
-import {DeleteTwoTone, EyeOutlined, InboxOutlined} from '@ant-design/icons';
+import {DeleteTwoTone, EyeOutlined, InboxOutlined, HolderOutlined} from '@ant-design/icons';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import {
     arrayMove, SortableContext, useSortable, verticalListSortingStrategy,
@@ -19,21 +19,29 @@ const isVideo = (file) => {
 };
 
 const DraggableUploadListItem = ({originNode, file}) => {
-    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
+    const {setNodeRef, transform, transition, isDragging, attributes, listeners} = useSortable({
         id: file.uid,
     });
     const style = {
-        transform: CSS.Translate.toString(transform), transition, cursor: 'move',
+        transform: CSS.Translate.toString(transform), transition,
     };
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className={isDragging ? 'is-dragging' : ''}
-            {...attributes}
-            {...listeners}
-            >
-            {file.status === 'error' && isDragging ? originNode.props.children : originNode}
+            className={`draggable-upload-list-item ${isDragging ? 'is-dragging' : ''}`}
+        >
+
+            <div className="draggable-item-content">
+                <HolderOutlined
+                    className="drag-handle"
+                    {...attributes}
+                    {...listeners}
+                />
+                <div style={{flexGrow: 1, minWidth: 0}}>
+                    {file.status === 'error' && isDragging ? originNode.props.children : originNode}
+                </div>
+            </div>
         </div>
     );
 };
@@ -41,7 +49,7 @@ const DraggableUploadListItem = ({originNode, file}) => {
 const HomePageCarousel = () => {
 
     // 封装一个统一的“从服务器获取文件列表”方法
-    const { fileList, setFileList,refreshFileList } = useHomePageCarouselList();
+    const {fileList, setFileList, refreshFileList} = useHomePageCarouselList();
 
     const sensor = useSensor(PointerSensor, {activationConstraint: {distance: 10}});
 
@@ -121,12 +129,12 @@ const HomePageCarousel = () => {
             </DndContext>
 
             {fileList.length === 0 ? (
-                <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
+                <Divider variant="dashed" className="dashed-divider" dashed>
                     请上传图片/视频
                 </Divider>
             ) : (
                 <>
-                    <Divider variant="dashed" style={{borderColor: '#6d7aea'}} dashed>
+                    <Divider variant="dashed" className="dashed-divider" dashed>
                         以下是上传的文件，可拖拽排序
                     </Divider>
 
@@ -135,12 +143,7 @@ const HomePageCarousel = () => {
                         autoplay
                         autoplaySpeed={2000}
                         infinite
-                        style={{
-                            maxWidth: '1200px',
-                            margin: '0 auto',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                        }}
+                        className="home-carousel-container"
                     >
                         {uploadedFiles.map((file) => (
                             <div key={file.uid}>
@@ -151,11 +154,6 @@ const HomePageCarousel = () => {
                                                 <span className="type-badge">视频</span>
                                                 <video
                                                     controls
-                                                    style={{
-                                                        maxHeight: '100%',
-                                                        maxWidth: '100%',
-                                                        filter: 'brightness(0.95)',
-                                                    }}
                                                     poster={file.poster}
                                                 >
                                                     <source src={file.url} type={file.type || 'video/mp4'}/>
@@ -168,11 +166,6 @@ const HomePageCarousel = () => {
                                                 <Image
                                                     src={file.url || file.thumbUrl}
                                                     alt={file.name}
-                                                    style={{
-                                                        maxHeight: '100%',
-                                                        maxWidth: '100%',
-                                                        objectFit: 'contain',
-                                                    }}
                                                     preview={{
                                                         mask: (
                                                             <span style={{
