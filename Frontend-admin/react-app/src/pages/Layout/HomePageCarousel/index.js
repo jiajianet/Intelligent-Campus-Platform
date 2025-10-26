@@ -168,11 +168,7 @@ const HomePageCarousel = () => {
                                                     alt={file.name}
                                                     preview={{
                                                         mask: (
-                                                            <span style={{
-                                                                color: '#fff',
-                                                                fontSize: '16px',
-                                                                letterSpacing: '0.1em',
-                                                            }}>点击预览</span>
+                                                            <span>点击预览</span>
                                                         ),
                                                     }}
                                                 />

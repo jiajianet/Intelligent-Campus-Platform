@@ -27,6 +27,7 @@ function useHomePageCarouselList() {
                     status: 'done',
                     type: file.type,
                     thumbUrl: file.thumbUrl,
+                    size: file.size,
                 }));
                 setFileList(formatted);
             }

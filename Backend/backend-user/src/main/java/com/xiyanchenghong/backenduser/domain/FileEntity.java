@@ -40,6 +40,9 @@ public class FileEntity {
     @Column(name = "sort_order")
     private Integer sortOrder;
 
+    @Column(name = "size")
+    private Long size;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

@@ -65,6 +65,7 @@ public class FileController {
                 fileEntity.setUrl(fileUrl);
                 fileEntity.setThumbUrl(fileUrl);
                 fileEntity.setType(file.getContentType());
+                fileEntity.setSize(file.getSize());
 
                 fileRepository.save(fileEntity);
 
@@ -73,6 +74,7 @@ public class FileController {
                 response.put("url", fileBaseUrl);
                 response.put("thumbUrl", fileBaseUrl);
                 response.put("percent", 100);
+                response.put("size", file.getSize());
 
                 logger.info("文件上传成功： {}", fileUrl);
             } catch (Exception e) {
@@ -170,8 +172,8 @@ public class FileController {
                 String fullUrl = fileEntity.getUrl();
                 //假如文件名时URL的最后一部分，并且前面有fileBaseUrl
                 //假如fileBaseUrl时正确定，是以/结尾
-                if(fullUrl == null || !fullUrl.startsWith(fileBaseUrl)) {
-                    logger.warn("文件URL格式不正确或者为空：{}",fullUrl);
+                if (fullUrl == null || !fullUrl.startsWith(fileBaseUrl)) {
+                    logger.warn("文件URL格式不正确或者为空：{}", fullUrl);
                     return ResponseEntity.ok(Result.success("文件记录已删除，物理文件跳过处理"));
                 }
 
