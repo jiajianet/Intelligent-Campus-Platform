@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -112,10 +114,19 @@ public class FileController {
                 contentType = "application/octet-stream";
             }
 
+            //对文件名进行 URL 编码
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+                    .replace("\\+", "%20");
+
+            //构建 Content-Disposition 头部，使用 filename*(filename*: 遵循 RFC 5987，支持 UTF-8) 字段支持 UTF-8
+            // (filename: 兼容旧浏览器，但可能乱码（Tomcat 会移除，但我们保留它的结构）)
+            //TODO:可以考虑双重方案，让老旧的浏览器支持 filename* 的浏览器
+            String contentDisposition = "inline; filename*=utf-8''" + encodedFileName;
+
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     // Content-Disposition: 'inline' 表示浏览器应尝试直接显示文件
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                     .body(resource);
 
         } catch (MalformedURLException e) {
