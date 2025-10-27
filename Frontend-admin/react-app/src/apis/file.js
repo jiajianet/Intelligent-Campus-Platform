@@ -26,3 +26,12 @@ export const getFilesAPI = () => {
         method: "GET",
     });
 };
+
+export const reorderFilesAPI = (uidList) => {
+
+    return request({
+        url: '/user/files/reorder',
+        method: "PUT",
+        data: uidList,
+    })
+}

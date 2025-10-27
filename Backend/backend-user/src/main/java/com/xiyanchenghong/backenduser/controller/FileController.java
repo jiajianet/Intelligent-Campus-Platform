@@ -60,6 +60,10 @@ public class FileController {
 
                 String fileUrl = fileBaseUrl + fileName;
 
+                //找到当前最大sortOrder，然后+1
+                Integer maxIndex = fileRepository.findMaxSortOrder().orElse(-1);
+                int newIndex = maxIndex + 1;
+
                 FileEntity fileEntity = new FileEntity();
                 fileEntity.setUid(uid);
                 fileEntity.setName(file.getOriginalFilename());
@@ -68,6 +72,7 @@ public class FileController {
                 fileEntity.setThumbUrl(fileUrl);
                 fileEntity.setType(file.getContentType());
                 fileEntity.setSize(file.getSize());
+                fileEntity.setSortOrder(newIndex);
 
                 fileRepository.save(fileEntity);
 
@@ -145,7 +150,7 @@ public class FileController {
     @GetMapping("/getFiles")
     public ResponseEntity<Result<List<FileEntity>>> getFiles() {
         logger.debug("查询所以状态为done的文件");
-        List<FileEntity> files = fileRepository.findByStatus("done");
+        List<FileEntity> files = fileRepository.findByStatusOrderBySortOrderAsc("done");
         logger.info("查询到{}个有效文件", files.size());
         return ResponseEntity.ok(Result.success(files));
     }
@@ -156,12 +161,22 @@ public class FileController {
         List<FileEntity> files = fileRepository.findAll();
         Map<String, Integer> orderMap = new HashMap<>();
         for (int i = 0; i < uids.size(); i++) {
-            orderMap.put(uids.get(i), i);
+            orderMap.put(uids.get(i), i); //i是最新的sortOrder
         }
 
+        //根据映射进行排序
         files.sort(Comparator.comparing(f -> orderMap.getOrDefault(f.getUid(), Integer.MIN_VALUE)));
 
+        //更新sortOrder
+        for (int i = 0; i< uids.size();i++){
+            FileEntity file = files.get(i);
+//            if (orderMap.containsKey(file.getUid())){
+//                file.setSortOrder(orderMap.get(file.getUid()));
+//            }
+            file.setSortOrder(i);
+        }
 
+        //更新排序信息
         logger.debug("更新{}个文件的排序信息", files.size());
         fileRepository.saveAll(files);
 

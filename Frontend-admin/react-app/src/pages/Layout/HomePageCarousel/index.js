@@ -8,7 +8,7 @@ import {
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
 import {Carousel, Divider, Image, message} from "antd";
-import {deleteFileAPI, uploadFileAPI} from "@/apis/file";
+import {deleteFileAPI, reorderFilesAPI, uploadFileAPI} from "@/apis/file";
 import {useHomePageCarouselList} from "@/hooks/useHomePageCarouselList";
 
 const isVideo = (file) => {
@@ -53,13 +53,30 @@ const HomePageCarousel = () => {
 
     const sensor = useSensor(PointerSensor, {activationConstraint: {distance: 10}});
 
-    const onDragEnd = ({active, over}) => {
+    const onDragEnd = async ({active, over}) => {
         if (active.id !== over?.id) {
-            setFileList((prev) => {
-                const activeIndex = prev.findIndex((i) => i.uid === active.id);
-                const overIndex = prev.findIndex((i) => i.uid === over?.id);
-                return arrayMove(prev, activeIndex, overIndex);
-            });
+            const newFileList = arrayMove(
+                fileList,
+                fileList.findIndex((item) => item.uid === active.id),
+                fileList.findIndex((item) => item.uid === over?.id)
+            );
+
+            setFileList(newFileList);
+
+            //新的UID顺序列表
+            const newUidsOrder = newFileList.map(file => file.uid);
+
+            try{
+                await reorderFilesAPI(newUidsOrder);
+                message.success('文件顺序更新成功!');
+
+            } catch (error) {
+                console.error('文件顺序更新失败:', error);
+                message.error('文件顺序更新失败');
+                //避免数据不一致
+                await reorderFilesAPI();
+            }
+
         }
     };
 
