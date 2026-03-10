@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.service.serviceImpl;
 
 import com.xiyanchenghong.backenduser.domain.ExamData;
-import com.xiyanchenghong.backenduser.repository.ExamDataRepository;
+import com.xiyanchenghong.backenduser.mapper.ExamDataMapper;
 import com.xiyanchenghong.backenduser.service.ExamDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,17 +10,15 @@ import org.springframework.stereotype.Service;
 public class ExamDataServiceImpl implements ExamDataService {
 
     @Autowired
-    private ExamDataRepository examDataRepository;
+    private ExamDataMapper examDataMapper;
 
     @Override
     public ExamData getExamData(Long examId, Long studentId) {
-        return examDataRepository.findByExamIdAndStudentId(examId, studentId);
+        return examDataMapper.findByExamIdAndStudentId(examId, studentId);
     }
 
     @Override
     public void updateExamData(ExamData examData) {
-        examDataRepository.save(examData);
+        examDataMapper.save(examData);
     }
-
-
 }

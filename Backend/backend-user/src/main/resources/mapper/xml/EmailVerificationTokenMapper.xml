@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.EmailVerificationTokenMapper">
+
+    <resultMap id="EmailVerificationTokenResultMap" type="com.xiyanchenghong.backenduser.domain.EmailVerificationToken">
+        <id property="id" column="id"/>
+        <result property="token" column="token"/>
+        <result property="userId" column="user_id"/>
+        <result property="expiryDate" column="expiry_date"/>
+    </resultMap>
+
+    <select id="getEmailVerificationTokenById" resultMap="EmailVerificationTokenResultMap">
+        SELECT * FROM email_verification_token WHERE id = #{id}
+    </select>
+
+    <select id="getEmailVerificationTokenByToken" resultMap="EmailVerificationTokenResultMap">
+        SELECT * FROM email_verification_token WHERE token = #{token}
+    </select>
+
+    <insert id="insertEmailVerificationToken" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO email_verification_token(token, user_id, expiry_date)
+        VALUES(#{token}, #{userId}, #{expiryDate})
+    </insert>
+
+    <update id="updateEmailVerificationToken">
+        UPDATE email_verification_token
+        SET token=#{token}, user_id=#{userId}, expiry_date=#{expiryDate}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteEmailVerificationToken">
+        DELETE FROM email_verification_token WHERE id=#{id}
+    </delete>
+
+    <insert id="save">
+        INSERT INTO email_verification_token (token, user_id, expiry_date)
+        VALUES (#{token}, #{userId}, #{expiryDate})
+    </insert>
+
+    <select id="findByToken" resultMap="EmailVerificationTokenResultMap">
+        SELECT * FROM email_verification_token WHERE token = #{token}
+    </select>
+</mapper>

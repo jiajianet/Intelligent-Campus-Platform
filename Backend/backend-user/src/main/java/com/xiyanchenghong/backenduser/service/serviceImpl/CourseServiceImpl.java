@@ -3,9 +3,9 @@ package com.xiyanchenghong.backenduser.service.serviceImpl;
 import com.xiyanchenghong.backenduser.domain.Course;
 import com.xiyanchenghong.backenduser.domain.CourseStudent;
 import com.xiyanchenghong.backenduser.domain.User;
-import com.xiyanchenghong.backenduser.repository.CourseRepository;
-import com.xiyanchenghong.backenduser.repository.CourseStudentRepository;
-import com.xiyanchenghong.backenduser.repository.UserRepository;
+import com.xiyanchenghong.backenduser.mapper.CourseMapper;
+import com.xiyanchenghong.backenduser.mapper.CourseStudentMapper;
+import com.xiyanchenghong.backenduser.mapper.UserMapper;
 import com.xiyanchenghong.backenduser.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,36 +18,36 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements CourseService {
 
     @Autowired
-    private CourseRepository courseRepository;
+    private CourseMapper courseMapper;
 
     @Autowired
-    private CourseStudentRepository courseStudentRepository;
+    private CourseStudentMapper courseStudentMapper;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Override
     public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+        return courseMapper.getAllCourses();
     }
 
     @Override
     public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId).orElse(null);
+        return courseMapper.getCourseById(courseId);
     }
 
     @Override
     public boolean joinCourse(Long userId, Long courseId) {
         try {
-            Course course = courseRepository.findById(courseId).orElse(null);
+            Course course = courseMapper.getCourseById(courseId);
             if (course == null) {
                 return false;
             }
             CourseStudent courseStudent = new CourseStudent();
             courseStudent.setStudentId(userId);
-            courseStudent.setCourse(course);
+            courseStudent.setCourseId(courseId);
             courseStudent.setJoinDate(new Date());
-            courseStudentRepository.save(courseStudent);
+            courseStudentMapper.insertCourseStudent(courseStudent);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +58,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public boolean dropCourse(Long userId, Long courseId) {
         try {
-            CourseStudent courseStudent = courseStudentRepository.findByStudentIdAndCourse_CourseId(userId, courseId);
+            CourseStudent courseStudent = courseStudentMapper.getCourseStudentByStudentIdAndCourseId(userId, courseId);
             if (courseStudent != null) {
-                courseStudentRepository.delete(courseStudent);
+                courseStudentMapper.deleteCourseStudentByStudentIdAndCourseId(userId, courseId);
                 return true;
             }
             return false;
@@ -72,13 +72,14 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(Course course) {
-        return courseRepository.save(course);
+        courseMapper.insertCourse(course);
+        return course;
     }
 
     @Override
     public boolean deleteCourse(Long courseId) {
         try {
-            courseRepository.deleteById(courseId);
+            courseMapper.deleteCourse(courseId);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,25 +89,25 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void updateCourse(Course course) {
-        courseRepository.save(course);
+        courseMapper.updateCourse(course);
     }
 
     @Override
     public List<Course> getCoursesByTeacherId(Long teacherId) {
-        return courseRepository.findByTeacherId(teacherId);
+        return courseMapper.getCoursesByTeacherId(teacherId);
     }
 
     @Override
     public List<Course> getCoursesByStudentId(Long studentId) {
-        List<CourseStudent> courseStudents = courseStudentRepository.findByStudentId(studentId);
+        List<CourseStudent> courseStudents = courseStudentMapper.getCourseStudentsByStudentId(studentId);
         return courseStudents.stream()
-                .map(CourseStudent::getCourse)
+                .map(courseStudent -> courseMapper.getCourseById(courseStudent.getCourseId()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Course> getAvailableCourses(Long studentId) {
-        List<Course> allCourses = courseRepository.findAll();
+        List<Course> allCourses = courseMapper.getAllCourses();
         List<Course> enrolledCourses = getCoursesByStudentId(studentId);
         return allCourses.stream()
                 .filter(course -> !enrolledCourses.contains(course))
@@ -115,13 +116,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<User> getStudentsByCourseId(Long courseId) {
-        return courseStudentRepository.findByCourse_CourseId(courseId).stream()
-                .map(courseStudent -> userRepository.findById(courseStudent.getStudentId()).orElse(null))
+        return courseStudentMapper.getCourseStudentsByCourseId(courseId).stream()
+                .map(courseStudent -> userMapper.getUserById(courseStudent.getStudentId()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public User getTeacherById(Long teacherId) {
-        return userRepository.findById(teacherId).orElse(null);
+        return userMapper.getUserById(teacherId);
     }
 }

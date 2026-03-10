@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.CourseStudentMapper">
+
+    <resultMap id="CourseStudentResultMap" type="com.xiyanchenghong.backenduser.domain.CourseStudent">
+        <id property="id" column="id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="joinDate" column="join_date"/>
+    </resultMap>
+
+    <select id="getCourseStudentById" resultMap="CourseStudentResultMap">
+        SELECT * FROM course_student WHERE id = #{id}
+    </select>
+
+    <select id="getAllCourseStudents" resultMap="CourseStudentResultMap">
+        SELECT * FROM course_student
+    </select>
+
+    <select id="getCourseStudentsByStudentId" resultMap="CourseStudentResultMap">
+        SELECT * FROM course_student WHERE student_id = #{studentId}
+    </select>
+
+    <select id="getCourseStudentsByCourseId" resultMap="CourseStudentResultMap">
+        SELECT * FROM course_student WHERE course_id = #{courseId}
+    </select>
+
+    <select id="getCourseStudentByStudentIdAndCourseId" resultMap="CourseStudentResultMap">
+        SELECT * FROM course_student WHERE student_id = #{studentId} AND course_id = #{courseId}
+    </select>
+
+    <insert id="insertCourseStudent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO course_student(student_id, course_id, join_date)
+        VALUES(#{studentId}, #{courseId}, #{joinDate})
+    </insert>
+
+    <update id="updateCourseStudent">
+        UPDATE course_student
+        SET student_id=#{studentId}, course_id=#{courseId}, join_date=#{joinDate}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteCourseStudent">
+        DELETE FROM course_student WHERE id=#{id}
+    </delete>
+
+    <delete id="deleteCourseStudentByStudentIdAndCourseId">
+        DELETE FROM course_student WHERE student_id=#{studentId} AND course_id=#{courseId}
+    </delete>
+</mapper>

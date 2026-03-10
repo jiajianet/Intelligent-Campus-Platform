@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.xiyanchenghong.backenduser.domain.User">
+        <id property="uid" column="uid"/>
+        <result property="uschool" column="uschool"/>
+        <result property="uno" column="uno"/>
+        <result property="password" column="password"/>
+        <result property="uname" column="uname"/>
+        <result property="email" column="email"/>
+        <result property="upic" column="upic"/>
+        <result property="emailverified" column="emailverified"/>
+        <result property="schedfile" column="schedfile"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+    <select id="getUserById" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uid = #{uid}
+    </select>
+
+    <select id="getAllUsers" resultMap="UserResultMap">
+        SELECT * FROM user
+    </select>
+
+    <select id="getUserByUnoAndEmail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uno = #{uno} AND email = #{email}
+    </select>
+
+    <select id="getUserByUno" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uno = #{uno}
+    </select>
+
+    <select id="getUserByUnoAndPassword" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uno = #{uno} AND password = #{password}
+    </select>
+
+    <select id="getUserByUname" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uname = #{uname}
+    </select>
+
+    <select id="getUsersByEmail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE email = #{email}
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="uid">
+        INSERT INTO user(uschool, uno, password, uname, email, upic, emailverified, schedfile, role)
+        VALUES(#{uschool}, #{uno}, #{password}, #{uname}, #{email}, #{upic}, #{emailverified}, #{schedfile}, #{role})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE user
+        SET uschool=#{uschool}, uno=#{uno}, password=#{password}, uname=#{uname}, email=#{email}, upic=#{upic}, emailverified=#{emailverified}, schedfile=#{schedfile}, role=#{role}
+        WHERE uid=#{uid}
+    </update>
+
+    <delete id="deleteUserByUno">
+        DELETE FROM user WHERE uno = #{uno}
+    </delete>
+
+    <delete id="deleteUserById">
+        DELETE FROM user WHERE uid = #{uid}
+    </delete>
+
+    <select id="findById" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uid = #{uid}
+    </select>
+
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE email = #{email}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM user WHERE uid = #{uid}
+    </delete>
+
+    <select id="findByUno" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uno = #{uno}
+    </select>
+
+    <update id="save">
+        UPDATE user
+        SET password = #{password}
+        WHERE uid = #{uid}
+    </update>
+
+    <select id="findByUnoAndEmail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE uno = #{uno} AND email = #{email}
+    </select>
+
+</mapper>

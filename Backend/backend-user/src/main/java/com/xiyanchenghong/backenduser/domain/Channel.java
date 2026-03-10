@@ -1,14 +1,11 @@
 package com.xiyanchenghong.backenduser.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
-@Entity
+@Getter
+@Setter
 public class Channel {
-    @Id  // 标记 id 字段为主键
-    @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Integer id;
     private String name;
 
@@ -19,20 +16,5 @@ public class Channel {
 
     public Channel() {
 
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 }

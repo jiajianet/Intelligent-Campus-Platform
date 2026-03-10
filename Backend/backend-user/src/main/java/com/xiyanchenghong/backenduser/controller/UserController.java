@@ -5,10 +5,10 @@ import com.anji.captcha.service.CaptchaService;
 import com.xiyanchenghong.backenduser.domain.CompleteRegistrationRequest;
 import com.xiyanchenghong.backenduser.domain.School;
 import com.xiyanchenghong.backenduser.domain.UserRegistrationRequest;
+import com.xiyanchenghong.backenduser.mapper.SchoolMapper;
 import com.xiyanchenghong.backenduser.model.*;
 import com.xiyanchenghong.backenduser.domain.User;
 import com.xiyanchenghong.backenduser.model.RequestLock;
-import com.xiyanchenghong.backenduser.repository.SchoolRepository;
 import com.xiyanchenghong.backenduser.service.UserService;
 import com.xiyanchenghong.backenduser.utils.JwtUtils;
 import com.xiyanchenghong.backenduser.utils.Result;
@@ -45,7 +45,7 @@ public class UserController {
     private CaptchaService captchaService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
-    private SchoolRepository schoolRepository;
+    private SchoolMapper schoolMapper;
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
@@ -249,7 +249,7 @@ public class UserController {
 
     @PostMapping("/schools")
     public List<School> getSchools(@RequestParam String school) {
-        return schoolRepository.findByNameContaining(school);
+        return schoolMapper.getSchoolsByNameContaining(school);
     }
 
 
@@ -544,11 +544,3 @@ public class UserController {
         return Result.success("User information updated successfully");
     }
 }
-
-
-
-
-
-
-
-

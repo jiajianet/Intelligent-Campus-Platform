@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.SchoolMapper">
+
+    <resultMap id="SchoolResultMap" type="com.xiyanchenghong.backenduser.domain.School">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="name" column="name"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="address" column="address"/>
+        <result property="lat" column="lat"/>
+        <result property="lng" column="lng"/>
+        <result property="provinceName" column="province_name"/>
+        <result property="cityName" column="city_name"/>
+        <result property="districtName" column="district_name"/>
+        <result property="nightHour" column="night_hour"/>
+        <result property="managerSalaryPercent" column="manager_salary_percent"/>
+        <result property="agentSalaryPercent" column="agent_salary_percent"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="adcode" column="adcode"/>
+    </resultMap>
+
+    <select id="getSchoolById" resultMap="SchoolResultMap">
+        SELECT * FROM school WHERE id = #{id}
+    </select>
+
+    <select id="getAllSchools" resultMap="SchoolResultMap">
+        SELECT * FROM school
+    </select>
+
+    <select id="getSchoolsByNameContaining" resultMap="SchoolResultMap">
+        SELECT * FROM school WHERE name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <select id="getSchoolByName" resultMap="SchoolResultMap">
+        SELECT * FROM school WHERE name = #{name}
+    </select>
+
+    <insert id="insertSchool" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO school(company_id, warehouse_id, name, province, city, district, address, lat, lng, province_name, city_name, district_name, night_hour, manager_salary_percent, agent_salary_percent, status, create_time, adcode)
+        VALUES(#{companyId}, #{warehouseId}, #{name}, #{province}, #{city}, #{district}, #{address}, #{lat}, #{lng}, #{provinceName}, #{cityName}, #{districtName}, #{nightHour}, #{managerSalaryPercent}, #{agentSalaryPercent}, #{status}, #{createTime}, #{adcode})
+    </insert>
+
+    <update id="updateSchool">
+        UPDATE school
+        SET company_id=#{companyId}, warehouse_id=#{warehouseId}, name=#{name}, province=#{province}, city=#{city}, district=#{district}, address=#{address}, lat=#{lat}, lng=#{lng}, province_name=#{provinceName}, city_name=#{cityName}, district_name=#{districtName}, night_hour=#{nightHour}, manager_salary_percent=#{managerSalaryPercent}, agent_salary_percent=#{agentSalaryPercent}, status=#{status}, create_time=#{createTime}, adcode=#{adcode}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteSchool">
+        DELETE FROM school WHERE id=#{id}
+    </delete>
+
+    <select id="findByName" resultMap="SchoolResultMap">
+        SELECT * FROM school WHERE name = #{name}
+    </select>
+
+</mapper>

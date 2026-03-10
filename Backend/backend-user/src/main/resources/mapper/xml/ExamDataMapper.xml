@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ExamDataMapper">
+
+    <resultMap id="ExamDataResultMap" type="com.xiyanchenghong.backenduser.domain.ExamData">
+        <id property="id" column="id"/>
+        <result property="examId" column="exam_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="data" column="data"/>
+    </resultMap>
+
+    <select id="getExamDataById" resultMap="ExamDataResultMap">
+        SELECT * FROM exam_data WHERE id = #{id}
+    </select>
+
+    <select id="getAllExamData" resultMap="ExamDataResultMap">
+        SELECT * FROM exam_data
+    </select>
+
+    <select id="getExamDataByExamIdAndStudentId" resultMap="ExamDataResultMap">
+        SELECT * FROM exam_data WHERE exam_id = #{examId} AND student_id = #{studentId}
+    </select>
+
+    <insert id="insertExamData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam_data(exam_id, student_id, data)
+        VALUES(#{examId}, #{studentId}, #{data})
+    </insert>
+
+    <update id="updateExamData">
+        UPDATE exam_data
+        SET exam_id=#{examId}, student_id=#{studentId}, data=#{data}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteExamData">
+        DELETE FROM exam_data WHERE id=#{id}
+    </delete>
+
+    <select id="findByExamIdAndStudentId" resultMap="ExamDataResultMap">
+        SELECT * FROM exam_data WHERE exam_id = #{examId} AND student_id = #{studentId}
+    </select>
+
+    <insert id="save">
+        INSERT INTO exam_data(exam_id, student_id, score, comments)
+        VALUES(#{examId}, #{studentId}, #{score}, #{comments})
+            ON DUPLICATE KEY UPDATE score = VALUES(score), comments = VALUES(comments)
+    </insert>
+</mapper>

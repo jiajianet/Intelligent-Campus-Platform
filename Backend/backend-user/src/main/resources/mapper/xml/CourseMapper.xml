@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.CourseMapper">
+
+    <resultMap id="CourseResultMap" type="com.xiyanchenghong.backenduser.domain.Course">
+        <id property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseDescription" column="course_description"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="progress" column="progress"/>
+        <result property="coverImagePath" column="cover_image_path"/>
+    </resultMap>
+
+    <select id="getCourseById" resultMap="CourseResultMap">
+        SELECT * FROM course WHERE course_id = #{courseId}
+    </select>
+
+    <select id="getAllCourses" resultMap="CourseResultMap">
+        SELECT * FROM course
+    </select>
+
+    <select id="getCoursesByTeacherId" resultMap="CourseResultMap">
+        SELECT * FROM course WHERE teacher_id = #{teacherId}
+    </select>
+
+    <insert id="insertCourse" useGeneratedKeys="true" keyProperty="courseId">
+        INSERT INTO course(course_name, course_description, teacher_id, start_date, end_date, progress, cover_image_path)
+        VALUES(#{courseName}, #{courseDescription}, #{teacherId}, #{startDate}, #{endDate}, #{progress}, #{coverImagePath})
+    </insert>
+
+    <update id="updateCourse">
+        UPDATE course
+        SET course_name=#{courseName}, course_description=#{courseDescription}, teacher_id=#{teacherId}, start_date=#{startDate}, end_date=#{endDate}, progress=#{progress}, cover_image_path=#{coverImagePath}
+        WHERE course_id=#{courseId}
+    </update>
+
+    <delete id="deleteCourse">
+        DELETE FROM course WHERE course_id=#{courseId}
+    </delete>
+</mapper>

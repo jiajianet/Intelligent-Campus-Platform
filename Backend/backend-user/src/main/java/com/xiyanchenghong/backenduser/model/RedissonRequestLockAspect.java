@@ -31,7 +31,7 @@ public class RedissonRequestLockAspect {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         RequestLock requestLock = method.getAnnotation(RequestLock.class);
-        if (requestLock == null || StringUtils.isEmpty(requestLock.prefix())) {
+        if (requestLock == null || !StringUtils.hasLength(requestLock.prefix())) {
             throw new BizException(400, "重复提交前缀不能为空");
         }
         // 获取自定义key

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ChannelMapper">
+
+    <resultMap id="ChannelResultMap" type="com.xiyanchenghong.backenduser.domain.Channel">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getChannelById" resultMap="ChannelResultMap">
+        SELECT * FROM channel WHERE id = #{id}
+    </select>
+
+    <select id="getAllChannels" resultMap="ChannelResultMap">
+        SELECT * FROM channel
+    </select>
+
+    <insert id="insertChannel" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO channel(name) VALUES(#{name})
+    </insert>
+
+    <update id="updateChannel">
+        UPDATE channel SET name=#{name} WHERE id=#{id}
+    </update>
+
+    <delete id="deleteChannel">
+        DELETE FROM channel WHERE id=#{id}
+    </delete>
+</mapper>

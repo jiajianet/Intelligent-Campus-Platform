@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ClassroomStudentMapper">
+    <resultMap id="ClassroomStudentResultMap" type="com.xiyanchenghong.backenduser.domain.ClassroomStudent">
+        <id property="id" column="id"/>
+        <result property="classroomId" column="classroom_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="handRaised" column="hand_raised"/>
+    </resultMap>
+
+    <select id="getClassroomStudentById" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student WHERE id = #{id}
+    </select>
+
+    <select id="getAllClassroomStudents" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student
+    </select>
+
+    <select id="getStudentsByClassroomId" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student WHERE classroom_id = #{classroomId}
+    </select>
+
+    <select id="getClassroomStudentByStudentId" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student WHERE student_id = #{studentId}
+    </select>
+
+    <select id="getStudentsByClassroomIdAndHandRaisedTrue" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student WHERE classroom_id = #{classroomId} AND hand_raised = true
+    </select>
+
+    <select id="getOngoingClassroomsByStudentId" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom WHERE student_id = #{studentId} AND end_time IS NULL
+    </select>
+
+    <select id="getRaisedHandsByStudentId" resultMap="ClassroomStudentResultMap">
+        SELECT * FROM classroom_student WHERE student_id = #{studentId} AND hand_raised = true
+    </select>
+
+    <update id="updateClassroomStudentHandRaised">
+        UPDATE classroom_student SET hand_raised=#{handRaised} WHERE student_id=#{studentId}
+    </update>
+
+    <insert id="insertClassroomStudent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO classroom_student(classroom_id, student_id, hand_raised)
+        VALUES(#{classroomId}, #{studentId}, #{handRaised})
+    </insert>
+
+    <update id="updateClassroomStudent">
+        UPDATE classroom_student
+        SET classroom_id=#{classroomId}, student_id=#{studentId}, hand_raised=#{handRaised}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteClassroomStudent">
+        DELETE FROM classroom_student WHERE id=#{id}
+    </delete>
+</mapper>

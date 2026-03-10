@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.ExamMapper">
+
+    <resultMap id="ExamResultMap" type="com.xiyanchenghong.backenduser.domain.Exam">
+        <id property="id" column="id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="examDate" column="exam_date"/>
+    </resultMap>
+
+    <select id="getExamById" resultMap="ExamResultMap">
+        SELECT * FROM exam WHERE id = #{id}
+    </select>
+
+    <select id="getAllExams" resultMap="ExamResultMap">
+        SELECT * FROM exam
+    </select>
+
+    <select id="getExamByIdAndTeacherId" resultMap="ExamResultMap">
+        SELECT * FROM exam WHERE id = #{id} AND teacher_id = #{teacherId}
+    </select>
+
+    <insert id="insertExam" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam(teacher_id, title, description, exam_date)
+        VALUES(#{teacherId}, #{title}, #{description}, #{examDate})
+    </insert>
+
+    <update id="updateExam">
+        UPDATE exam
+        SET teacher_id=#{teacherId}, title=#{title}, description=#{description}, exam_date=#{examDate}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteExam">
+        DELETE FROM exam WHERE id=#{id}
+    </delete>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam (id, name, date, teacher_id)
+        VALUES (#{id}, #{name}, #{date}, #{teacherId})
+    </insert>
+
+    <delete id="deleteByIdAndTeacherId">
+        DELETE FROM exam WHERE id = #{examId} AND teacher_id = #{teacherId}
+    </delete>
+
+    <select id="findByIdAndTeacherId" resultMap="ExamResultMap">
+        SELECT * FROM exam WHERE id = #{examId} AND teacher_id = #{teacherId}
+    </select>
+
+    <select id="findById" resultMap="ExamResultMap">
+        SELECT * FROM exam WHERE id = #{examId}
+    </select>
+
+    <select id="existsByIdAndTeacherId" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM exam WHERE id = #{examId} AND teacher_id = #{teacherId}
+    </select>
+
+</mapper>
