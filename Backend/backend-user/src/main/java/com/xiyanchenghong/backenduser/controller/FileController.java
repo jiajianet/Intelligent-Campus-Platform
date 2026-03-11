@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.controller;
 
 import com.xiyanchenghong.backenduser.domain.FileEntity;
-import com.xiyanchenghong.backenduser.repository.FileRepository;
+import com.xiyanchenghong.backenduser.mapper.FileMapper;
 import com.xiyanchenghong.backenduser.service.FileStorageService;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +34,12 @@ public class FileController {
     @Value("${file.base-url}")
     private String fileBaseUrl;
 
-
-    private final FileRepository fileRepository;
-
+    private final FileMapper fileMapper;
     private final FileStorageService fileStorageService;
 
     @Autowired
-    public FileController(FileStorageService fileStorageService, FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    public FileController(FileStorageService fileStorageService, FileMapper fileMapper) {
+        this.fileMapper = fileMapper;
         this.fileStorageService = fileStorageService;
     }
 
@@ -61,8 +59,8 @@ public class FileController {
                 String fileUrl = fileBaseUrl + fileName;
 
                 //找到当前最大sortOrder，然后+1
-                Integer maxIndex = fileRepository.findMaxSortOrder().orElse(-1);
-                int newIndex = maxIndex + 1;
+                Integer maxIndex = fileMapper.findMaxSortOrder();
+                int newIndex = (maxIndex == null) ? 0 : maxIndex + 1;
 
                 FileEntity fileEntity = new FileEntity();
                 fileEntity.setUid(uid);
@@ -74,7 +72,7 @@ public class FileController {
                 fileEntity.setSize(file.getSize());
                 fileEntity.setSortOrder(newIndex);
 
-                fileRepository.save(fileEntity);
+                fileMapper.insert(fileEntity);
 
                 response.put("uid", uid);
                 response.put("name", file.getOriginalFilename());
@@ -150,7 +148,7 @@ public class FileController {
     @GetMapping("/getFiles")
     public ResponseEntity<Result<List<FileEntity>>> getFiles() {
         logger.debug("查询所以状态为done的文件");
-        List<FileEntity> files = fileRepository.findByStatusOrderBySortOrderAsc("done");
+        List<FileEntity> files = fileMapper.findByStatusOrderBySortOrderAsc("done");
         logger.info("查询到{}个有效文件", files.size());
         return ResponseEntity.ok(Result.success(files));
     }
@@ -158,74 +156,54 @@ public class FileController {
     @PutMapping("/reorder")
     public ResponseEntity<Result<String>> reorderFiles(@RequestBody List<String> uids) {
         logger.info("开始重排文件顺序，收到{}个文件ID", uids.size());
-        List<FileEntity> files = fileRepository.findAll();
-        Map<String, Integer> orderMap = new HashMap<>();
+//        MyBatis 的更新是直接修改数据库
         for (int i = 0; i < uids.size(); i++) {
-            orderMap.put(uids.get(i), i); //i是最新的sortOrder
+            fileMapper.updateSortOrder(uids.get(i), i); //i是最新的sortOrder
         }
-
-        //根据映射进行排序
-        files.sort(Comparator.comparing(f -> orderMap.getOrDefault(f.getUid(), Integer.MIN_VALUE)));
-
-        //更新sortOrder
-        for (int i = 0; i< uids.size();i++){
-            FileEntity file = files.get(i);
-//            if (orderMap.containsKey(file.getUid())){
-//                file.setSortOrder(orderMap.get(file.getUid()));
-//            }
-            file.setSortOrder(i);
-        }
-
-        //更新排序信息
-        logger.debug("更新{}个文件的排序信息", files.size());
-        fileRepository.saveAll(files);
-
+        logger.info("文件顺序重排完成");
         return ResponseEntity.ok(Result.success("文件顺序已更新"));
     }
 
     //TODO可能会重复（概率小）？
     @DeleteMapping("/delete/{uid}")
     public ResponseEntity<Object> deleteFile(@PathVariable String uid) {
-        logger.info("删除文件，UID：{}", uid);
-        //使用Java 8 引入的容器类避免空指针异常
-        Optional<FileEntity> fileEntityOptional = Optional.ofNullable(fileRepository.findByUid(uid));
+        logger.info("开始执行删除流程，UID：{}", uid);
+        // MyBatis 根基UID查找
+        FileEntity fileEntity = fileMapper.findByUid(uid);
 
-        if (fileEntityOptional.isPresent()) {
-            FileEntity fileEntity = fileEntityOptional.get();
-
-            try {
-
-                String fullUrl = fileEntity.getUrl();
-                //假如文件名时URL的最后一部分，并且前面有fileBaseUrl
-                //假如fileBaseUrl时正确定，是以/结尾
-                if (fullUrl == null || !fullUrl.startsWith(fileBaseUrl)) {
-                    logger.warn("文件URL格式不正确或者为空：{}", fullUrl);
-                    return ResponseEntity.ok(Result.success("文件记录已删除，物理文件跳过处理"));
-                }
-
-                //提取文件名(例如：从 'http://xxx/uuid_name.jpg' 得到 'uuid_name.jpg')
-                String fileNameToDelete = fullUrl.substring(fileBaseUrl.length());
-
-                //删除物理文件
-                boolean isFileDeleted = fileStorageService.deleteFile(fileNameToDelete);
-                if (isFileDeleted) {
-                    //删除数据库记录
-                    fileRepository.delete(fileEntity);
-                    return ResponseEntity.ok(Result.success("文件删除成功"));
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.error(500, "文件删除失败"));
-                }
-
-            } catch (Exception e) {
-                logger.error("文件删除失败: {}", uid, e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(Result.error(500, "文件删除失败"));
-            }
-
+        if (fileEntity == null) {
+            //Result的error不是泛类，会有警告
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.error(404, "文件不存在"));
 
         }
-        //Result的error不是泛类，会有警告
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.error(404, "文件不存在"));
+
+        try{
+            String fullUrl = fileEntity.getUrl();
+            if(fullUrl == null || !fullUrl.startsWith(fileBaseUrl)) {
+                // URL不合法，无法提取文件名
+                logger.error("文件URL不合法，无法提取文件名: {}", fullUrl);
+                fileMapper.deleteByUid(uid);
+                return ResponseEntity.ok(Result.success("文件记录已删除，但文件URL不合法，无法删除文件"));
+            }
+
+            String fileNameToDelete = fullUrl.substring(fileBaseUrl.length());
+
+            boolean isFileDeleted = fileStorageService.deleteFile(fileNameToDelete);
+
+            if(isFileDeleted) {
+                fileMapper.deleteByUid(uid);
+                logger.info("文件删除成功，UID: {}, 文件名: {}", uid, fileNameToDelete);
+                return ResponseEntity.ok(Result.success("文件已删除"));
+            } else {
+                logger.error("文件删除失败，可能文件不存在或无法访问，UID: {}, 文件名: {}", uid, fileNameToDelete);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.error(500, "文件删除失败，可能文件不存在或无法访问"));
+            }
+
+        } catch (Exception e) {
+            logger.error("删除文件过程中发生异常，UID: {}", uid, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.error(500, "删除文件过程中发生异常"));
+        }
+
     }
 
 }
