@@ -15,7 +15,10 @@
         <result property="channelId" column="channel_id"/>
         <result property="pubDate" column="pub_date"/>
         <result property="content" column="content"/>
-        <association property="cover" column="{type=image,type=image}" select="selectCoverByArticleId" />
+        <association property="cover" javaType="com.xiyanchenghong.backenduser.domain.Cover">
+            <result property="type" column="type"/>
+            <result property="image" column="image"/>
+        </association>
     </resultMap>
 
     <select id="getArticleById" resultMap="ArticleResultMap">
@@ -27,13 +30,13 @@
     </select>
 
     <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO article(title, content, status, channel_id, pub_date, cover)
-        VALUES(#{title}, #{content}, #{status}, #{channelId}, #{pubDate}, #{cover})
+        INSERT INTO article(title, content, status, channel_id, pub_date, type, image)
+        VALUES(#{title}, #{content}, #{status}, #{channelId}, #{pubDate}, #{cover.type}, #{cover.image})
     </insert>
 
     <update id="updateArticle">
         UPDATE article
-        SET title=#{title}, content=#{content}, status=#{status}, channel_id=#{channelId}, pub_date=#{pubDate}, cover=#{cover}
+        SET title=#{title}, content=#{content}, status=#{status}, channel_id=#{channelId}, pub_date=#{pubDate}, type=#{cover.type}, image=#{cover.image}
         WHERE id=#{id}
     </update>
 
