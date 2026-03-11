@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.controller;
 
 
-import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServiceImpl;
+import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServicelmpl;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,9 @@ import java.util.Collections;
 public class ArticleImageUploadController {
 
     private static final Logger logger = LoggerFactory.getLogger(ArticleImageUploadController.class);
-    private final ArticleServiceImpl imageService;
+    private final ArticleServicelmpl imageService;
 
-    public ArticleImageUploadController(ArticleServiceImpl imageService) {
+    public ArticleImageUploadController(ArticleServicelmpl imageService) {
         this.imageService = imageService;
     }
 

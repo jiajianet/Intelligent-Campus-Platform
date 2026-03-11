@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.controller;
 
 import com.xiyanchenghong.backenduser.domain.Article;
-import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServiceImpl;
+import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServicelmpl;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +15,10 @@ import java.util.List;
 @RequestMapping("/user")
 public class ArticleController {
 
-    private final ArticleServiceImpl articleService;
+    private final ArticleServicelmpl articleService;
 
     @Autowired
-    public ArticleController(ArticleServiceImpl articleService) {
+    public ArticleController(ArticleServicelmpl articleService) {
         this.articleService = articleService;
     }
 
