@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ArticleServicelmpl implements ArticleService {
+public class ArticleServiceImpl implements ArticleService {
 
     @Value("${upload.dir}")
     private String uploadDir;
