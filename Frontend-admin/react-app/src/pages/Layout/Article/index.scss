@@ -1,193 +1,549 @@
-/* 全局样式重置 */
-* {
-  box-sizing: border-box;
+/**
+ * Article Page Styles
+ * @description Modern article management page design
+ * @author 犀焰澄泓团队
+ * @version 2.0.0
+ */
+
+// ============================================
+// Variables
+// ============================================
+$primary-color: #667eea;
+$primary-light: #7c9ef0;
+$primary-dark: #5a67d8;
+$secondary-color: #764ba2;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$error-color: #ff4d4f;
+$info-color: #1890ff;
+
+$bg-color: #f5f7fa;
+$bg-card: #ffffff;
+$text-primary: #333333;
+$text-secondary: #666666;
+$text-light: #999999;
+$border-color: #e8e8e8;
+$border-light: #f0f0f0;
+
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// ============================================
+// Page Container
+// ============================================
+.article-page {
+  padding: 24px;
+  min-height: calc(100vh - 112px);
+  background: $bg-color;
+  animation: fadeIn 0.4s ease;
 }
 
-/* 页面容器 */
-.article-container {
-  padding: 20px;
-  min-height: calc(100vh - 64px);
-  background-color: #f5f5f5;
-}
+// ============================================
+// Page Header
+// ============================================
+.page-header {
+  margin-bottom: 24px;
+  animation: slideInUp 0.4s ease;
 
-/* 面包屑导航 */
-.breadcrumb-container {
-  margin-bottom: 20px;
-}
+  .ant-breadcrumb {
+    margin-bottom: 12px;
 
-/* 卡片样式 */
-.ant-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
+    .ant-breadcrumb-link {
+      color: $text-secondary;
+      transition: color $transition-fast;
 
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  .ant-breadcrumb-separator {
+    color: $text-light;
   }
 }
 
-/* 筛选表单 */
+.page-title {
+  margin: 0 !important;
+  color: $text-primary !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ============================================
+// Filter Card
+// ============================================
+.filter-card {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  margin-bottom: 24px;
+  animation: slideInUp 0.4s ease 0.1s backwards;
+  transition: all $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  .ant-card-body {
+    padding: 20px 24px;
+  }
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border-light;
+
+  .anticon {
+    color: $primary-color;
+    font-size: 16px;
+  }
+
+  .ant-typography {
+    color: $text-primary;
+    font-weight: 600;
+  }
+}
+
 .filter-form {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  align-items: end;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+  align-items: center;
 
-.filter-form .ant-form-item {
-  margin-bottom: 0;
-}
+  .filter-item {
+    margin-bottom: 0;
 
-.filter-form .ant-btn {
-  margin-left: 16px;
-  height: 32px;
-}
+    .ant-form-item-label {
+      padding-bottom: 0;
 
-/* 表格样式 */
-.ant-table {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.ant-table-wrapper {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.ant-table-thead > tr > th {
-  background-color: #fafafa;
-  font-weight: 600;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.ant-table-tbody > tr {
-  transition: all 0.3s ease;
-}
-
-.ant-table-tbody > tr:hover {
-  background-color: #f5f7fa;
-}
-
-.ant-table-tbody > tr > td {
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle;
-}
-
-/* 封面图片样式 */
-.cover-image {
-  border-radius: 4px;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(1.05);
+      > label {
+        color: $text-secondary;
+        font-weight: 500;
+      }
+    }
   }
 }
 
-/* 操作按钮 */
+.status-radio-group {
+  .ant-radio-button-wrapper {
+    border-radius: $radius-md !important;
+    margin: 0 2px;
+    transition: all $transition-fast;
+
+    &:first-child {
+      border-radius: $radius-md !important;
+    }
+
+    &:last-child {
+      border-radius: $radius-md !important;
+    }
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &.ant-radio-button-wrapper-checked {
+      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+      border-color: transparent;
+      color: white;
+
+      &:hover {
+        background: linear-gradient(135deg, $primary-light 0%, $secondary-color 100%);
+      }
+    }
+  }
+}
+
+.filter-actions {
+  margin-left: auto;
+}
+
+.search-btn {
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+  border: none;
+  border-radius: $radius-md;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba($primary-color, 0.35);
+  transition: all $transition-normal;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($primary-color, 0.45);
+    background: linear-gradient(135deg, $primary-light 0%, $secondary-color 100%);
+  }
+}
+
+.add-btn {
+  background: white;
+  border: 1px solid $primary-color;
+  color: $primary-color;
+  border-radius: $radius-md;
+  font-weight: 500;
+  transition: all $transition-normal;
+
+  &:hover {
+    background: rgba($primary-color, 0.08);
+    color: $primary-color;
+    transform: translateY(-2px);
+  }
+}
+
+// ============================================
+// Data Card
+// ============================================
+.data-card {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  animation: slideInUp 0.4s ease 0.2s backwards;
+  transition: all $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  .ant-card-head {
+    border-bottom: 1px solid $border-light;
+    padding: 16px 24px;
+
+    .ant-card-head-title {
+      color: $text-primary;
+      font-weight: 600;
+
+      .anticon {
+        color: $primary-color;
+        margin-right: 8px;
+      }
+    }
+
+    .count-tag {
+      margin-left: 8px;
+      background: rgba($primary-color, 0.1);
+      border: none;
+      color: $primary-color;
+    }
+  }
+
+  .ant-card-extra {
+    .add-btn {
+      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.35);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba($primary-color, 0.45);
+        background: linear-gradient(135deg, $primary-light 0%, $secondary-color 100%);
+      }
+    }
+  }
+
+  .ant-card-body {
+    padding: 0;
+  }
+}
+
+// ============================================
+// Table Styles
+// ============================================
+.article-table {
+  .ant-table {
+    background: transparent;
+
+    &-thead > tr > th {
+      background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+      color: $text-primary;
+      font-weight: 600;
+      border-bottom: 2px solid $border-color;
+      padding: 14px 16px;
+    }
+
+    &-tbody > tr {
+      transition: all $transition-fast;
+
+      &:hover > td {
+        background: rgba($primary-color, 0.03);
+      }
+
+      > td {
+        padding: 16px;
+        border-bottom: 1px solid $border-light;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  // Pagination
+  .ant-table-pagination {
+    padding: 20px 24px;
+    margin: 0 !important;
+    background: #fafafa;
+    border-top: 1px solid $border-light;
+
+    .ant-pagination-item {
+      border-radius: $radius-sm;
+      transition: all $transition-fast;
+
+      &:hover {
+        border-color: $primary-color;
+
+        a {
+          color: $primary-color;
+        }
+      }
+
+      &-active {
+        background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+        border-color: transparent;
+
+        a {
+          color: white;
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, $primary-light 0%, $secondary-color 100%);
+        }
+      }
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      .ant-pagination-item-link {
+        border-radius: $radius-sm;
+        transition: all $transition-fast;
+
+        &:hover {
+          color: $primary-color;
+          border-color: $primary-color;
+        }
+      }
+    }
+
+    .ant-pagination-options-quick-jumper {
+      input {
+        border-radius: $radius-sm;
+
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// Cover Image
+// ============================================
+.cover-wrapper {
+  position: relative;
+  width: 100px;
+  height: 70px;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform $transition-normal;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// ============================================
+// Article Title
+// ============================================
+.article-title {
+  color: $text-primary;
+  transition: color $transition-fast;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+// ============================================
+// Status Tags
+// ============================================
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  transition: all $transition-fast;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &.status-0 {
+    background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+    color: #d48806;
+  }
+
+  &.status-1 {
+    background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+    color: #389e0d;
+  }
+
+  &.status-2 {
+    background: linear-gradient(135deg, #f0f5ff 0%, #d6e4ff 100%);
+    color: #1890ff;
+  }
+}
+
+// ============================================
+// Stat Count
+// ============================================
+.stat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 4px 10px;
+  background: $bg-color;
+  border-radius: $radius-sm;
+  font-weight: 500;
+  color: $text-secondary;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+// ============================================
+// Operation Buttons
+// ============================================
 .operation-buttons {
   display: flex;
   gap: 8px;
+
+  .ant-btn {
+    transition: all $transition-fast;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .edit-btn {
+    color: $primary-color;
+    background: rgba($primary-color, 0.1);
+
+    &:hover {
+      background: rgba($primary-color, 0.2);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    }
+  }
+
+  .delete-btn {
+    color: $error-color;
+    background: rgba($error-color, 0.1);
+
+    &:hover {
+      background: rgba($error-color, 0.2);
+      box-shadow: 0 4px 12px rgba($error-color, 0.3);
+    }
+  }
 }
 
-.ant-btn {
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.ant-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.ant-btn-danger:hover {
-  box-shadow: 0 2px 8px rgba(245, 34, 45, 0.3);
-}
-
-/* 分页样式 */
-.ant-table-wrapper .ant-table-pagination-right {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-  border-top: 1px solid #f0f0f0;
-  background-color: #fff;
-  border-radius: 0 0 8px 8px;
-}
-
-/* 菜单选中状态 */
-.ant-menu-dark .ant-menu-item-selected,
-.ant-menu-dark>.ant-menu .ant-menu-item-selected {
-  background-color: #4154f1;
-}
-
-/* 按钮样式 */
-.ant-btn-variant-solid,
-.ant-btn-color-primary {
-  background-color: #4154f1;
-}
-
-/* 标签样式 */
-.ant-tag {
-  border-radius: 12px;
-  padding: 2px 12px;
-  font-size: 12px;
-}
-
-/* 加载状态 */
+// ============================================
+// Loading & Empty States
+// ============================================
 .loading-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  padding: 80px 0;
+  gap: 16px;
+
+  .loading-tip {
+    font-size: 14px;
+  }
+
+  .ant-spin {
+    .ant-spin-dot-item {
+      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+    }
+  }
 }
 
-/* 空数据状态 */
 .empty-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px 0;
-  color: #999;
-}
+  padding: 80px 0;
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .article-container {
-    padding: 10px;
+  .ant-empty-image {
+    height: 120px;
+    opacity: 0.6;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
   }
 
-  .filter-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-form .ant-btn {
-    margin-left: 0;
+  .ant-empty-description {
     margin-top: 16px;
+    color: $text-secondary;
   }
 
-  .ant-table {
-    font-size: 12px;
-  }
+  .ant-btn-link {
+    color: $primary-color;
+    padding: 0;
 
-  .ant-table-thead > tr > th {
-    padding: 8px;
-  }
-
-  .ant-table-tbody > tr > td {
-    padding: 8px;
+    &:hover {
+      color: $primary-light;
+    }
   }
 }
 
-/* 动画效果 */
+// ============================================
+// Animations
+// ============================================
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -198,30 +554,145 @@
   }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* 表格列宽调整 */
-.ant-table-column-title {
-  white-space: nowrap;
+// ============================================
+// Responsive Design
+// ============================================
+@media (max-width: 1200px) {
+  .article-page {
+    padding: 20px;
+  }
+
+  .filter-form {
+    .filter-item {
+      flex: 0 0 calc(50% - 8px);
+    }
+
+    .filter-actions {
+      flex: 0 0 100%;
+      margin-left: 0;
+      margin-top: 8px;
+    }
+  }
 }
 
-/* 状态标签颜色 */
-.ant-tag-warning {
-  background-color: #fff7e6;
-  border-color: #ffd591;
-  color: #fa8c16;
+@media (max-width: 768px) {
+  .article-page {
+    padding: 12px;
+  }
+
+  .page-title {
+    font-size: 20px !important;
+  }
+
+  .filter-card {
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  .filter-form {
+    .filter-item {
+      flex: 0 0 100%;
+
+      .ant-form-item-label {
+        margin-bottom: 4px;
+      }
+    }
+
+    .status-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .ant-radio-button-wrapper {
+        flex: 0 0 auto;
+        margin: 0;
+      }
+    }
+  }
+
+  .data-card {
+    .ant-card-head {
+      padding: 12px 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .ant-card-extra {
+      order: -1;
+      width: 100%;
+
+      .add-btn {
+        width: 100%;
+      }
+    }
+  }
+
+  .article-table {
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 12px 8px;
+    }
+  }
+
+  .cover-wrapper {
+    width: 60px;
+    height: 45px;
+  }
+
+  .stat-count {
+    min-width: 24px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+
+  .operation-buttons {
+    .ant-btn {
+      width: 28px;
+      height: 28px;
+
+      .anticon {
+        font-size: 12px;
+      }
+    }
+  }
 }
 
-.ant-tag-success {
-  background-color: #f6ffed;
-  border-color: #b7eb8f;
-  color: #52c41a;
-}
+@media (max-width: 480px) {
+  .article-page {
+    padding: 8px;
+  }
 
-.ant-tag-processing {
-  background-color: #e6f7ff;
-  border-color: #91d5ff;
-  color: #1890ff;
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .filter-card,
+  .data-card {
+    border-radius: $radius-md;
+    margin-bottom: 16px;
+  }
+
+  .filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .search-btn,
+  .add-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

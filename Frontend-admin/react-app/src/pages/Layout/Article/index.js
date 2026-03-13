@@ -1,197 +1,348 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm, message, Spin, Empty } from 'antd'
-import locale from 'antd/es/date-picker/locale/zh_CN'
+/**
+ * Article Management Page
+ * @description Modern article list management with filtering and pagination
+ * @author 犀焰澄泓团队
+ * @version 2.0.0
+ */
+
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+    Card,
+    Breadcrumb,
+    Form,
+    Button,
+    Radio,
+    DatePicker,
+    Select,
+    Popconfirm,
+    message,
+    Spin,
+    Empty,
+    Space,
+    Typography,
+    Tooltip
+} from 'antd';
+import {
+    EditOutlined,
+    DeleteOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    FilterOutlined,
+    FileTextOutlined,
+    EyeOutlined,
+    MessageOutlined,
+    LikeOutlined,
+    CalendarOutlined,
+    ReloadOutlined,
+    HomeOutlined,
+    ClockCircleOutlined,
+    CheckCircleOutlined
+} from '@ant-design/icons';
+import { Table, Tag } from 'antd';
 import dayjs from 'dayjs';
+import locale from 'antd/es/date-picker/locale/zh_CN';
 
 import 'dayjs/locale/zh-cn';
-// 导入资源
-import { Table, Tag } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import img404 from '@/assets/images/error.png'
-import './index.scss'
-import { useChannel } from '@/hooks/useChannel'
-import { useEffect, useState } from 'react'
-import { getArticleListAPI, deleteArticleAPI } from '@/apis/article'
+import img404 from '@/assets/images/error.png';
+import './index.scss';
+import { useChannel } from '@/hooks/useChannel';
+import { getArticleListAPI, deleteArticleAPI } from '@/apis/article';
 
-const { Option } = Select
-const { RangePicker } = DatePicker
-dayjs.locale('zh-cn')
+const { Option } = Select;
+const { RangePicker } = DatePicker;
+const { Text, Title } = Typography;
+dayjs.locale('zh-cn');
+
+// Status mapping with icons
+const statusConfig = {
+    0: { label: '待审核', color: 'warning', icon: <ClockCircleOutlined /> },
+    1: { label: '审核通过', color: 'success', icon: <CheckCircleOutlined /> },
+    2: { label: '草稿', color: 'default', icon: <EditOutlined /> }
+};
 
 const Article = () => {
-    const navigate = useNavigate()
-    const { channelList } = useChannel()
+    const navigate = useNavigate();
+    const { channelList } = useChannel();
 
-    // 文章状态的映射
-    const status = {
-        0: <Tag color="warning">待审核</Tag>,
-        1: <Tag color="success">审核通过</Tag>,
-        2: <Tag color="processing">草稿</Tag>,
-    }
-
-    // 表格列定义
-    const columns = [{
-        title: '封面', dataIndex: 'cover', width: 120, render: cover => {
-            return <img className="cover-image" src={cover.image || img404} width={80} height={60} alt="" />
-        }
-    }, {
-        title: '标题', dataIndex: 'title', width: 220,
-        ellipsis: {
-            showTooltip: true,
-        }
-    }, {
-        title: '状态', dataIndex: 'status',
-        render: data => status[data]
-    }, {
-        title: '发布时间', dataIndex: 'pubDate'
-    }, {
-        title: '阅读数', dataIndex: 'readCount'
-    }, {
-        title: '评论数', dataIndex: 'commentCount'
-    }, {
-        title: '点赞数', dataIndex: 'likeCount'
-    }, {
-        title: '操作', render: data => {
-            return (
-                <div className="operation-buttons">
-                    <Button 
-                        type="primary" 
-                        shape="circle" 
-                        icon={<EditOutlined />}
-                        onClick={() => navigate((`/publish?id=${data.id}`))}
+    // Table columns definition
+    const columns = [
+        {
+            title: '封面',
+            dataIndex: 'cover',
+            width: 140,
+            render: (cover) => (
+                <div className="cover-wrapper">
+                    <img
+                        className="cover-image"
+                        src={cover?.image || img404}
+                        alt="封面"
                     />
-                    <Popconfirm
-                        title="删除文章"
-                        description="确认要删除当前文章吗?"
-                        onConfirm={() => onConfirm(data)}
-                        okText="是"
-                        cancelText="否"
-                    >
-                        <Button
-                            type="primary"
-                            danger
-                            shape="circle"
-                            icon={<DeleteOutlined />}
-                        />
-                    </Popconfirm>
                 </div>
             )
+        },
+        {
+            title: '标题',
+            dataIndex: 'title',
+            width: 280,
+            ellipsis: true,
+            render: (title) => (
+                <Tooltip title={title}>
+                    <Text strong className="article-title">{title}</Text>
+                </Tooltip>
+            )
+        },
+        {
+            title: '状态',
+            dataIndex: 'status',
+            width: 100,
+            render: (status) => {
+                const config = statusConfig[status];
+                return (
+                    <Tag
+                        color={config.color}
+                        className={`status-tag status-${status}`}
+                        icon={config.icon}
+                    >
+                        {config.label}
+                    </Tag>
+                );
+            }
+        },
+        {
+            title: (
+                <Space>
+                    <CalendarOutlined />
+                    <span>发布时间</span>
+                </Space>
+            ),
+            dataIndex: 'pubDate',
+            width: 160,
+            render: (date) => (
+                <Text type="secondary">{date || '-'}</Text>
+            )
+        },
+        {
+            title: (
+                <Space>
+                    <EyeOutlined />
+                    <span>阅读</span>
+                </Space>
+            ),
+            dataIndex: 'readCount',
+            width: 80,
+            align: 'center',
+            render: (count) => (
+                <span className="stat-count">{count || 0}</span>
+            )
+        },
+        {
+            title: (
+                <Space>
+                    <MessageOutlined />
+                    <span>评论</span>
+                </Space>
+            ),
+            dataIndex: 'commentCount',
+            width: 80,
+            align: 'center',
+            render: (count) => (
+                <span className="stat-count">{count || 0}</span>
+            )
+        },
+        {
+            title: (
+                <Space>
+                    <LikeOutlined />
+                    <span>点赞</span>
+                </Space>
+            ),
+            dataIndex: 'likeCount',
+            width: 80,
+            align: 'center',
+            render: (count) => (
+                <span className="stat-count">{count || 0}</span>
+            )
+        },
+        {
+            title: '操作',
+            key: 'action',
+            width: 120,
+            fixed: 'right',
+            render: (_, record) => (
+                <Space size="small" className="operation-buttons">
+                    <Tooltip title="编辑">
+                        <Button
+                            type="text"
+                            shape="circle"
+                            icon={<EditOutlined />}
+                            className="edit-btn"
+                            onClick={() => navigate(`/publish?id=${record.id}`)}
+                        />
+                    </Tooltip>
+                    <Popconfirm
+                        title="删除文章"
+                        description="确定要删除这篇文章吗？"
+                        onConfirm={() => onConfirm(record)}
+                        okText="确定删除"
+                        cancelText="取消"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <Tooltip title="删除">
+                            <Button
+                                type="text"
+                                shape="circle"
+                                icon={<DeleteOutlined />}
+                                className="delete-btn"
+                            />
+                        </Tooltip>
+                    </Popconfirm>
+                </Space>
+            )
         }
-    }]
+    ];
 
-    // 筛选功能的状态和分页配置
+    // Filter form state and pagination config
     const [reqData, setReqData] = useState({
-        status: '', channelId: '', beginPubDate: '', endPubDate: '', page: 1, perPage: 4,
-    })
+        status: '',
+        channelId: '',
+        beginPubDate: '',
+        endPubDate: '',
+        page: 1,
+        perPage: 4
+    });
 
-    const [list, setList] = useState([])
-    const [count, setCount] = useState(0)
-    const [loading, setLoading] = useState(false)
+    const [list, setList] = useState([]);
+    const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm();
 
-    // 获取文章列表
+    // Fetch article list
     useEffect(() => {
         async function getList() {
-            setLoading(true)
+            setLoading(true);
             try {
-                const res = await getArticleListAPI(reqData)
-                setList(res.data?.data?.results || [])
-                setCount(res.data?.data?.totalCount || 0)
+                const res = await getArticleListAPI(reqData);
+                setList(res.data?.data?.results || []);
+                setCount(res.data?.data?.totalCount || 0);
             } catch (error) {
-                console.error("获取文章列表时出错：", error)
-                message.error('获取文章列表失败，请重试')
+                console.error('获取文章列表时出错：', error);
+                message.error('获取文章列表失败，请重试');
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         }
+        getList();
+    }, [reqData]);
 
-        getList()
-    }, [reqData])  // 每次reqData变化就会拉取新的数据
-
-    // 获取表单数据
+    // Handle filter form submit
     const onFinish = (formValue) => {
-        console.log(formValue)
-        const { channelId, status, date, perPage } = formValue
+        const { channelId, status, date, perPage } = formValue;
 
-        // 判断是否有选择频道或日期
-        if (!channelId && (!date || date.length === 0)) {
+        if (!channelId && (!date || date.length === 0) && !status) {
             message.warning('请至少选择一个筛选条件');
-            return;  // 如果没有选择条件，则不执行请求
+            return;
         }
 
-        if (date && date.length > 0) {
-            setReqData({
-                ...reqData,
-                channelId,
-                status,
-                beginPubDate: date[0].format('YYYY-MM-DD'),
-                endPubDate: date[1].format('YYYY-MM-DD'),
-                page: 1, // 重置为第一页
-                perPage: perPage || 4, // 默认每页条数
-            })
-        } else {
-            setReqData({
-                ...reqData,
-                channelId,
-                status,
-                beginPubDate: '',
-                endPubDate: '',
-                page: 1, // 重置为第一页
-                perPage: perPage || 4, // 默认每页条数
-            })
-        }
-    }
+        const newReqData = {
+            ...reqData,
+            channelId,
+            status,
+            beginPubDate: date?.[0]?.format('YYYY-MM-DD') || '',
+            endPubDate: date?.[1]?.format('YYYY-MM-DD') || '',
+            page: 1,
+            perPage: perPage || 4
+        };
 
-    // 分页功能
+        setReqData(newReqData);
+    };
+
+    // Handle reset
+    const onReset = () => {
+        form.resetFields();
+        setReqData({
+            status: '',
+            channelId: '',
+            beginPubDate: '',
+            endPubDate: '',
+            page: 1,
+            perPage: 4
+        });
+    };
+
+    // Handle page change
     const onPageChange = (page) => {
-        console.log("当前页码：", page)
-        setReqData({ ...reqData, page })
-    }
+        setReqData({ ...reqData, page });
+    };
 
-    // 删除文章
+    // Handle delete
     const onConfirm = async (data) => {
         try {
-            await deleteArticleAPI(data.id)
-            message.success('删除成功！')
-            setReqData({ ...reqData }) // 重新获取文章列表
+            await deleteArticleAPI(data.id);
+            message.success('删除成功！');
+            setReqData({ ...reqData });
         } catch (error) {
-            console.error('删除文章失败：', error)
-            message.error('删除失败，请重试！')
+            console.error('删除文章失败：', error);
+            message.error('删除失败，请重试！');
         }
-    }
+    };
 
-    // 每页条数的选择（可配置）
+    // Handle page size change
     const onPageSizeChange = (value) => {
-        console.log("每页条数：", value)
-        setReqData({ ...reqData, perPage: value, page: 1 }) // 重置为第一页
-    }
+        setReqData({ ...reqData, perPage: value, page: 1 });
+    };
 
     return (
-        <div className="article-container fade-in">
-            <div className="breadcrumb-container">
-                <Breadcrumb items={[
-                    { title: <Link to={'/'}>首页</Link> }, 
-                    { title: '文章列表' },
-                ]} />
+        <div className="article-page">
+            {/* Breadcrumb */}
+            <div className="page-header">
+                <Breadcrumb
+                    items={[
+                        { title: <Link to="/home"><HomeOutlined /> 首页</Link> },
+                        { title: <><FileTextOutlined /> 文章管理</> },
+                        { title: '文章列表' }
+                    ]}
+                />
+                <Title level={3} className="page-title">文章管理</Title>
             </div>
 
-            <div className="filter-form">
-                <Form 
-                    layout="inline" 
-                    initialValues={{ status: '', perPage: reqData.perPage }} 
+            {/* Filter Card */}
+            <Card className="filter-card" bordered={false}>
+                <div className="filter-header">
+                    <Space>
+                        <FilterOutlined />
+                        <Text strong>筛选条件</Text>
+                    </Space>
+                    <Button
+                        type="link"
+                        icon={<ReloadOutlined />}
+                        onClick={onReset}
+                    >
+                        重置
+                    </Button>
+                </div>
+
+                <Form
+                    form={form}
+                    layout="inline"
+                    initialValues={{ status: '', perPage: reqData.perPage }}
                     onFinish={onFinish}
+                    className="filter-form"
                 >
-                    <Form.Item label="状态" name="status">
-                        <Radio.Group>
-                            <Radio value={''}>全部</Radio>
-                            <Radio value={0}>待审核</Radio>
-                            <Radio value={1}>审核通过</Radio>
-                            <Radio value={2}>草稿</Radio>
+                    <Form.Item label="状态" name="status" className="filter-item">
+                        <Radio.Group className="status-radio-group">
+                            <Radio.Button value="">全部</Radio.Button>
+                            <Radio.Button value={0}>待审核</Radio.Button>
+                            <Radio.Button value={1}>已发布</Radio.Button>
+                            <Radio.Button value={2}>草稿</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
 
-                    <Form.Item label="频道" name="channelId">
+                    <Form.Item label="频道" name="channelId" className="filter-item">
                         <Select
-                            placeholder="请选择频道"
-                            style={{ width: 150 }}
+                            placeholder="选择频道"
+                            allowClear
+                            style={{ width: 160 }}
                         >
                             {channelList.map(item => (
                                 <Option key={item.id} value={item.id}>{item.name}</Option>
@@ -199,65 +350,114 @@ const Article = () => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item label="日期" name="date">
+                    <Form.Item label="日期" name="date" className="filter-item">
                         <RangePicker locale={locale} />
                     </Form.Item>
 
-                    <Form.Item label="每页条数" name="perPage">
+                    <Form.Item label="每页" name="perPage" className="filter-item">
                         <Select
-                            defaultValue={reqData.perPage}
-                            style={{ width: 100 }}
+                            style={{ width: 90 }}
                             onChange={onPageSizeChange}
                         >
-                            <Option value={4}>4</Option>
-                            <Option value={8}>8</Option>
-                            <Option value={16}>16</Option>
+                            <Option value={4}>4条</Option>
+                            <Option value={8}>8条</Option>
+                            <Option value={16}>16条</Option>
+                            <Option value={32}>32条</Option>
                         </Select>
                     </Form.Item>
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            筛选
-                        </Button>
+                    <Form.Item className="filter-actions">
+                        <Space>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                icon={<SearchOutlined />}
+                                className="search-btn"
+                            >
+                                搜索
+                            </Button>
+                            <Button
+                                icon={<PlusOutlined />}
+                                onClick={() => navigate('/publish')}
+                                className="add-btn"
+                            >
+                                新建文章
+                            </Button>
+                        </Space>
                     </Form.Item>
                 </Form>
-            </div>
+            </Card>
 
-            {/* 表格 */}
-            <Card 
-                title={`根据筛选条件共查询到 ${count} 条结果：`}
-                className="fade-in"
+            {/* Data Card */}
+            <Card
+                className="data-card"
+                bordered={false}
+                title={
+                    <Space>
+                        <FileTextOutlined />
+                        <span>文章列表</span>
+                        <Tag color="blue" className="count-tag">{count} 篇</Tag>
+                    </Space>
+                }
+                extra={
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => navigate('/publish')}
+                        className="add-btn"
+                    >
+                        新建文章
+                    </Button>
+                }
             >
                 {loading ? (
                     <div className="loading-container">
-                        <Spin size="large" tip="加载中..." />
+                        <Spin size="large" />
+                        <Text type="secondary" className="loading-tip">加载中...</Text>
                     </div>
                 ) : list.length > 0 ? (
                     <Table
                         rowKey="id"
                         columns={columns}
                         dataSource={list}
+                        scroll={{ x: 1200 }}
                         pagination={{
                             total: count,
                             pageSize: reqData.perPage,
                             current: reqData.page,
                             onChange: onPageChange,
-                            onShowSizeChange: (current, size) => onPageSizeChange(size),  // 确保分页条数更新
-                            showSizeChanger: true,
-                            showTotal: (total) => `共 ${total} 条数据`,
+                            showSizeChanger: false,
+                            showQuickJumper: true,
+                            showTotal: (total, range) => (
+                                <Text type="secondary">
+                                    第 {range[0]}-{range[1]} 条，共 {total} 条
+                                </Text>
+                            ),
+                            pageSizeOptions: ['4', '8', '16', '32']
                         }}
+                        className="article-table"
                     />
                 ) : (
                     <div className="empty-container">
-                        <Empty 
-                            description="暂无文章数据" 
+                        <Empty
+                            description={
+                                <Space direction="vertical" size={0}>
+                                    <Text type="secondary">暂无文章数据</Text>
+                                    <Button
+                                        type="link"
+                                        onClick={() => navigate('/publish')}
+                                    >
+                                        立即创建第一篇文章
+                                    </Button>
+                                </Space>
+                            }
                             image={Empty.PRESENTED_IMAGE_SIMPLE}
                         />
                     </div>
                 )}
             </Card>
         </div>
-    )
-}
+    );
+};
 
-export default Article
+export default Article;
