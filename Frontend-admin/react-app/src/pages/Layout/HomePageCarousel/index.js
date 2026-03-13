@@ -130,7 +130,7 @@ const HomePageCarousel = () => {
     const uploadedFiles = fileList.filter(file => file.status === 'done');
 
     return (
-        <div>
+        <div className="homepage-carousel-wrapper">
             <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
                 <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
                     <Dragger {...props}>
