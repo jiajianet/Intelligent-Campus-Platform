@@ -1,11 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm, message } from 'antd'
+import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm, message, Spin, Empty } from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import dayjs from 'dayjs';
 
 import 'dayjs/locale/zh-cn';
 // 导入资源
-import { Table, Tag, Space } from 'antd'
+import { Table, Tag } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/images/error.png'
 import './index.scss'
@@ -31,10 +31,13 @@ const Article = () => {
     // 表格列定义
     const columns = [{
         title: '封面', dataIndex: 'cover', width: 120, render: cover => {
-            return <img src={cover.image || img404} width={80} height={60} alt="" />
+            return <img className="cover-image" src={cover.image || img404} width={80} height={60} alt="" />
         }
     }, {
-        title: '标题', dataIndex: 'title', width: 220
+        title: '标题', dataIndex: 'title', width: 220,
+        ellipsis: {
+            showTooltip: true,
+        }
     }, {
         title: '状态', dataIndex: 'status',
         render: data => status[data]
@@ -48,24 +51,30 @@ const Article = () => {
         title: '点赞数', dataIndex: 'likeCount'
     }, {
         title: '操作', render: data => {
-            return (<Space size="middle">
-                <Button type="primary" shape="circle" icon={<EditOutlined />}
-                    onClick={() => navigate((`/publish?id=${data.id}`))} />
-                <Popconfirm
-                    title="删除文章"
-                    description="确认要删除当前文章吗?"
-                    onConfirm={() => onConfirm(data)}
-                    okText="是"
-                    cancelText="否"
-                >
-                    <Button
-                        type="primary"
-                        danger
-                        shape="circle"
-                        icon={<DeleteOutlined />}
+            return (
+                <div className="operation-buttons">
+                    <Button 
+                        type="primary" 
+                        shape="circle" 
+                        icon={<EditOutlined />}
+                        onClick={() => navigate((`/publish?id=${data.id}`))}
                     />
-                </Popconfirm>
-            </Space>)
+                    <Popconfirm
+                        title="删除文章"
+                        description="确认要删除当前文章吗?"
+                        onConfirm={() => onConfirm(data)}
+                        okText="是"
+                        cancelText="否"
+                    >
+                        <Button
+                            type="primary"
+                            danger
+                            shape="circle"
+                            icon={<DeleteOutlined />}
+                        />
+                    </Popconfirm>
+                </div>
+            )
         }
     }]
 
@@ -76,16 +85,21 @@ const Article = () => {
 
     const [list, setList] = useState([])
     const [count, setCount] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     // 获取文章列表
     useEffect(() => {
         async function getList() {
+            setLoading(true)
             try {
                 const res = await getArticleListAPI(reqData)
                 setList(res.data?.data?.results || [])
                 setCount(res.data?.data?.totalCount || 0)
             } catch (error) {
                 console.error("获取文章列表时出错：", error)
+                message.error('获取文章列表失败，请重试')
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -151,12 +165,20 @@ const Article = () => {
     }
 
     return (
-        <div>
-            <Card
-                title={<Breadcrumb items={[{ title: <Link to={'/'}>首页</Link> }, { title: '文章列表' },]} />}
-                style={{ marginBottom: 20 }}
-            >
-                <Form initialValues={{ status: '', perPage: reqData.perPage }} onFinish={onFinish}>
+        <div className="article-container fade-in">
+            <div className="breadcrumb-container">
+                <Breadcrumb items={[
+                    { title: <Link to={'/'}>首页</Link> }, 
+                    { title: '文章列表' },
+                ]} />
+            </div>
+
+            <div className="filter-form">
+                <Form 
+                    layout="inline" 
+                    initialValues={{ status: '', perPage: reqData.perPage }} 
+                    onFinish={onFinish}
+                >
                     <Form.Item label="状态" name="status">
                         <Radio.Group>
                             <Radio value={''}>全部</Radio>
@@ -169,7 +191,7 @@ const Article = () => {
                     <Form.Item label="频道" name="channelId">
                         <Select
                             placeholder="请选择频道"
-                            style={{ width: 120 }}
+                            style={{ width: 150 }}
                         >
                             {channelList.map(item => (
                                 <Option key={item.id} value={item.id}>{item.name}</Option>
@@ -178,13 +200,13 @@ const Article = () => {
                     </Form.Item>
 
                     <Form.Item label="日期" name="date">
-                        <RangePicker locale={locale}  />
+                        <RangePicker locale={locale} />
                     </Form.Item>
 
                     <Form.Item label="每页条数" name="perPage">
                         <Select
                             defaultValue={reqData.perPage}
-                            style={{ width: 120 }}
+                            style={{ width: 100 }}
                             onChange={onPageSizeChange}
                         >
                             <Option value={4}>4</Option>
@@ -194,27 +216,45 @@ const Article = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" style={{ marginLeft: 40 }}>
+                        <Button type="primary" htmlType="submit">
                             筛选
                         </Button>
                     </Form.Item>
                 </Form>
-            </Card>
+            </div>
 
             {/* 表格 */}
-            <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-                <Table
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={list}
-                    pagination={{
-                        total: count,
-                        pageSize: reqData.perPage,
-                        current: reqData.page,
-                        onChange: onPageChange,
-                        onShowSizeChange: (size) => onPageSizeChange(size),  // 确保分页条数更新
-                    }}
-                />
+            <Card 
+                title={`根据筛选条件共查询到 ${count} 条结果：`}
+                className="fade-in"
+            >
+                {loading ? (
+                    <div className="loading-container">
+                        <Spin size="large" tip="加载中..." />
+                    </div>
+                ) : list.length > 0 ? (
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={list}
+                        pagination={{
+                            total: count,
+                            pageSize: reqData.perPage,
+                            current: reqData.page,
+                            onChange: onPageChange,
+                            onShowSizeChange: (current, size) => onPageSizeChange(size),  // 确保分页条数更新
+                            showSizeChanger: true,
+                            showTotal: (total) => `共 ${total} 条数据`,
+                        }}
+                    />
+                ) : (
+                    <div className="empty-container">
+                        <Empty 
+                            description="暂无文章数据" 
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        />
+                    </div>
+                )}
             </Card>
         </div>
     )
