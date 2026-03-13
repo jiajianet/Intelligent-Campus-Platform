@@ -131,34 +131,48 @@ const HomePageCarousel = () => {
 
     return (
         <div className="homepage-carousel-wrapper">
-            <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-                <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
-                    <Dragger {...props}>
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined/>
-                        </p>
-                        <p className="ant-upload-text">单击或拖动文件到此区域以上传</p>
-                        <p className="ant-upload-hint">
-                            支持单次或批量上传。严禁上传公司数据或其他禁止的文件。
-                        </p>
-                    </Dragger>
-                </SortableContext>
-            </DndContext>
+            {/* 页面标题 */}
+            <div className="page-header">
+                <h1>首页轮播管理</h1>
+                <p>上传和管理首页轮播图片及视频</p>
+            </div>
 
+            {/* 上传区域卡片 */}
+            <div className="content-card">
+                <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+                    <SortableContext items={fileList.map((i) => i.uid)} strategy={verticalListSortingStrategy}>
+                        <Dragger {...props}>
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined/>
+                            </p>
+                            <p className="ant-upload-text">单击或拖动文件到此区域以上传</p>
+                            <p className="ant-upload-hint">
+                                支持单次或批量上传图片和视频文件，系统将自动优化展示效果
+                            </p>
+                        </Dragger>
+                    </SortableContext>
+                </DndContext>
+            </div>
+
+            {/* 轮播预览区域 */}
             {fileList.length === 0 ? (
-                <Divider variant="dashed" className="dashed-divider" dashed>
-                    请上传图片/视频
-                </Divider>
+                <div className="content-card">
+                    <div className="empty-state">
+                        <div className="empty-icon">
+                            <InboxOutlined />
+                        </div>
+                        <div className="empty-title">暂无轮播内容</div>
+                        <div className="empty-desc">请上传图片或视频文件以创建轮播展示</div>
+                    </div>
+                </div>
             ) : (
-                <>
-                    <Divider variant="dashed" className="dashed-divider" dashed>
-                        以下是上传的文件，可拖拽排序
-                    </Divider>
+                <div className="content-card">
+                    <Divider variant="dashed" className="dashed-divider" data-content="轮播预览" dashed />
 
                     <Carousel
                         arrows
                         autoplay
-                        autoplaySpeed={2000}
+                        autoplaySpeed={3000}
                         infinite
                         className="home-carousel-container"
                     >
@@ -196,7 +210,7 @@ const HomePageCarousel = () => {
                             </div>
                         ))}
                     </Carousel>
-                </>
+                </div>
             )}
         </div>
     );
