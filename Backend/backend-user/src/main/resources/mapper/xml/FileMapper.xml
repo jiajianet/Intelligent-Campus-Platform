@@ -8,6 +8,10 @@
         SELECT * FROM file_entity WHERE status = #{status}
     </select>
 
+    <select id="findByUid" resultType="com.xiyanchenghong.backenduser.domain.FileEntity">
+        SELECT * FROM file_entity WHERE uid = #{uid}
+    </select>
+
     <select id="findMaxSortOrder" resultType="java.lang.Integer">
         SELECT MAX(sort_order) FROM file_entity
     </select>

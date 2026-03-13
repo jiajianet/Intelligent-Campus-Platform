@@ -118,14 +118,14 @@ public class FileServiceImpl implements FileService {
 
         String fullUrl = fileEntity.getUrl();
         if (fullUrl != null && fullUrl.startsWith(fileBaseUrl)) {
-            String fileNameToDelete = fullUrl.substring(fileBaseUrl.length());
+            String fileNameToDelete = fullUrl.replace(fileBaseUrl, "");
             boolean isFileDeleted = fileStorageService.deleteFile(fileNameToDelete);
 
             if (isFileDeleted) {
                 logger.info("文件删除成功，UID: {}, 文件名: {}", uid, fileNameToDelete);
             } else {
-                logger.error("文件删除失败，可能文件不存在或无法访问，UID: {}, 文件名: {}", uid, fileNameToDelete);
-                throw new RuntimeException("文件删除失败，可能文件不存在或无法访问");
+                // 文件在磁盘上不存在，但数据库记录仍然存在，继续删除数据库记录
+                logger.warn("文件在磁盘上不存在，但将继续删除数据库记录，UID: {}, 文件名: {}", uid, fileNameToDelete);
             }
         } else {
             logger.error("文件URL不合法，无法提取文件名: {}", fullUrl);
@@ -133,6 +133,7 @@ public class FileServiceImpl implements FileService {
         }
 
         fileMapper.deleteByUid(uid);
+        logger.info("数据库记录删除成功，UID: {}", uid);
 
     }
 
