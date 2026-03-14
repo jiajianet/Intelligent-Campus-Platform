@@ -2,7 +2,7 @@ import {
     Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message, Divider
 } from 'antd'
 import ReactQuill from 'react-quill'
-import {PlusOutlined, ArrowLeftOutlined, SaveOutlined, EyeOutlined} from '@ant-design/icons'
+import {PlusOutlined, ArrowLeftOutlined, SaveOutlined} from '@ant-design/icons'
 import {Link, useNavigate, useSearchParams} from 'react-router-dom'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
