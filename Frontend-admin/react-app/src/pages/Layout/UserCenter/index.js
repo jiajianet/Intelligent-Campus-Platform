@@ -1,11 +1,11 @@
 /**
  * User Center Component
- * @description User dashboard with statistics and account settings
+ * @description User dashboard with independent statistics and account settings
  * @author 犀焰澄泓团队
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Card,
     Row,
@@ -22,17 +22,20 @@ import {
     Input,
     Button,
     Avatar,
-    Upload,
     Modal,
     message,
     Divider,
     List,
     Switch,
-    Select
+    Select,
+    Timeline,
+    Empty,
+    Tooltip
 } from 'antd';
-import './index.scss';
+import * as echarts from 'echarts';
 import {
     ArrowUpOutlined,
+    ArrowDownOutlined,
     UserOutlined,
     CameraOutlined,
     LockOutlined,
@@ -40,18 +43,24 @@ import {
     PhoneOutlined,
     SafetyOutlined,
     SettingOutlined,
-    BellOutlined,
     EditOutlined,
     SaveOutlined,
     DeleteOutlined,
-    ExclamationCircleOutlined
+    ExclamationCircleOutlined,
+    FileTextOutlined,
+    EyeOutlined,
+    HeartOutlined,
+    ShareAltOutlined,
+    StarOutlined,
+    ClockCircleOutlined,
+    RiseOutlined,
+    FallOutlined,
+    TrophyOutlined,
+    FireOutlined
 } from '@ant-design/icons';
 import locale from 'antd/es/date-picker/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-
-import LineChart from '../Home/components/LineChart';
-import PieChart from '../Home/components/PieChart';
 import './index.scss';
 
 const { RangePicker } = DatePicker;
@@ -73,22 +82,178 @@ const mockUserInfo = {
     lastLoginTime: '2024-03-15 10:30:00'
 };
 
-// Statistics Data
-const articleNumberData = [
-    { key: '1', username: '小曾', number: 128, trend: '+12%' },
-    { key: '2', username: '小杨', number: 96, trend: '+8%' },
-    { key: '3', username: '小贾', number: 84, trend: '-3%' },
-    { key: '4', username: '小明', number: 72, trend: '+15%' },
-    { key: '5', username: '小红', number: 64, trend: '+5%' },
+// User's personal statistics data
+const personalStatsData = {
+    totalArticles: 186,
+    totalViews: 24580,
+    totalLikes: 1236,
+    totalShares: 456,
+    avgReadTime: '5:32',
+    completionRate: 78,
+    weeklyGrowth: 12.5,
+    rank: 3
+};
+
+// Activity timeline data
+const activityData = [
+    { time: '2024-03-15 14:30', action: '发布新文章', title: '智慧校园平台新功能上线', type: 'publish' },
+    { time: '2024-03-15 10:15', action: '文章审核通过', title: '如何提升教学质量', type: 'approve' },
+    { time: '2024-03-14 16:45', action: '收到用户反馈', title: '关于文章分类的建议', type: 'feedback' },
+    { time: '2024-03-14 09:20', action: '编辑文章', title: '校园安全管理制度', type: 'edit' },
+    { time: '2024-03-13 11:00', action: '发布新文章', title: '本周学术活动预告', type: 'publish' },
 ];
 
-const salesCategoryData = [
-    { type: '科技', value: 666, percent: 52.3, color: '#667eea' },
-    { type: '娱乐', value: 234, percent: 18.4, color: '#52c41a' },
-    { type: '体育', value: 156, percent: 12.2, color: '#faad14' },
-    { type: '军事', value: 120, percent: 9.4, color: '#ff4d4f' },
-    { type: '推荐', value: 98, percent: 7.7, color: '#13c2c2' },
+// Article category distribution
+const categoryData = [
+    { name: '校园新闻', value: 45, color: '#1890ff' },
+    { name: '学术动态', value: 32, color: '#52c41a' },
+    { name: '通知公告', value: 28, color: '#faad14' },
+    { name: '活动赛事', value: 18, color: '#722ed1' },
+    { name: '其他', value: 12, color: '#8c8c8c' },
 ];
+
+// Monthly article data
+const monthlyData = [
+    { month: '1月', articles: 12, views: 1800 },
+    { month: '2月', articles: 18, views: 2400 },
+    { month: '3月', articles: 15, views: 2100 },
+    { month: '4月', articles: 22, views: 3200 },
+    { month: '5月', articles: 28, views: 3800 },
+    { month: '6月', articles: 25, views: 3500 },
+    { month: '7月', articles: 20, views: 2800 },
+    { month: '8月', articles: 16, views: 2200 },
+    { month: '9月', articles: 24, views: 3400 },
+    { month: '10月', articles: 30, views: 4200 },
+    { month: '11月', articles: 18, views: 2600 },
+    { month: '12月', articles: 22, views: 3100 },
+];
+
+// Top articles data
+const topArticlesData = [
+    { key: '1', title: '智慧校园平台新功能上线公告', views: 3256, likes: 186, date: '2024-03-15' },
+    { key: '2', title: '2024年春季学期教学安排通知', views: 2890, likes: 142, date: '2024-03-10' },
+    { key: '3', title: '校园网络安全管理制度', views: 2456, likes: 128, date: '2024-03-08' },
+    { key: '4', title: '学术论文撰写指南', views: 2134, likes: 98, date: '2024-03-05' },
+    { key: '5', title: '图书馆开放时间调整', views: 1890, likes: 76, date: '2024-03-01' },
+];
+
+// ECharts component for bar chart
+const BarChartECharts = ({ data, height = 300 }) => {
+    const chartRef = useRef(null);
+    const chartInstance = useRef(null);
+
+    useEffect(() => {
+        if (chartRef.current) {
+            chartInstance.current = echarts.init(chartRef.current);
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: data.map(item => item.month),
+                    axisLine: { lineStyle: { color: '#e2e8f0' } },
+                    axisLabel: { color: '#64748b', fontSize: 11 }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: { show: false },
+                    splitLine: { lineStyle: { color: '#f1f5f9' } },
+                    axisLabel: { color: '#64748b' }
+                },
+                series: [{
+                    name: '文章数',
+                    type: 'bar',
+                    barWidth: '40%',
+                    data: data.map(item => item.articles),
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: '#667eea' },
+                            { offset: 1, color: '#764ba2' }
+                        ]),
+                        borderRadius: [4, 4, 0, 0]
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#764ba2' },
+                                { offset: 1, color: '#667eea' }
+                            ])
+                        }
+                    }
+                }]
+            };
+            chartInstance.current.setOption(option);
+        }
+        return () => {
+            chartInstance.current?.dispose();
+        };
+    }, [data]);
+
+    return <div ref={chartRef} style={{ width: '100%', height }} />;
+};
+
+// ECharts component for pie chart
+const PieChartECharts = ({ data, height = 250 }) => {
+    const chartRef = useRef(null);
+    const chartInstance = useRef(null);
+
+    useEffect(() => {
+        if (chartRef.current) {
+            chartInstance.current = echarts.init(chartRef.current);
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    right: 10,
+                    top: 'center',
+                    textStyle: { color: '#64748b', fontSize: 12 }
+                },
+                series: [{
+                    name: '分类',
+                    type: 'pie',
+                    radius: ['45%', '70%'],
+                    center: ['35%', '50%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 8,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: { show: false },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 14,
+                            fontWeight: 'bold'
+                        }
+                    },
+                    data: data.map(item => ({
+                        value: item.value,
+                        name: item.name,
+                        itemStyle: { color: item.color }
+                    }))
+                }]
+            };
+            chartInstance.current.setOption(option);
+        }
+        return () => {
+            chartInstance.current?.dispose();
+        };
+    }, [data]);
+
+    return <div ref={chartRef} style={{ width: '100%', height }} />;
+};
 
 // User Info Card Component
 const UserInfoCard = ({ userInfo, onEditAvatar, onEditInfo }) => {
@@ -161,6 +326,274 @@ const UserInfoCard = ({ userInfo, onEditAvatar, onEditInfo }) => {
     );
 };
 
+// Statistics Content - Independent Design
+const StatisticsContent = ({ dateRange, onDateChange }) => {
+    // Personal stat cards data
+    const statCardsData = [
+        {
+            title: '总文章数',
+            value: personalStatsData.totalArticles,
+            suffix: '篇',
+            trend: 'up',
+            trendValue: '+12.5%',
+            icon: <FileTextOutlined />,
+            color: '#667eea',
+            bgColor: 'rgba(102, 126, 234, 0.1)'
+        },
+        {
+            title: '总阅读量',
+            value: personalStatsData.totalViews,
+            suffix: '次',
+            trend: 'up',
+            trendValue: '+8.3%',
+            icon: <EyeOutlined />,
+            color: '#52c41a',
+            bgColor: 'rgba(82, 196, 26, 0.1)'
+        },
+        {
+            title: '总点赞数',
+            value: personalStatsData.totalLikes,
+            suffix: '',
+            trend: 'up',
+            trendValue: '+15.2%',
+            icon: <HeartOutlined />,
+            color: '#ff4d4f',
+            bgColor: 'rgba(255, 77, 79, 0.1)'
+        },
+        {
+            title: '总分享数',
+            value: personalStatsData.totalShares,
+            suffix: '',
+            trend: 'down',
+            trendValue: '-3.1%',
+            icon: <ShareAltOutlined />,
+            color: '#faad14',
+            bgColor: 'rgba(250, 173, 20, 0.1)'
+        }
+    ];
+
+    // Get action type color
+    const getActionColor = (type) => {
+        const colors = {
+            publish: 'green',
+            approve: 'blue',
+            feedback: 'orange',
+            edit: 'purple'
+        };
+        return colors[type] || 'default';
+    };
+
+    return (
+        <div className="my-statistics-content">
+            {/* Header */}
+            <div className="stats-header">
+                <div className="header-info">
+                    <Title level={4} className="header-title">我的数据</Title>
+                    <Text type="secondary">记录您在平台的点点滴滴</Text>
+                </div>
+                <div className="header-actions">
+                    <RangePicker
+                        locale={locale}
+                        value={dateRange}
+                        onChange={onDateChange}
+                        allowClear={false}
+                    />
+                </div>
+            </div>
+
+            {/* Stat Cards Row */}
+            <Row gutter={[16, 16]} className="stat-cards-row">
+                {statCardsData.map((item, index) => (
+                    <Col xs={12} sm={12} lg={6} key={index}>
+                        <Card className="stat-card-item" bordered={false}>
+                            <div className="stat-card-content">
+                                <div className="stat-icon" style={{ background: item.bgColor, color: item.color }}>
+                                    {item.icon}
+                                </div>
+                                <div className="stat-info">
+                                    <Text type="secondary" className="stat-label">{item.title}</Text>
+                                    <div className="stat-value-row">
+                                        <Statistic
+                                            value={item.value}
+                                            suffix={item.suffix}
+                                            valueStyle={{ fontSize: 24, fontWeight: 600 }}
+                                        />
+                                        <Tag
+                                            color={item.trend === 'up' ? 'success' : 'error'}
+                                            icon={item.trend === 'up' ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                                            className="trend-tag"
+                                        >
+                                            {item.trendValue}
+                                        </Tag>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+
+            {/* Rank and Progress Row */}
+            <Row gutter={[16, 16]} className="rank-progress-row">
+                <Col xs={24} md={8}>
+                    <Card className="rank-card" bordered={false}>
+                        <div className="rank-content">
+                            <TrophyOutlined className="rank-icon" />
+                            <div className="rank-info">
+                                <Text type="secondary">作者排名</Text>
+                                <div className="rank-value">
+                                    <span className="current-rank">第 {personalStatsData.rank} 名</span>
+                                    <Tag color="gold">TOP 5</Tag>
+                                </div>
+                            </div>
+                        </div>
+                        <Progress
+                            percent={60}
+                            strokeColor="#667eea"
+                            trailColor="#f0f0f0"
+                            showInfo={false}
+                        />
+                        <Text type="secondary" className="rank-hint">还需 28 篇文章超越上一名</Text>
+                    </Card>
+                </Col>
+                <Col xs={24} md={8}>
+                    <Card className="completion-card" bordered={false}>
+                        <div className="completion-content">
+                            <div className="completion-header">
+                                <Text type="secondary">目标完成率</Text>
+                                <Text strong className="completion-percent">{personalStatsData.completionRate}%</Text>
+                            </div>
+                            <Progress
+                                percent={personalStatsData.completionRate}
+                                strokeColor={{
+                                    '0%': '#667eea',
+                                    '100%': '#52c41a'
+                                }}
+                                trailColor="#f0f0f0"
+                            />
+                            <Text type="secondary">本月已发布 18 篇，还差 5 篇达成目标</Text>
+                        </div>
+                    </Card>
+                </Col>
+                <Col xs={24} md={8}>
+                    <Card className="readtime-card" bordered={false}>
+                        <div className="readtime-content">
+                            <ClockCircleOutlined className="readtime-icon" />
+                            <div className="readtime-info">
+                                <Text type="secondary">平均阅读时长</Text>
+                                <Statistic
+                                    value={personalStatsData.avgReadTime}
+                                    valueStyle={{ fontSize: 28, fontWeight: 600, color: '#667eea' }}
+                                />
+                            </div>
+                        </div>
+                        <div className="readtime-trend">
+                            <FireOutlined style={{ color: '#ff4d4f' }} />
+                            <Text type="secondary">用户平均停留 5 分钟</Text>
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Charts Row */}
+            <Row gutter={[16, 16]} className="charts-section">
+                <Col xs={24} lg={14}>
+                    <Card className="chart-card-item" bordered={false} title="月度发布统计">
+                        <BarChartECharts data={monthlyData} height={280} />
+                    </Card>
+                </Col>
+                <Col xs={24} lg={10}>
+                    <Card className="chart-card-item" bordered={false} title="文章分类分布">
+                        <PieChartECharts data={categoryData} height={280} />
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Activity Timeline and Top Articles */}
+            <Row gutter={[16, 16]} className="bottom-section">
+                <Col xs={24} lg={12}>
+                    <Card className="timeline-card" bordered={false} title="最近活动">
+                        <Timeline
+                            items={activityData.map(item => ({
+                                color: getActionColor(item.type),
+                                children: (
+                                    <div className="timeline-item">
+                                        <div className="timeline-time">{item.time}</div>
+                                        <div className="timeline-action">
+                                            <Tag color={getActionColor(item.type)}>{item.action}</Tag>
+                                            <Text>{item.title}</Text>
+                                        </div>
+                                    </div>
+                                )
+                            }))}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={24} lg={12}>
+                    <Card className="articles-card" bordered={false} title="热门文章">
+                        <Table
+                            dataSource={topArticlesData}
+                            pagination={false}
+                            size="small"
+                            columns={[
+                                {
+                                    title: '排名',
+                                    key: 'rank',
+                                    width: 50,
+                                    render: (_, __, index) => (
+                                        <span className={`article-rank rank-${index + 1}`}>
+                                            {index + 1}
+                                        </span>
+                                    )
+                                },
+                                {
+                                    title: '文章标题',
+                                    dataIndex: 'title',
+                                    key: 'title',
+                                    render: (text) => (
+                                        <Tooltip title={text}>
+                                            <Text ellipsis style={{ maxWidth: 180 }}>{text}</Text>
+                                        </Tooltip>
+                                    )
+                                },
+                                {
+                                    title: '阅读',
+                                    dataIndex: 'views',
+                                    key: 'views',
+                                    width: 70,
+                                    render: (val) => (
+                                        <span><EyeOutlined /> {val}</span>
+                                    )
+                                },
+                                {
+                                    title: '点赞',
+                                    dataIndex: 'likes',
+                                    key: 'likes',
+                                    width: 70,
+                                    render: (val) => (
+                                        <span><HeartOutlined /> {val}</span>
+                                    )
+                                }
+                            ]}
+                        />
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Summary Tags */}
+            <Card className="summary-card" bordered={false}>
+                <div className="summary-content">
+                    <Text type="secondary">数据概览：</Text>
+                    <Tag color="blue">本年发布 {personalStatsData.totalArticles} 篇</Tag>
+                    <Tag color="green">较去年同期 +{personalStatsData.weeklyGrowth}%</Tag>
+                    <Tag color="purple">累计阅读 {personalStatsData.totalViews} 次</Tag>
+                    <Tag color="red">获得 {personalStatsData.totalLikes} 次点赞</Tag>
+                </div>
+            </Card>
+        </div>
+    );
+};
+
 // Account Settings Component
 const AccountSettings = ({ userInfo }) => {
     const [form] = Form.useForm();
@@ -170,7 +603,6 @@ const AccountSettings = ({ userInfo }) => {
 
     const handleSaveProfile = async (values) => {
         setLoading(true);
-        // Simulate API call
         setTimeout(() => {
             setLoading(false);
             message.success('个人信息更新成功');
@@ -421,213 +853,6 @@ const AccountSettings = ({ userInfo }) => {
     );
 };
 
-// Statistics Tab Content
-const StatisticsContent = ({ loading, dateRange, onDateChange }) => {
-    return (
-        <div className="statistics-content">
-            {/* Header with Date Picker */}
-            <div className="content-header">
-                <div className="header-left">
-                    <Title level={4} className="section-title">数据统计</Title>
-                    <Text type="secondary">查看您的文章数据与分析</Text>
-                </div>
-                <div className="header-right">
-                    <Space>
-                        <Text type="secondary">时间范围：</Text>
-                        <RangePicker
-                            locale={locale}
-                            value={dateRange}
-                            onChange={onDateChange}
-                            allowClear={false}
-                            className="date-picker"
-                        />
-                    </Space>
-                </div>
-            </div>
-
-            {/* Statistics Cards */}
-            <Row gutter={[16, 16]} className="stats-row">
-                <Col xs={24} sm={12} lg={6}>
-                    <Card className="stat-card">
-                        <Statistic
-                            title="总文章数"
-                            value={1265}
-                            suffix={
-                                <Tag icon={<ArrowUpOutlined />} color="green">
-                                    12%
-                                </Tag>
-                            }
-                        />
-                        <div className="stat-footer">8,846 访问量</div>
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} lg={6}>
-                    <Card className="stat-card">
-                        <Statistic title="实际增数" value={656} />
-                        <Progress percent={78} size="small" status="active" />
-                        <div className="stat-tags">
-                            <Tag color="green">+12%</Tag>
-                            <Tag color="red">-11%</Tag>
-                        </div>
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} lg={6}>
-                    <Card className="stat-card">
-                        <Statistic title="日文章数" value={12} />
-                        <div className="stat-tags">
-                            <Tag color="green">转化率 60%</Tag>
-                        </div>
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} lg={6}>
-                    <Card className="stat-card">
-                        <Statistic title="目标购置" value={1234} />
-                        <Progress percent={60} size="small" status="exception" />
-                        <div className="stat-tags">
-                            <Tag color="blue">政府地址 4,544</Tag>
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Charts Row */}
-            <Row gutter={[16, 16]} className="charts-row">
-                <Col xs={24} lg={16}>
-                    <Card className="chart-card" bordered={false} title="文章阅读量趋势">
-                        <LineChart height={300} />
-                    </Card>
-                </Col>
-                <Col xs={24} lg={8}>
-                    <Card className="chart-card" bordered={false} title="文章分类占比">
-                        <div className="pie-chart-container">
-                            <PieChart height={250} />
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Data Tables Row */}
-            <Row gutter={[16, 16]} className="tables-row">
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="table-card"
-                        bordered={false}
-                        title={
-                            <div className="card-title">
-                                <UserOutlined />
-                                文章数排名
-                            </div>
-                        }
-                    >
-                        <Table
-                            dataSource={articleNumberData}
-                            pagination={false}
-                            size="small"
-                        >
-                            <Table.Column
-                                title="排名"
-                                key="rank"
-                                width={60}
-                                render={(_, __, index) => (
-                                    <span className={`rank-badge rank-${index + 1}`}>
-                                        {index + 1}
-                                    </span>
-                                )}
-                            />
-                            <Table.Column
-                                title="作者"
-                                dataIndex="username"
-                                key="username"
-                            />
-                            <Table.Column
-                                title="文章数"
-                                dataIndex="number"
-                                key="number"
-                                align="right"
-                            />
-                            <Table.Column
-                                title="趋势"
-                                dataIndex="trend"
-                                key="trend"
-                                align="right"
-                                render={(value) => {
-                                    const isUp = value.startsWith('+');
-                                    return (
-                                        <Tag color={isUp ? 'green' : 'red'}>
-                                            {value}
-                                        </Tag>
-                                    );
-                                }}
-                            />
-                        </Table>
-                    </Card>
-                </Col>
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="table-card"
-                        bordered={false}
-                        title={
-                            <div className="card-title">
-                                <SettingOutlined />
-                                分类详情
-                            </div>
-                        }
-                    >
-                        <div className="category-list">
-                            {salesCategoryData.map((item) => (
-                                <div key={item.type} className="category-item">
-                                    <div className="category-header">
-                                        <div className="category-info">
-                                            <span
-                                                className="category-dot"
-                                                style={{ backgroundColor: item.color }}
-                                            />
-                                            <Text>{item.type}</Text>
-                                        </div>
-                                        <div className="category-values">
-                                            <Text strong>{item.value}</Text>
-                                            <Text type="secondary" className="percent">{item.percent}%</Text>
-                                        </div>
-                                    </div>
-                                    <Progress
-                                        percent={item.percent}
-                                        size="small"
-                                        strokeColor={item.color}
-                                        showInfo={false}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                        <Row gutter={16} className="category-summary">
-                            <Col span={12}>
-                                <Statistic title="文章总数" value={1274} />
-                            </Col>
-                            <Col span={12}>
-                                <Statistic title="平均阅读" value={325} suffix="次" />
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Bottom Tags */}
-            <Card className="tags-card" bordered={false}>
-                <div className="tags-header">
-                    <BellOutlined />
-                    <Text strong>线上热门搜索</Text>
-                </div>
-                <div className="tags-content">
-                    <Tag color="processing">总数产值 1,231</Tag>
-                    <Tag color="processing">政府地址 4,544</Tag>
-                    <Tag color="success">科技动态 3,212</Tag>
-                    <Tag color="warning">校园新闻 2,890</Tag>
-                    <Tag color="error">学术成果 1,567</Tag>
-                </div>
-            </Card>
-        </div>
-    );
-};
-
 // Main UserCenter Component
 const UserCenter = () => {
     const [loading, setLoading] = useState(true);
@@ -701,12 +926,11 @@ const UserCenter = () => {
                                     label: (
                                         <span>
                                             <SettingOutlined />
-                                            数据统计
+                                            我的数据
                                         </span>
                                     ),
                                     children: (
                                         <StatisticsContent
-                                            loading={loading}
                                             dateRange={dateRange}
                                             onDateChange={handleDateChange}
                                         />
