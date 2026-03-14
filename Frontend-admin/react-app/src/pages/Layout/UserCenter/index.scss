@@ -1,11 +1,536 @@
- .ant-btn-color-primary{
-     background-color: #4154f1;
- }
-.ant-card {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s;
+/**
+ * User Center Styles
+ * @description Modern user center design with profile and settings
+ * @author 犀焰澄泓团队
+ * @version 1.0.0
+ */
+
+// ============================================
+// Variables
+// ============================================
+$primary-color: #667eea;
+$primary-light: #7c9ef0;
+$primary-dark: #5a67d8;
+$secondary-color: #764ba2;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$error-color: #ff4d4f;
+$info-color: #1890ff;
+
+$bg-color: #f5f7fa;
+$bg-card: #ffffff;
+$text-primary: #1a1a2e;
+$text-secondary: #64748b;
+$text-light: #94a3b8;
+$border-color: #e2e8f0;
+$border-light: #f1f5f9;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
+
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// ============================================
+// Main Container
+// ============================================
+.user-center {
+  padding: 24px;
+  min-height: calc(100vh - 112px);
+  background: $bg-color;
+  animation: fadeIn 0.4s ease;
+}
+
+.user-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.content-card {
+  background: $bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  min-height: calc(100vh - 160px);
+
+  .ant-card-body {
+    padding: 0;
+  }
+
+  .ant-tabs-nav {
+    padding: 0 24px;
+    margin-bottom: 0;
+
+    &::before {
+      border-bottom: 1px solid $border-light;
+    }
+  }
+
+  .ant-tabs-content-holder {
+    padding: 24px;
+  }
+}
+
+// ============================================
+// User Info Card
+// ============================================
+.user-info-card {
+  background: $bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+
+  .ant-card-body {
+    padding: 24px;
+  }
+
+  .user-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+
+    .user-avatar {
+      border: 4px solid rgba($primary-color, 0.1);
+      transition: all $transition-normal;
+
+      &:hover {
+        border-color: rgba($primary-color, 0.3);
+      }
+    }
+
+    .avatar-upload-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      opacity: 0;
+      transition: all $transition-normal;
+      border-radius: 50%;
+    }
+
+    &:hover .avatar-upload-mask {
+      opacity: 1;
+    }
+  }
+
+  .user-basic-info {
+    .user-name {
+      margin: 0 0 8px 0 !important;
+      font-size: 20px !important;
+    }
+
+    .user-meta {
+      margin-top: 8px;
+      font-size: 13px;
+    }
+  }
+
+  .edit-btn {
+    width: 100%;
+  }
+
+  .user-detail-info {
+    .info-icon {
+      color: $primary-color;
+      font-size: 18px;
+    }
+
+    .ant-list-item {
+      padding: 8px 0;
+
+      .ant-list-item-meta-title {
+        margin-bottom: 0;
+        font-size: 13px;
+        color: $text-secondary;
+      }
+
+      .ant-list-item-meta-description {
+        font-size: 14px;
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+// ============================================
+// Quick Actions Card
+// ============================================
+.quick-actions-card {
+  background: $bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+
+  .ant-card-body {
+    padding: 20px;
+  }
+
+  .ant-typography {
+    margin-bottom: 12px;
+    color: $text-primary;
+  }
+
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .ant-btn {
+      justify-content: flex-start;
+      border-color: $border-color;
+
+      &:hover {
+        border-color: $primary-color;
+        color: $primary-color;
+        background: rgba($primary-color, 0.05);
+      }
+    }
+  }
+}
+
+// ============================================
+// Statistics Content
+// ============================================
+.statistics-content {
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $border-light;
+
+    .section-title {
+      margin: 0 0 4px 0 !important;
+      font-size: 18px !important;
+    }
+  }
+
+  .stats-row {
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: $bg-card;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+    transition: all $transition-normal;
 
     &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
     }
+
+    .ant-card-body {
+      padding: 20px;
+    }
+
+    .stat-footer {
+      margin-top: 8px;
+      font-size: 13px;
+      color: $text-secondary;
+    }
+
+    .stat-tags {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .charts-row {
+    margin-bottom: 20px;
+  }
+
+  .chart-card {
+    background: $bg-card;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+
+    .ant-card-head {
+      border-bottom: 1px solid $border-light;
+      padding: 16px 20px;
+    }
+
+    .ant-card-body {
+      padding: 20px;
+    }
+  }
+
+  .pie-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tables-row {
+    margin-bottom: 20px;
+  }
+
+  .table-card {
+    background: $bg-card;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+    height: 100%;
+
+    .ant-card-head {
+      border-bottom: 1px solid $border-light;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .anticon {
+        color: $primary-color;
+      }
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 600;
+
+      &.rank-1 {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb800 100%);
+        color: white;
+      }
+
+      &.rank-2 {
+        background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+        color: white;
+      }
+
+      &.rank-3 {
+        background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+        color: white;
+      }
+
+      &:not(.rank-1):not(.rank-2):not(.rank-3) {
+        background: $border-light;
+        color: $text-secondary;
+      }
+    }
+  }
+
+  .category-list {
+    padding: 8px 0;
+  }
+
+  .category-item {
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .category-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .category-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+      }
+
+      .category-values {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .percent {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  .category-summary {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid $border-light;
+
+    .ant-statistic-title {
+      font-size: 13px;
+      color: $text-secondary;
+    }
+
+    .ant-statistic-content {
+      font-size: 20px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+
+  .tags-card {
+    background: $bg-card;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+
+    .ant-card-body {
+      padding: 16px 20px;
+    }
+
+    .tags-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: $text-primary;
+    }
+
+    .tags-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+}
+
+// ============================================
+// Account Settings
+// ============================================
+.account-settings {
+  .settings-card {
+    background: $bg-card;
+    border-radius: $radius-md;
+    box-shadow: none;
+
+    .ant-card-body {
+      padding: 24px;
+    }
+  }
+
+  .setting-section {
+    .ant-typography {
+      margin-bottom: 16px;
+    }
+
+    &.danger-zone {
+      padding: 16px;
+      background: rgba($error-color, 0.05);
+      border-radius: $radius-md;
+      border: 1px solid rgba($error-color, 0.2);
+    }
+  }
+
+  .ant-divider {
+    margin: 24px 0;
+  }
+}
+
+// ============================================
+// Animations
+// ============================================
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// Responsive Design
+// ============================================
+@media (max-width: 1200px) {
+  .user-center {
+    padding: 20px;
+  }
+
+  .user-sidebar {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-center {
+    padding: 16px;
+  }
+
+  .content-card {
+    .ant-tabs-content-holder {
+      padding: 16px;
+    }
+  }
+
+  .statistics-content {
+    .content-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .charts-row {
+      .ant-col {
+        margin-bottom: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .user-info-card {
+    .user-header {
+      .avatar-wrapper {
+        .user-avatar {
+          width: 80px !important;
+          height: 80px !important;
+        }
+      }
+    }
+  }
+
+  .quick-actions-card {
+    .action-list {
+      .ant-btn {
+        span {
+          display: none;
+        }
+      }
+    }
+  }
 }
