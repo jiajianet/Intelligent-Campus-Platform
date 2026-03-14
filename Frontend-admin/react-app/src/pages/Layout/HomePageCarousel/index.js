@@ -1,13 +1,14 @@
 import './index.scss'
 import React from 'react';
-import {DeleteTwoTone, EyeOutlined, InboxOutlined, HolderOutlined} from '@ant-design/icons';
+import {DeleteTwoTone, EyeOutlined, InboxOutlined, HolderOutlined, HomeOutlined, FileTextOutlined} from '@ant-design/icons';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import {
     arrayMove, SortableContext, useSortable, verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import Dragger from "antd/es/upload/Dragger";
-import {Carousel, Divider, Image, message} from "antd";
+import {Breadcrumb, Carousel, Divider, Image, message} from "antd";
+import {Link} from "react-router-dom";
 import {deleteFileAPI, reorderFilesAPI, uploadFileAPI} from "@/apis/file";
 import {useHomePageCarouselList} from "@/hooks/useHomePageCarouselList";
 
@@ -131,8 +132,19 @@ const HomePageCarousel = () => {
 
     return (
         <div className="homepage-carousel-wrapper">
-            {/* 页面标题 */}
+            {/* Breadcrumb */}
             <div className="page-header">
+                <Breadcrumb
+                    items={[
+                        { title: <Link to="/home"><HomeOutlined /> 首页</Link> },
+                        { title: <><FileTextOutlined /> 系统管理</> },
+                        { title: '首页轮播管理' }
+                    ]}
+                />
+            </div>
+
+            {/* 页面标题 */}
+            <div className="page-title-section">
                 <h1>首页轮播管理</h1>
                 <p>上传和管理首页轮播图片及视频</p>
             </div>

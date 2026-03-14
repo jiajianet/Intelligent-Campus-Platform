@@ -2,7 +2,7 @@ import {
     Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message, Divider
 } from 'antd'
 import ReactQuill from 'react-quill'
-import {PlusOutlined, ArrowLeftOutlined, SaveOutlined} from '@ant-design/icons'
+import {PlusOutlined, ArrowLeftOutlined, SaveOutlined, HomeOutlined, FileTextOutlined} from '@ant-design/icons'
 import {Link, useNavigate, useSearchParams} from 'react-router-dom'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
@@ -138,12 +138,13 @@ const Publish = () => {
     
     return (
         <div className="publish">
-            <div className="publish-header">
+            {/* Breadcrumb */}
+            <div className="page-header">
                 <Breadcrumb
                     items={[
-                        {title: <Link to={'/'}>首页</Link>},
-                        {title: <Link to={'/article'}>文章管理</Link>},
-                        {title: `${articleId ? '编辑' : '发布'}文章`},
+                        { title: <Link to="/home"><HomeOutlined /> 首页</Link> },
+                        { title: <><FileTextOutlined /> 文章管理</> },
+                        { title: `${articleId ? '编辑' : '发布'}文章` }
                     ]}
                 />
             </div>

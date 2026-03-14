@@ -162,20 +162,17 @@ body {
   }
 }
 
-/* Header Section - Reduced Spacing */
-.publish-header {
-  margin-bottom: var(--space-2);
-  padding-bottom: var(--space-1);
-  border-bottom: 1px solid var(--gray-200);
+/* Page Header - Matched with Article Page */
+.page-header {
+  margin-bottom: var(--space-4);
+  animation: slideInUp 0.4s ease;
 
   .ant-breadcrumb {
-    font-size: var(--text-xs);
-    font-weight: var(--font-medium);
-    color: var(--gray-600);
+    margin-bottom: var(--space-2);
 
     .ant-breadcrumb-link {
       color: var(--gray-600);
-      transition: all var(--transition-fast);
+      transition: color var(--transition-fast);
       font-weight: var(--font-medium);
 
       &:hover {
@@ -196,9 +193,17 @@ body {
   }
 
   @media (max-width: 768px) {
-    margin-bottom: var(--space-2);
-    padding-bottom: var(--space-1);
+    margin-bottom: var(--space-3);
   }
+
+  @media (max-width: 480px) {
+    margin-bottom: var(--space-2);
+  }
+}
+
+/* Header Section - Deprecated */
+.publish-header {
+  display: none;
 }
 
 /* Card Styling - Professional Layout */
