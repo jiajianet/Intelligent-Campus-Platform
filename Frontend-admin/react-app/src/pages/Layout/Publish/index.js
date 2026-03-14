@@ -163,31 +163,54 @@ const Publish = () => {
                     form={form}
                     className="publish-form"
                 >
-                    <div className="form-row">
-                        <Form.Item
-                            label="文章标题"
-                            name="title"
-                            rules={[{required: true, message: '请输入文章标题'}]}
-                            className="form-item"
-                        >
-                            <Input placeholder="请输入文章标题" className="form-input" />
-                        </Form.Item>
+                    {/* 第一行：标题行组件 */}
+                    <div className="form-row title-row">
+                        <div className="title-section">
+                            <h3 className="section-title">文章信息</h3>
+                        </div>
                     </div>
 
-                    <div className="form-row">
-                        <Form.Item
-                            label="文章频道"
-                            name="channelId"
-                            rules={[{required: true, message: '请选择文章频道'}]}
-                            className="form-item"
-                        >
-                            <Select placeholder="请选择文章频道" className="form-select">
-                                {channelList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
-                            </Select>
-                        </Form.Item>
+                    {/* 第二行：内容输入区组件 */}
+                    <div className="form-row content-input-row">
+                        <div className="input-container">
+                            <Form.Item
+                                label="文章标题"
+                                name="title"
+                                rules={[
+                                    {required: true, message: '请输入文章标题'},
+                                    {max: 50, message: '标题长度不能超过50个字符'}
+                                ]}
+                                className="form-item title-input"
+                            >
+                                <Input 
+                                    placeholder="请输入文章标题" 
+                                    className="form-input"
+                                    maxLength={50}
+                                    showCount
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="文章频道"
+                                name="channelId"
+                                rules={[{required: true, message: '请选择文章频道'}]}
+                                className="form-item channel-select"
+                            >
+                                <Select 
+                                    placeholder="请选择文章频道" 
+                                    className="form-select"
+                                    showSearch
+                                    filterOption={(input, option) => 
+                                        option.children.toLowerCase().includes(input.toLowerCase())
+                                    }
+                                >
+                                    {channelList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
+                                </Select>
+                            </Form.Item>
+                        </div>
                     </div>
 
-                    <div className="form-row">
+                    {/* 第三行：封面设置区组件 */}
+                    <div className="form-row cover-setting-row">
                         <Form.Item label="封面设置" className="form-item">
                             <div className="cover-section">
                                 <Form.Item name="type" className="cover-type">
@@ -208,20 +231,35 @@ const Publish = () => {
                                             fileList={image}
                                             customRequest={customUpload}
                                             className="upload-component"
+                                            accept="image/jpeg,image/png"
+                                            beforeUpload={(file) => {
+                                                const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+                                                const isLt2M = file.size / 1024 / 1024 < 20;
+                                                if (!isJpgOrPng) {
+                                                    message.error('只能上传JPG/PNG格式的图片!');
+                                                    return false;
+                                                }
+                                                if (!isLt2M) {
+                                                    message.error('图片大小不能超过2MB!');
+                                                    return false;
+                                                }
+                                                return true;
+                                            }}
                                         >
                                             <div className="upload-button">
                                                 <PlusOutlined className="upload-icon" />
                                                 <div className="upload-text">上传图片</div>
                                             </div>
                                         </Upload>
-                                        <p className="upload-hint">建议上传尺寸适中的图片，以获得最佳显示效果</p>
+                                        <p className="upload-hint">建议上传尺寸为16:9比例的图片，大小不超过20MB</p>
                                     </div>
                                 )}
                             </div>
                         </Form.Item>
                     </div>
                     
-                    <div className="form-row">
+                    {/* 第四行：文章内容编辑区组件 */}
+                    <div className="form-row content-editor-row">
                         <Form.Item
                             label="文章内容"
                             name="content"
