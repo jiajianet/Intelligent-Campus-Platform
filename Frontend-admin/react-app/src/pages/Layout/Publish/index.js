@@ -1,8 +1,8 @@
 import {
-    Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message
+    Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message, Divider
 } from 'antd'
 import ReactQuill from 'react-quill'
-import {PlusOutlined} from '@ant-design/icons'
+import {PlusOutlined, ArrowLeftOutlined, SaveOutlined, EyeOutlined} from '@ant-design/icons'
 import {Link, useNavigate, useSearchParams} from 'react-router-dom'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
@@ -131,84 +131,137 @@ const Publish = () => {
             console.log("无文章id，为新建文章");
         }
     }, [articleId, form]);
-    return (<div className="publish">
-        <Card
-            title={<Breadcrumb
-                items={[{title: <Link to={'/'}>首页</Link>}, {title: `${articleId ? '编辑' : '发布'}文章`},]}
-            />}
-        >
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 16}}
-                initialValues={{type: 0}}
-                onFinish={onFinish}
-                form={form}
-            >
-                <Form.Item
-                    label="标题"
-                    name="title"
-                    rules={[{required: true, message: '请输入文章标题'}]}
+    
+    const handleCancel = () => {
+        navigate('/article');
+    };
+    
+    return (
+        <div className="publish">
+            <div className="publish-header">
+                <Breadcrumb
+                    items={[
+                        {title: <Link to={'/'}>首页</Link>},
+                        {title: <Link to={'/article'}>文章管理</Link>},
+                        {title: `${articleId ? '编辑' : '发布'}文章`},
+                    ]}
+                />
+            </div>
+            
+            <Card className="publish-card">
+                <div className="publish-card-header">
+                    <h2 className="publish-title">{articleId ? '编辑文章' : '发布文章'}</h2>
+                    <p className="publish-subtitle">{articleId ? '修改现有文章内容' : '创建新的文章'}</p>
+                </div>
+                
+                <Divider className="publish-divider" />
+                
+                <Form
+                    layout="vertical"
+                    initialValues={{type: 0}}
+                    onFinish={onFinish}
+                    form={form}
+                    className="publish-form"
                 >
-                    <Input placeholder="请输入文章标题" style={{width: 400}}/>
-                </Form.Item>
+                    <div className="form-row">
+                        <Form.Item
+                            label="文章标题"
+                            name="title"
+                            rules={[{required: true, message: '请输入文章标题'}]}
+                            className="form-item"
+                        >
+                            <Input placeholder="请输入文章标题" className="form-input" />
+                        </Form.Item>
+                    </div>
 
-                <Form.Item
-                    label="频道"
-                    name="channelId"
-                    rules={[{required: true, message: '请选择文章频道'}]}
-                >
-                    <Select placeholder="请选择文章频道" style={{width: 400}}>
+                    <div className="form-row">
+                        <Form.Item
+                            label="文章频道"
+                            name="channelId"
+                            rules={[{required: true, message: '请选择文章频道'}]}
+                            className="form-item"
+                        >
+                            <Select placeholder="请选择文章频道" className="form-select">
+                                {channelList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
+                            </Select>
+                        </Form.Item>
+                    </div>
 
-                        {channelList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
-                    </Select>
-                </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="封面设置" className="form-item">
+                            <div className="cover-section">
+                                <Form.Item name="type" className="cover-type">
+                                    <Radio.Group onChange={onTypeChange} className="radio-group">
+                                        <Radio value={0}>无图</Radio>
+                                        <Radio value={1}>单图</Radio>
+                                    </Radio.Group>
+                                </Form.Item>
+                                
+                                {imageType > 0 && (
+                                    <div className="upload-section">
+                                        <Upload
+                                            listType="picture-card"
+                                            showUploadList
+                                            name='image'
+                                            onChange={onChange}
+                                            maxCount={imageType}
+                                            fileList={image}
+                                            customRequest={customUpload}
+                                            className="upload-component"
+                                        >
+                                            <div className="upload-button">
+                                                <PlusOutlined className="upload-icon" />
+                                                <div className="upload-text">上传图片</div>
+                                            </div>
+                                        </Upload>
+                                        <p className="upload-hint">建议上传尺寸适中的图片，以获得最佳显示效果</p>
+                                    </div>
+                                )}
+                            </div>
+                        </Form.Item>
+                    </div>
+                    
+                    <div className="form-row">
+                        <Form.Item
+                            label="文章内容"
+                            name="content"
+                            rules={[{required: true, message: '请输入文章内容'}]}
+                            className="form-item"
+                        >
+                            {/* 这里使用ReactQuill编辑器 */}
+                            <ReactQuill
+                                className="publish-quill"
+                                theme="snow"
+                                placeholder="请输入文章内容"
+                            />
+                        </Form.Item>
+                    </div>
 
-                <Form.Item label="封面">
-                    <Form.Item name="type">
-                        <Radio.Group onChange={onTypeChange}>
-                            <Radio value={1}>单图</Radio>
-                            <Radio value={0}>无图</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    {/* 决定选择文件框 显示控制上传列表 */}
-                    {imageType > 0 && <Upload
-                        listType="picture-card"
-                        showUploadList
-                        name='image'
-                        onChange={onChange}
-                        maxCount={imageType}
-                        fileList={image}
-                        customRequest={customUpload}
-                    >
-                        <div style={{marginTop: 8}}>
-                            <PlusOutlined/>
-                        </div>
-                    </Upload>}
-
-                </Form.Item>
-                <Form.Item
-                    label="内容"
-                    name="content"
-                    rules={[{required: true, message: '请输入文章内容'}]}
-                >
-                    {/* 这里使用ReactQuill编辑器 */}
-                    <ReactQuill
-                        className="publish-quill"
-                        theme="snow"
-                        placeholder="请输入文章内容"
-                    />
-                </Form.Item>
-
-                <Form.Item wrapperCol={{offset: 4}}>
-                    <Space>
-                        <Button size="large" type="primary" htmlType="submit">
-                            发布文章
-                        </Button>
-                    </Space>
-                </Form.Item>
-            </Form>
-        </Card>
-    </div>)
+                    <div className="form-actions">
+                        <Space className="action-buttons">
+                            <Button 
+                                size="large" 
+                                onClick={handleCancel}
+                                icon={<ArrowLeftOutlined />}
+                                className="cancel-button"
+                            >
+                                返回列表
+                            </Button>
+                            <Button 
+                                size="large" 
+                                type="primary" 
+                                htmlType="submit"
+                                icon={<SaveOutlined />}
+                                className="submit-button"
+                            >
+                                {articleId ? '更新文章' : '发布文章'}
+                            </Button>
+                        </Space>
+                    </div>
+                </Form>
+            </Card>
+        </div>
+    )
 }
 
 export default Publish
