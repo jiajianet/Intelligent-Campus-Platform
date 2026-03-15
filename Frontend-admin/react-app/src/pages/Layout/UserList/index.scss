@@ -1,0 +1,168 @@
+.user-list-container {
+  padding: 16px;
+
+  .user-list-card {
+    margin-bottom: 16px;
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 16px;
+
+    .filter-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .filter-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .search-input {
+          width: 280px;
+        }
+
+        .role-select,
+        .status-select {
+          min-width: 120px;
+        }
+      }
+
+      .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .refresh-btn {
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+
+        .create-btn {
+          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+
+          &:hover {
+            background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          }
+        }
+      }
+    }
+  }
+
+  .table-card {
+    .table-header {
+      margin-bottom: 12px;
+
+      .selected-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 8px 12px;
+        background: #f6ffed;
+        border: 1px solid #b7eb8f;
+        border-radius: 6px;
+
+        .ant-typography {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .user-table {
+      .user-info-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .user-info-text {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.4;
+
+          .username-text {
+            font-size: 12px;
+          }
+        }
+      }
+
+      .action-btn {
+        transition: all 0.3s;
+
+        &.edit-btn {
+          color: #1890ff;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+
+        &.enable-btn {
+          color: #52c41a;
+
+          &:hover {
+            background: #f6ffed;
+          }
+        }
+
+        &.disable-btn {
+          color: #ff4d4f;
+
+          &:hover {
+            background: #fff2f0;
+          }
+        }
+
+        &.delete-btn {
+          color: #ff4d4f;
+
+          &:hover {
+            background: #fff2f0;
+          }
+        }
+      }
+
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: #f0f5ff;
+      }
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .user-list-container {
+    .filter-card {
+      .filter-content {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filter-left,
+        .filter-right {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .filter-left {
+          .search-input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
