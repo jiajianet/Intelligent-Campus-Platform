@@ -1,0 +1,181 @@
+.menu-list-container {
+  padding: 16px;
+
+  .menu-list-card {
+    margin-bottom: 16px;
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 16px;
+
+    .filter-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .filter-left {
+        .search-input {
+          width: 300px;
+        }
+      }
+
+      .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .refresh-btn {
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+
+        .create-btn {
+          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+
+          &:hover {
+            background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          }
+        }
+      }
+    }
+  }
+
+  .table-card {
+    .menu-table {
+      .menu-name-cell {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        transition: all 0.3s;
+
+        &.add-btn {
+          color: #52c41a;
+
+          &:hover {
+            background: #f6ffed;
+          }
+        }
+
+        &.edit-btn {
+          color: #1890ff;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+
+        &.enable-btn {
+          color: #52c41a;
+
+          &:hover {
+            background: #f6ffed;
+          }
+        }
+
+        &.disable-btn {
+          color: #faad14;
+
+          &:hover {
+            background: #fffbe6;
+          }
+        }
+
+        &.delete-btn {
+          color: #ff4d4f;
+
+          &:hover {
+            background: #fff2f0;
+          }
+        }
+
+        &[disabled] {
+          color: #d9d9d9;
+          cursor: not-allowed;
+
+          &:hover {
+            background: transparent;
+          }
+        }
+      }
+
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: #f0f5ff;
+      }
+    }
+  }
+
+  // Modal样式
+  .menu-modal {
+    .menu-form {
+      .ant-form-item {
+        margin-bottom: 16px;
+
+        .ant-form-item-label {
+          padding-bottom: 8px;
+
+          label {
+            font-weight: 500;
+            color: #303133;
+          }
+        }
+
+        .ant-input,
+        .ant-input-number,
+        .ant-select-selector {
+          border-radius: 6px;
+
+          &:hover {
+            border-color: #40a9ff;
+          }
+
+          &:focus,
+          &.ant-input-focused {
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .menu-list-container {
+    .filter-card {
+      .filter-content {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filter-left,
+        .filter-right {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .filter-left {
+          .search-input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
