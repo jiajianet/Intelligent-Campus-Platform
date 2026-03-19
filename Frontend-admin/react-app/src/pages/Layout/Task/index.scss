@@ -1,0 +1,211 @@
+.task-container {
+  padding: 16px;
+
+  .task-card {
+    margin-bottom: 16px;
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 16px;
+
+    .filter-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .filter-left {
+        .search-input {
+          width: 300px;
+        }
+      }
+
+      .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .refresh-btn {
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+
+        .create-btn {
+          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+
+          &:hover {
+            background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          }
+        }
+      }
+    }
+  }
+
+  .table-card {
+    .task-table {
+      .action-btn {
+        transition: all 0.3s;
+
+        &.execute-btn {
+          color: #52c41a;
+
+          &:hover {
+            background: #f6ffed;
+          }
+
+          &[disabled] {
+            color: #d9d9d9;
+            cursor: not-allowed;
+          }
+        }
+
+        &.start-btn {
+          color: #52c41a;
+
+          &:hover {
+            background: #f6ffed;
+          }
+        }
+
+        &.pause-btn {
+          color: #faad14;
+
+          &:hover {
+            background: #fffbe6;
+          }
+        }
+
+        &.log-btn {
+          color: #1890ff;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+
+        &.edit-btn {
+          color: #1890ff;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+
+        &.delete-btn {
+          color: #ff4d4f;
+
+          &:hover {
+            background: #fff2f0;
+          }
+        }
+      }
+
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: #f0f5ff;
+      }
+    }
+  }
+
+  // Modal样式
+  .task-modal {
+    .task-form {
+      .ant-form-item {
+        margin-bottom: 16px;
+
+        .ant-form-item-label {
+          padding-bottom: 8px;
+
+          label {
+            font-weight: 500;
+            color: #303133;
+          }
+        }
+
+        .ant-input,
+        .ant-input-number,
+        .ant-select-selector {
+          border-radius: 6px;
+
+          &:hover {
+            border-color: #40a9ff;
+          }
+
+          &:focus,
+          &.ant-input-focused {
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+          }
+        }
+
+        .ant-input-textarea {
+          textarea {
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
+
+  // Drawer样式
+  .log-drawer {
+    .execute-logs {
+      .log-item {
+        .log-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+
+        .log-detail {
+          margin-bottom: 4px;
+        }
+
+        .log-result {
+          font-size: 12px;
+        }
+      }
+
+      .ant-timeline-item-content {
+        margin-left: 8px;
+      }
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .task-container {
+    .filter-card {
+      .filter-content {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filter-left,
+        .filter-right {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .filter-left {
+          .search-input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

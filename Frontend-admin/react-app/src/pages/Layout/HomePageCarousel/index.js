@@ -49,7 +49,7 @@ const DraggableUploadListItem = ({originNode, file}) => {
 
 const HomePageCarousel = () => {
 
-    // 封装一个统一的“从服务器获取文件列表”方法
+    // 封装一个统一的"从服务器获取文件列表"方法
     const {fileList, setFileList, refreshFileList} = useHomePageCarouselList();
 
     const sensor = useSensor(PointerSensor, {activationConstraint: {distance: 10}});
@@ -136,7 +136,7 @@ const HomePageCarousel = () => {
             <div className="page-header">
                 <Breadcrumb
                     items={[
-                        { title: <Link to="/home"><HomeOutlined /> 首页</Link> },
+                        { title: <Link to="/homePageCarousel"><HomeOutlined /> 首页</Link> },
                         { title: <><FileTextOutlined /> 系统管理</> },
                         { title: '首页轮播管理' }
                     ]}
