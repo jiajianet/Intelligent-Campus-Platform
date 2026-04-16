@@ -65,7 +65,7 @@ public class AiToolDispatcher {
         AiToolExecutionResult result = new AiToolExecutionResult();
         result.setToolName("get_article_count");
         result.setSuccess(true);
-        result.setSummary("当前共有 " + count + " 篇文章");
+        result.setSummary("📊 **文章统计**\n\n当前系统共有 **" + count + "** 篇文章");
         result.setData(Map.of("count", count));
         result.setReferences(Collections.emptyList());
         return result;
@@ -83,7 +83,7 @@ public class AiToolDispatcher {
         AiToolExecutionResult result = new AiToolExecutionResult();
         result.setToolName("get_recent_articles");
         result.setSuccess(true);
-        result.setSummary("最近 " + days + " 天发布了 " + articles.size() + " 篇文章");
+        result.setSummary("📰 **最近文章**\n\n最近 " + days + " 天发布了 **" + articles.size() + "** 篇文章");
         result.setData(Map.of("articles", articles.stream().map(a -> Map.of("id", a.getId(), "title", a.getTitle(), "pubDate", a.getPubDate())).toList()));
         result.setReferences(references);
         return result;
@@ -100,7 +100,7 @@ public class AiToolDispatcher {
         AiToolExecutionResult result = new AiToolExecutionResult();
         result.setToolName("get_pending_articles");
         result.setSuccess(true);
-        result.setSummary("待审核文章有 " + articles.size() + " 篇");
+        result.setSummary("⏳ **待审核文章**\n\n当前有 **" + articles.size() + "** 篇文章待审核");
         result.setData(Map.of("articles", articles.stream().map(a -> Map.of("id", a.getId(), "title", a.getTitle())).toList()));
         result.setReferences(references);
         return result;
@@ -118,7 +118,7 @@ public class AiToolDispatcher {
         AiToolExecutionResult result = new AiToolExecutionResult();
         result.setToolName("search_articles_by_title");
         result.setSuccess(true);
-        result.setSummary("找到 " + articles.size() + " 篇标题包含「" + keyword + "」的文章");
+        result.setSummary("🔍 **搜索结果**\n\n找到 **" + articles.size() + "** 篇标题包含「" + keyword + "」的文章");
         result.setData(Map.of("articles", articles.stream().map(a -> Map.of("id", a.getId(), "title", a.getTitle())).toList()));
         result.setReferences(references);
         return result;
@@ -132,12 +132,12 @@ public class AiToolDispatcher {
         result.setToolName("get_article_by_id");
         if (article != null) {
             result.setSuccess(true);
-            result.setSummary("文章标题: " + article.getTitle());
+            result.setSummary("📄 **文章详情**\n\n**" + article.getTitle() + "**\n\nID: " + article.getId());
             result.setData(Map.of("article", Map.of("id", article.getId(), "title", article.getTitle(), "content", article.getContent() != null ? article.getContent().substring(0, Math.min(200, article.getContent().length())) : "")));
             result.setReferences(List.of(new ReferenceItem("article", String.valueOf(article.getId()), article.getTitle())));
         } else {
             result.setSuccess(false);
-            result.setSummary("未找到 ID 为 " + id + " 的文章");
+            result.setSummary("⚠️ **未找到**\n\n未找到 ID 为 " + id + " 的文章");
             result.setData(Collections.emptyMap());
         }
         return result;
@@ -152,7 +152,7 @@ public class AiToolDispatcher {
         AiToolExecutionResult result = new AiToolExecutionResult();
         result.setToolName("get_article_stats");
         result.setSuccess(true);
-        result.setSummary("文章统计: 总计 " + total + " 篇，已发布 " + published + " 篇，草稿 " + draft + " 篇，已删除 " + deleted + " 篇");
+        result.setSummary("📊 **文章统计概览**\n\n| 状态 | 数量 |\n| --- | --- |\n| 📚 总计 | **" + total + "** |\n| ✅ 已发布 | **" + published + "** |\n| 📝 草稿 | **" + draft + "** |\n| 🗑️ 已删除 | **" + deleted + "** |");
         result.setData(Map.of("total", total, "published", published, "draft", draft, "deleted", deleted));
         result.setReferences(Collections.emptyList());
         return result;
