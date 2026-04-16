@@ -57,7 +57,7 @@ const mockRoles = [
         roleName: '超级管理员',
         roleKey: 'admin',
         description: '拥有系统所有权限，可管理所有功能',
-        permissions: ['dashboard', 'dashboard.home', 'dashboard.userCenter', 'articles', 'articles.list', 'articles.create', 'articles.carousel', 'users', 'users.list', 'users.create', 'system', 'system.setting', 'system.role', 'menu', 'menu.list', 'menu.create', 'operation', 'operation.log', 'operation.task', 'help', 'help.doc', 'help.question', 'update'],
+        permissions: ['dashboard', 'dashboard.home', 'dashboard.userCenter', 'articles', 'articles.list', 'articles.create', 'articles.carousel', 'articles.aiAssistant', 'users', 'users.list', 'users.create', 'system', 'system.setting', 'system.role', 'menu', 'menu.list', 'menu.create', 'operation', 'operation.log', 'operation.task', 'help', 'help.doc', 'help.question', 'update'],
         createTime: '2024-01-15 10:30:00',
         userCount: 2,
         status: 1
@@ -120,7 +120,8 @@ const permissionTree = [
         children: [
             { key: 'articles.list', title: '文章列表' },
             { key: 'articles.create', title: '创建文章' },
-            { key: 'articles.carousel', title: '主页轮播图' }
+            { key: 'articles.carousel', title: '主页轮播图' },
+            { key: 'articles.aiAssistant', title: 'AI 助手' }
         ]
     },
     {

@@ -20,6 +20,7 @@ const Log = lazy(() => import('@/pages/Layout/Log'));
 const Task = lazy(() => import('@/pages/Layout/Task'));
 const Document = lazy(() => import('@/pages/Layout/Document'));
 const Question = lazy(() => import('@/pages/Layout/Question'));
+const AiAssistant = lazy(() => import('@/pages/Layout/AiAssistant'));
 const Update = lazy(() => import('@/pages/Layout/Update'));
 const UserCenter = lazy(() => import('src/pages/Layout/UserCenter'));
 const HomePageCarousel = lazy(() => import('@/pages/Layout/HomePageCarousel'));
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
             {
                 path: 'question',
                 element: <Suspense fallback={<div>加载中...<Spin/></div>}><Question/></Suspense>
+            },
+            {
+                path: 'aiAssistant',
+                element: <Suspense fallback={<div>加载中...<Spin/></div>}><AiAssistant/></Suspense>
             },
             {
                 path: 'update',

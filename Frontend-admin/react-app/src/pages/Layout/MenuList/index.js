@@ -46,7 +46,11 @@ import {
     TeamOutlined,
     SettingOutlined,
     BugOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    PictureOutlined,
+    WindowsOutlined,
+    ClockCircleOutlined,
+    RobotOutlined
 } from '@ant-design/icons'
 import {Link, useNavigate} from 'react-router-dom'
 import './index.scss'
@@ -168,6 +172,20 @@ const mockMenus = [
                 visible: 1,
                 status: 1,
                 permission: 'articles:carousel:view',
+                children: []
+            },
+            {
+                id: 24,
+                parentId: 2,
+                menuName: 'AI 助手',
+                menuKey: 'articles.aiAssistant',
+                icon: 'RobotOutlined',
+                path: '/aiAssistant',
+                component: 'Layout/AiAssistant',
+                sortOrder: 4,
+                visible: 1,
+                status: 1,
+                permission: 'articles:aiAssistant:view',
                 children: []
             }
         ]
@@ -359,7 +377,7 @@ const iconOptions = [
     'DiffOutlined', 'EditOutlined', 'UserOutlined', 'UserAddOutlined',
     'SolutionOutlined', 'TeamOutlined', 'SettingOutlined', 'BarsOutlined',
     'BugOutlined', 'FileTextOutlined', 'UnorderedListOutlined', 'PlusOutlined',
-    'SearchOutlined', 'DeleteOutlined', 'ReloadOutlined', 'MenuOutlined'
+    'SearchOutlined', 'DeleteOutlined', 'ReloadOutlined', 'MenuOutlined', 'RobotOutlined'
 ]
 
 const MenuList = () => {
@@ -614,12 +632,16 @@ const MenuList = () => {
             'UserAddOutlined': <UserAddOutlined/>,
             'SolutionOutlined': <SolutionOutlined/>,
             'TeamOutlined': <TeamOutlined/>,
+            'WindowsOutlined': <WindowsOutlined/>,
             'SettingOutlined': <SettingOutlined/>,
             'BarsOutlined': <BarsOutlined/>,
             'BugOutlined': <BugOutlined/>,
+            'ClockCircleOutlined': <ClockCircleOutlined/>,
             'FileTextOutlined': <FileTextOutlined/>,
+            'PictureOutlined': <PictureOutlined/>,
             'UnorderedListOutlined': <UnorderedListOutlined/>,
-            'PlusOutlined': <PlusOutlined/>
+            'PlusOutlined': <PlusOutlined/>,
+            'RobotOutlined': <RobotOutlined/>
         }
         return iconMap[iconName] || <MenuOutlined/>
     }

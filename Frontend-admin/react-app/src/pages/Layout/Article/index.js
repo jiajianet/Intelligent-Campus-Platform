@@ -37,7 +37,8 @@ import {
     ReloadOutlined,
     HomeOutlined,
     ClockCircleOutlined,
-    CheckCircleOutlined
+    CheckCircleOutlined,
+    RobotOutlined
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import dayjs from 'dayjs';
@@ -400,14 +401,22 @@ const Article = () => {
                     </Space>
                 }
                 extra={
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={() => navigate('/publish')}
-                        className="add-btn"
-                    >
-                        新建文章
-                    </Button>
+                    <Space>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => navigate('/publish')}
+                            className="add-btn"
+                        >
+                            新建文章
+                        </Button>
+                        <Button
+                            icon={<RobotOutlined />}
+                            onClick={() => navigate('/aiAssistant')}
+                        >
+                            AI 助手
+                        </Button>
+                    </Space>
                 }
             >
                 {loading ? (

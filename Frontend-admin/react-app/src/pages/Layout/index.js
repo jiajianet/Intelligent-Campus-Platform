@@ -21,7 +21,8 @@ import {
     WindowsOutlined,
     AppstoreOutlined,
     FileTextOutlined,
-    QuestionOutlined
+    QuestionOutlined,
+    RobotOutlined
 } from '@ant-design/icons'
 import './index.scss'
 import {Link, Outlet, useLocation, useNavigate} from 'react-router-dom'
@@ -79,6 +80,11 @@ const items = [
                 label: '主页轮廓图',
                 key: '/homePageCarousel',
                 icon: <FormOutlined/>
+            },
+            {
+                label: 'AI 助手',
+                key: '/aiAssistant',
+                icon: <RobotOutlined/>
             },
         ]
     },
