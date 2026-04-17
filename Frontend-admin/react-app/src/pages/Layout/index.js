@@ -28,7 +28,7 @@ import './index.scss'
 import {Link, Outlet, useLocation, useNavigate} from 'react-router-dom'
 import {clearUserInfo, fetchUserInfo} from '@/store/modules/user'
 import {useDispatch, useSelector} from 'react-redux'
-//TODO <CommentOutlined /> 加侧边弹窗添加大模型<MessageOutlined /> <QuestionCircleOutlined />
+import AiAssistant from '@/components/AiAssistant'
 const {Header, Sider, Content} = Layout
 
 /**
@@ -359,6 +359,7 @@ const XychLayout = () => {
                     <Outlet/>
                 </Content>
             </Layout>
+            <AiAssistant mode="drawer" title="智能助手" pageContext={{ page: location.pathname }} />
         </Layout>
     )
 }
