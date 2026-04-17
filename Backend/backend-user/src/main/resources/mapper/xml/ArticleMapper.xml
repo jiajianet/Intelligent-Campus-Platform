@@ -15,7 +15,10 @@
         <result property="channelId" column="channel_id"/>
         <result property="pubDate" column="pub_date"/>
         <result property="content" column="content"/>
-        <association property="cover" column="{type=image,type=image}" select="selectCoverByArticleId" />
+        <association property="cover" javaType="com.xiyanchenghong.backenduser.domain.Cover">
+            <result property="type" column="type"/>
+            <result property="image" column="image"/>
+        </association>
     </resultMap>
 
     <select id="getArticleById" resultMap="ArticleResultMap">
@@ -27,13 +30,13 @@
     </select>
 
     <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO article(title, content, status, channel_id, pub_date, cover)
-        VALUES(#{title}, #{content}, #{status}, #{channelId}, #{pubDate}, #{cover})
+        INSERT INTO article(title, content, status, channel_id, pub_date, type, image)
+        VALUES(#{title}, #{content}, #{status}, #{channelId}, #{pubDate}, #{cover.type}, #{cover.image})
     </insert>
 
     <update id="updateArticle">
         UPDATE article
-        SET title=#{title}, content=#{content}, status=#{status}, channel_id=#{channelId}, pub_date=#{pubDate}, cover=#{cover}
+        SET title=#{title}, content=#{content}, status=#{status}, channel_id=#{channelId}, pub_date=#{pubDate}, type=#{cover.type}, image=#{cover.image}
         WHERE id=#{id}
     </update>
 
@@ -47,6 +50,44 @@
             LIMIT #{offset}, #{perPage}
     </select>
 
+    <select id="getArticlesForAi" resultMap="ArticleResultMap">
+        SELECT * FROM article
+            ${spec}
+            ORDER BY pub_date DESC, id DESC
+            LIMIT #{limit}
+    </select>
+
+    <select id="searchArticlesByKeyword" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+           OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY pub_date DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="searchArticlesByKeywordForAi" resultMap="ArticleResultMap">
+        SELECT * FROM article
+            ${spec}
+            AND (
+                title LIKE CONCAT('%', #{keyword}, '%')
+                OR content LIKE CONCAT('%', #{keyword}, '%')
+            )
+        ORDER BY pub_date DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="getArticleStats" resultType="com.xiyanchenghong.backenduser.ai.model.AiArticleStatsRow">
+        SELECT COUNT(*) AS totalCount,
+               SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS pendingCount,
+               SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS publishedCount,
+               SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS draftCount,
+               COALESCE(SUM(read_count), 0) AS totalReadCount,
+               COALESCE(SUM(comment_count), 0) AS totalCommentCount,
+               COALESCE(SUM(like_count), 0) AS totalLikeCount
+        FROM article
+            ${spec}
+    </select>
+
     <select id="countArticles" resultType="long">
         SELECT COUNT(*) FROM article
                                  ${spec}
@@ -54,5 +95,40 @@
 
     <select id="selectCoverByArticleId" resultType="com.xiyanchenghong.backenduser.domain.Cover">
         SELECT type, image FROM article WHERE id = #{articleId}
+    </select>
+
+    <select id="countArticlesWithFilters" resultType="long">
+        SELECT COUNT(*) FROM article
+        <where>
+            <if test="status != null">AND status = #{status}</if>
+            <if test="channelId != null">AND channel_id = #{channelId}</if>
+            <if test="beginDate != null">AND pub_date &gt;= #{beginDate}</if>
+            <if test="endDate != null">AND pub_date &lt;= #{endDate}</if>
+        </where>
+    </select>
+
+    <select id="findRecentArticles" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        WHERE pub_date &gt;= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+        ORDER BY pub_date DESC, id DESC
+    </select>
+
+    <select id="getArticlesByStatus" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        <where>
+            <if test="status != null">AND status = #{status}</if>
+            <if test="channelId != null">AND channel_id = #{channelId}</if>
+            <if test="beginDate != null">AND pub_date &gt;= #{beginDate}</if>
+            <if test="endDate != null">AND pub_date &lt;= #{endDate}</if>
+        </where>
+        ORDER BY pub_date DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="searchArticlesByTitle" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY pub_date DESC, id DESC
+        LIMIT 50
     </select>
 </mapper>

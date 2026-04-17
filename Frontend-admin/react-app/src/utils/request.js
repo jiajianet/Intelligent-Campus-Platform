@@ -8,8 +8,9 @@ import { getToken } from './token';
 // 请求拦截器 响应拦截器
 const request = axios.create({
     withCredentials: true,
-    baseURL: 'http://111.230.253.94:8081',
-    timeout: 5000,
+    // baseURL: 'http://111.230.253.94:8081',
+    baseURL: 'http://localhost:8081',
+    timeout: 120000,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -34,7 +35,7 @@ request.interceptors.response.use((response) => {
     return response
 }, (error) => {
     console.dir(error)
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
         removeToken()
         router.navigate('/login')
         window.location.reload()

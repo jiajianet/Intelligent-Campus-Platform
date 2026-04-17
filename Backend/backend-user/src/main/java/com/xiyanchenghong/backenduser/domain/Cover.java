@@ -9,8 +9,6 @@ public class Cover {
     private Integer type;
     private String image;
 
-    public Cover() {}
-
     public Cover(Integer type, String image) {
         this.type = type;
         this.image = image;

@@ -1,0 +1,133 @@
+.log-container {
+  padding: 16px;
+
+  .log-card {
+    margin-bottom: 16px;
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 16px;
+
+    .filter-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .filter-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .search-input {
+          width: 260px;
+        }
+
+        .operation-select,
+        .date-picker {
+          min-width: 160px;
+        }
+      }
+
+      .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .refresh-btn {
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+
+        .export-btn {
+          &:hover {
+            color: #52c41a;
+            border-color: #52c41a;
+          }
+        }
+      }
+    }
+  }
+
+  .table-card {
+    .log-tabs {
+      margin-bottom: 16px;
+    }
+
+    .log-table {
+      .action-btn {
+        transition: all 0.3s;
+
+        &.view-btn {
+          color: #1890ff;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+      }
+
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: #f0f5ff;
+      }
+    }
+  }
+
+  // Modal样式
+  .log-detail-modal {
+    .json-content {
+      margin: 0;
+      padding: 8px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      font-size: 12px;
+      max-height: 150px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .ant-descriptions-bordered .ant-descriptions-item-label {
+      background: #fafafa;
+      font-weight: 500;
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .log-container {
+    .filter-card {
+      .filter-content {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filter-left,
+        .filter-right {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .filter-left {
+          .search-input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

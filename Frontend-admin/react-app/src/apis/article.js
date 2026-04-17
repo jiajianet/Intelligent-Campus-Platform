@@ -1,5 +1,5 @@
 //封装文章相关的api接口
-import { request } from '@/utils';
+import {request} from '@/utils';
 
 //获取频道分类
 export function getChannelAPI() {
@@ -48,5 +48,16 @@ export function deleteArticleAPI(id) {
     return request({
         url: `/user/articles/${id}`,
         method: 'DELETE'
+    })
+}
+
+//上传图片
+export function uploadImageAPI(data, onProgress) {
+    return request({
+        url: `/user/upload`,
+        method: 'POST',
+        data,
+        headers: {'Content-Type': 'multipart/form-data'},
+        onUploadProgress: onProgress
     })
 }

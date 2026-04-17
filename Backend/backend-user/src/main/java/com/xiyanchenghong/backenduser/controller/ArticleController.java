@@ -1,7 +1,7 @@
 package com.xiyanchenghong.backenduser.controller;
 
 import com.xiyanchenghong.backenduser.domain.Article;
-import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServicelmpl;
+import com.xiyanchenghong.backenduser.service.serviceImpl.ArticleServiceImpl;
 import com.xiyanchenghong.backenduser.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class ArticleController {
 
+    private final ArticleServiceImpl articleService;
+
     @Autowired
-    private ArticleServicelmpl articleService;
+    public ArticleController(ArticleServiceImpl articleService) {
+        this.articleService = articleService;
+    }
 
     // 创建文章
     @PostMapping("/articles")
@@ -37,10 +41,11 @@ public class ArticleController {
     public ResponseEntity<Object> deleteArticle(@PathVariable("id") Long articleId) {
         try {
             articleService.deleteArticle(articleId);
-            return ResponseEntity.ok("文章删除成功");
+            return ResponseEntity.ok(Result.success(null,"文章删除成功"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("文章删除失败: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Result.error(500,"文章删除失败: " + e.getMessage()));
         }
     }
 

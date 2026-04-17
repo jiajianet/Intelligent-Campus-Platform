@@ -26,6 +26,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new HandlerInterceptor() {
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+                        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                            return true;
+                        }
                         String token = request.getHeader("Authorization");
                         if (token != null && token.startsWith("Bearer ")) {
                             token = token.substring(7);
@@ -62,6 +65,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/articles/{id}",
                         "/user/upload",
                         "/user/images/{imageName}",
+                        "/user/files/upload/**",
+                        "/user/files/reorder",
+                        "/user/files/getFiles",
+                        "/user/files/delete/{uid}",
+                        "/user/ai",
                         "/captcha/get",
                         "/captcha/check",
                         "/user/forgotPassword",

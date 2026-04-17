@@ -1,0 +1,158 @@
+.system-setting-container {
+  padding: 16px;
+
+  .system-setting-card {
+    margin-bottom: 16px;
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .setting-content-card {
+    .system-setting-form {
+      .setting-tabs {
+        .ant-tabs-nav {
+          width: 180px;
+          background: #fafafa;
+          border-radius: 8px 0 0 8px;
+          padding: 8px;
+
+          .ant-tabs-tab {
+            justify-content: flex-start;
+            padding: 12px 16px;
+            margin: 4px 0;
+            border-radius: 6px;
+
+            &:hover {
+              background: #e6f7ff;
+            }
+
+            &.ant-tabs-tab-active {
+              background: #1890ff;
+
+              .ant-tabs-tab-btn {
+                color: #fff;
+              }
+            }
+
+            .ant-tabs-tab-btn {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+          }
+        }
+
+        .ant-tabs-content-holder {
+          padding: 0 24px;
+        }
+
+        .ant-tabs-content {
+          height: 100%;
+        }
+
+        .tab-content {
+          padding: 16px 0;
+
+          .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #303133;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+
+            .anticon {
+              color: #1890ff;
+            }
+          }
+
+          .ant-form-item {
+            margin-bottom: 20px;
+
+            .ant-form-item-label {
+              padding-bottom: 8px;
+
+              label {
+                font-weight: 500;
+                color: #303133;
+              }
+            }
+
+            .ant-input,
+            .ant-input-number,
+            .ant-select-selector {
+              border-radius: 6px;
+
+              &:hover {
+                border-color: #40a9ff;
+              }
+
+              &:focus,
+              &.ant-input-focused {
+                border-color: #1890ff;
+                box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+              }
+            }
+
+            .ant-input-number {
+              width: 100%;
+            }
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 24px;
+        margin-top: 24px;
+        border-top: 1px solid #f0f0f0;
+
+        .submit-btn {
+          min-width: 120px;
+          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+
+          &:hover {
+            background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          }
+        }
+
+        .reset-btn {
+          min-width: 80px;
+
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .system-setting-container {
+    .setting-content-card {
+      .system-setting-form {
+        .setting-tabs {
+          .ant-tabs-nav {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+          }
+
+          .ant-tabs-content-holder {
+            padding: 0;
+          }
+        }
+      }
+    }
+  }
+}

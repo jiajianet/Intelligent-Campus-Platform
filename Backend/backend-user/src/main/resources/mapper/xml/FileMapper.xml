@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiyanchenghong.backenduser.mapper.FileMapper">
+
+    <select id="findByStatusOrderBySortOrderAsc" resultType="com.xiyanchenghong.backenduser.domain.FileEntity">
+        SELECT * FROM file_entity WHERE status = #{status}
+    </select>
+
+    <select id="findByUid" resultType="com.xiyanchenghong.backenduser.domain.FileEntity">
+        SELECT * FROM file_entity WHERE uid = #{uid}
+    </select>
+
+    <select id="findMaxSortOrder" resultType="java.lang.Integer">
+        SELECT MAX(sort_order) FROM file_entity
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.xiyanchenghong.backenduser.domain.FileEntity">
+        INSERT INTO file_entity (uid, name, url, size, type, created_at,status,sort_order,thumb_url,percent)
+        VALUES (#{uid}, #{name}, #{url}, #{size}, #{type}, #{createdAt}, #{status}, #{sortOrder}, #{thumbUrl}, #{percent})
+    </insert>
+
+    <delete id = "deleteByUid">
+        DELETE FROM file_entity WHERE uid = #{uid}
+    </delete>
+
+    <update id="updateSortOrder">
+        UPDATE file_entity
+        SET sort_order = #{sortOrder}
+        WHERE uid = #{uid}
+    </update>
+
+</mapper>
