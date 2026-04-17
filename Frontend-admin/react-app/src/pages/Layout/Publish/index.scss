@@ -144,10 +144,11 @@ body {
   padding: var(--space-4);
   font-family: var(--font-sans);
   animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 1200px;
+  // max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   overflow-x: hidden;
+  background: #f5f7fa;
 
   @media (max-width: 1024px) {
     padding: var(--space-3);
@@ -215,8 +216,9 @@ body {
   overflow: hidden;
   transition: all var(--transition-normal);
   position: relative;
-  margin-bottom: var(--space-4);
+  margin: 0 auto var(--space-4); /* 关键：水平居中 */
   width: 100%;
+  max-width: 1200px;
   box-sizing: border-box;
 
   &:hover {
