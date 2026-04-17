@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Ant%20Design-5-1677FF?logo=antdesign" alt="Ant Design">
   <img src="https://img.shields.io/badge/MyBatis-3.0-000000?logo=mybatis" alt="MyBatis">
   <img src="https://img.shields.io/badge/JWT-Auth-000000?logo=jsonwebtokens" alt="JWT">
+  <img src="https://img.shields.io/badge/Ollama-LLM-412991" alt="Ollama">
 </p>
 
 ## 目录
