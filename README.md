@@ -24,6 +24,7 @@
 - [配置指南](#配置指南)
 - [贡献方法](#贡献方法)
 - [接口文档](#接口文档)
+- [AI助手API接口文档](#ai助手api接口文档)
 - [Q&A](#qa)
 
 ---
@@ -120,6 +121,72 @@
 - Redis
 - JWT认证
 - AJ-Captcha验证码
+
+### AI助手模块
+
+AI助手模块是本项目智能交互的核心组件，为用户提供智能问答、资源查询、数据分析等AI驱动的服务。后端AI代码位于仓库 `Backend/backend-user/src/main/java/com/xiyanchenghong/backenduser/ai` 文件夹下。
+
+#### 核心功能特性
+
+- **智能对话**：基于Ollama本地大模型，支持自然语言交互
+- **多轮会话**：支持会话管理，保持对话上下文
+- **工具调用**：集成多种内置工具，自动执行任务
+- **文章智能查询**：获取文章统计、搜索、推荐等功能
+- **内容生成**：支持TTS文本生成、内容总结等
+- **会话历史**：保存完整的对话历史记录
+
+#### 模块架构
+
+**后端技术栈**：
+- Ollama大模型引擎
+- Spring Boot REST API
+- 工具调用系统（Tool Calling）
+- 会话管理
+- JSON数据交互
+
+**模块结构**：
+```
+Backend/backend-user/src/main/java/com/xiyanchenghong/backenduser/ai/
+├── controller/
+│   └── AiChatController.java              # AI聊天REST接口
+├── service/
+│   ├── AiChatService.java                 # 主要聊天逻辑服务
+│   ├── OllamaClient.java                  # Ollama客户端
+│   └── AiToolDispatcher.java              # 工具调度器
+├── model/
+│   ├── AiConversationMessage.java         # 对话消息模型
+│   ├── OllamaChatResult.java              # Ollama返回结果
+│   ├── AiToolExecutionResult.java         # 工具执行结果
+│   ├── AiChatResult.java                  # 聊天结果模型
+│   └── AiArticleStatsRow.java             # 文章统计模型
+└── dto/
+    ├── AiChatRequest.java                 # 请求DTO
+    ├── AiChatResponse.java                # 响应DTO
+    ├── AiSessionHistoryResponse.java      # 会话历史响应
+    ├── HistoryMessageView.java            # 历史消息视图
+    ├── ToolCallView.java                  # 工具调用视图
+    └── ReferenceItem.java                 # 参考信息
+```
+
+#### 支持的工具集
+
+| 工具名称 | 描述 | 参数 |
+|---------|------|------|
+| `get_article_count` | 获取文章总数 | 无 |
+| `get_recent_articles` | 获取最近文章 | limit: 数量 |
+| `get_pending_articles` | 获取待审核文章 | limit: 数量 |
+| `search_articles_by_title` | 按标题搜索文章 | title: 标题关键词 |
+| `get_article_by_id` | 根据ID获取文章 | id: 文章ID |
+| `get_article_stats` | 获取文章统计数据 | 无 |
+
+#### 系统提示词
+
+系统根据页面上下文动态生成提示词，引导AI在不同场景下提供针对性的服务：
+
+- **首页**：推荐校园公告、课程信息、活动资讯
+- **文章页面**：提供文章相关的智能问答、内容推荐
+- **用户中心**：个人信息查询、学习进度分析
+- **管理平台**：数据分析、内容管理建议
 
 ---
 
@@ -253,6 +320,41 @@ redis-server
 #### 2. 启动MySQL服务
 
 确保MySQL服务已启动。
+
+#### 2.1 安装并启动Ollama（可选，用于AI功能）
+
+AI助手模块需要Ollama大模型引擎支持。如需使用AI功能，请：
+
+##### 安装Ollama
+
+1. 访问 [Ollama官方网站](https://ollama.ai) 下载安装程序
+2. 根据操作系统选择相应版本（Windows/Mac/Linux）
+3. 安装完成后，Ollama会以服务形式运行
+
+##### 下载模型
+
+```bash
+# 下载Llama3模型（推荐）
+ollama pull llama3
+
+# 或下载其他模型
+ollama pull mistral
+ollama pull neural-chat
+```
+
+##### 启动Ollama服务
+
+```bash
+# Windows：安装后自动启动，默认监听 http://127.0.0.1:11434
+
+# Mac/Linux：
+ollama serve
+
+# 验证服务是否运行
+curl http://127.0.0.1:11434/api/tags
+```
+
+> **注意**：Ollama默认配置足以满足开发需求。若需要在其他地址运行或修改模型，可修改配置文件或环境变量
 
 #### 3. 启动后端服务
 
@@ -411,6 +513,22 @@ npm start
 5. 查看学生出勤情况
 6. 导出班级数据
 
+#### 用例6：使用AI助手查询校园信息
+
+1. 登录系统
+2. 在任意页面（首页、文章页、用户中心等）激活AI助手
+3. 输入自然语言问题，如："最近有什么校园活动？"、"帮我总结一下最新文章"
+4. AI助手将调用相关工具获取信息并生成回复
+5. 查看AI的回复结果和相关参考资源
+6. 继续提问进行多轮对话，系统将保持上下文
+
+#### 用例7：查看AI会话历史
+
+1. 与AI助手进行对话
+2. 系统自动保存会话ID
+3. 使用会话ID查询历史对话记录
+4. 可在任何时间恢复该会话继续对话
+
 ---
 
 ## 配置指南
@@ -553,6 +671,25 @@ aj.captcha.interference-options=2
 # 邮件日志级别
 logging.level.org.springframework.mail=DEBUG
 logging.level.org.springframework.mail.javamail=DEBUG
+```
+
+##### AI模块配置
+
+```properties
+# Ollama服务地址
+ollama.base-url=http://127.0.0.1:11434
+
+# 使用的AI模型名称
+ollama.model=llama3
+
+# AI会话最大上下文消息数
+ai.max-context-messages=12
+
+# AI工具调用最大轮数
+ai.max-tool-rounds=3
+
+# 是否启用AI功能
+ai.enabled=true
 ```
 
 #### 前端配置文件
@@ -1308,6 +1445,194 @@ public class Result{
   - `imageName`
 - 返回
   - `图片`
+
+---
+
+## AI助手API接口文档
+
+### 9. AI聊天接口
+
+#### 9.1 发起AI对话
+
+- **接口地址**：POST `/user/ai/chat`
+- **认证要求**：需要JWT token
+- **请求头**：
+  ```
+  Authorization: Bearer {token}
+  Content-Type: application/json
+  ```
+
+- **请求参数**：
+
+```json
+{
+    "sessionId": "会话ID（可选，不传则创建新会话）",
+    "message": "用户输入的消息",
+    "mode": "对话模式（可选）",
+    "pageContext": {
+        "page": "当前页面标识",
+        "channelId": "频道ID（可选）",
+        "articleId": "文章ID（可选）"
+    }
+}
+```
+
+**参数说明**：
+- `sessionId`：会话唯一标识，用于维持对话上下文。若不提供则自动生成新会话
+- `message`：用户的输入消息
+- `mode`：对话模式（如：normal、search等），影响系统提示词
+- `pageContext`：页面上下文，帮助AI理解用户所在的功能模块
+
+- **响应成功示例**：
+
+```json
+{
+    "code": "0",
+    "msg": "OK",
+    "data": {
+        "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+        "assistantMessage": "根据您的查询，校园内有15篇最新文章。其中包括...",
+        "ttsText": "根据您的查询，校园内有15篇最新文章",
+        "toolCalls": [
+            {
+                "name": "get_recent_articles",
+                "arguments": {
+                    "limit": 5
+                }
+            }
+        ],
+        "references": [
+            {
+                "type": "article",
+                "id": "116",
+                "title": "最新校园通知",
+                "url": "/articles/116"
+            }
+        ]
+    },
+    "token": null
+}
+```
+
+**响应字段说明**：
+- `sessionId`：当前会话ID，后续请求需要使用此ID
+- `assistantMessage`：AI助手的回复文本
+- `ttsText`：可用于文本转语音的简化版文本
+- `toolCalls`：AI执行的工具调用列表
+- `references`：相关引用资源（文章、数据等）
+
+#### 9.2 获取会话历史
+
+- **接口地址**：GET `/user/ai/session/{sessionId}/history`
+- **认证要求**：需要JWT token
+- **请求头**：
+  ```
+  Authorization: Bearer {token}
+  ```
+
+- **路径参数**：
+  - `sessionId`：会话ID
+
+- **响应示例**：
+
+```json
+{
+    "code": "0",
+    "msg": "OK",
+    "data": {
+        "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+        "messages": [
+            {
+                "role": "user",
+                "content": "最近有什么校园动态吗？"
+            },
+            {
+                "role": "assistant",
+                "content": "根据我的查询，最近有以下校园动态..."
+            },
+            {
+                "role": "user",
+                "content": "能详细介绍一下吗？"
+            },
+            {
+                "role": "assistant",
+                "content": "当然可以，让我为您详细介绍..."
+            }
+        ]
+    },
+    "token": null
+}
+```
+
+#### 9.3 获取工具架构
+
+- **接口地址**：GET `/user/ai/tools/schema`
+- **认证要求**：需要JWT token
+- **请求头**：
+  ```
+  Authorization: Bearer {token}
+  ```
+
+- **响应示例**：
+
+```json
+{
+    "code": "0",
+    "msg": "OK",
+    "data": [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_article_count",
+                "description": "获取文章总数",
+                "parameters": {
+                    "type": "object",
+                    "properties": {}
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "get_recent_articles",
+                "description": "获取最近发布的文章列表",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "limit": {
+                            "type": "integer",
+                            "description": "返回文章数量"
+                        }
+                    },
+                    "required": ["limit"]
+                }
+            }
+        }
+    ],
+    "token": null
+}
+```
+
+### 10. 错误处理
+
+#### AI服务错误响应
+
+当AI服务出现错误时，返回以下格式：
+
+```json
+{
+    "code": "500",
+    "msg": "AI 服务暂时不可用，请稍后重试",
+    "data": null,
+    "token": null
+}
+```
+
+**常见错误**：
+- `500`：AI服务不可用（Ollama未运行或网络问题）
+- `400`：请求参数错误
+- `401`：未授权（token无效或过期）
+- `429`：请求过于频繁
 
 ---
 
