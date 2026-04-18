@@ -34,6 +34,17 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 系统设置功能需要实现以下后端API:
+// - GET /api/config - 获取系统配置
+// - PUT /api/config - 更新系统配置
+// - PUT /api/config/email - 更新邮件配置（需加密存储密码）
+// - PUT /api/config/upload - 更新上传配置
+// - PUT /api/config/security - 更新安全设置
+// - PUT /api/config/theme - 更新主题配置
+// - PUT /api/config/cache - 更新缓存配置（Redis）
+// - POST /api/upload/logo - 上传系统Logo
+
 const {Title, Text} = Typography
 const {Option} = Select
 const {TextArea} = Input

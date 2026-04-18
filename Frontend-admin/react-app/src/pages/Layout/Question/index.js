@@ -38,6 +38,16 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 常见问题功能需要实现以下后端API:
+// - GET /api/question/list - 获取问题列表（支持分类、搜索）
+// - GET /api/question/{id} - 获取问题详情
+// - POST /api/question - 提交新问题（反馈）
+// - PUT /api/question/{id} - 更新问题答案
+// - DELETE /api/question/{id} - 删除问题
+// - POST /api/question/{id}/like - 点赞
+// - GET /api/question/categories - 获取问题分类
+
 const {Title, Text, Paragraph} = Typography
 const {Option} = Select
 const {Panel} = Collapse

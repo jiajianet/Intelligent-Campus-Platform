@@ -28,6 +28,15 @@ import {
 import {Link, useNavigate} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 用户列表功能需要实现以下后端API:
+// - GET /api/user/list - 获取用户列表（支持分页、筛选）
+// - GET /api/user/{id} - 获取用户详情
+// - POST /api/user - 创建用户
+// - PUT /api/user/{id} - 更新用户信息
+// - DELETE /api/user/{id} - 删除用户
+// - PUT /api/user/{id}/status - 启用/禁用用户
+
 const {Title, Text} = Typography
 const {Option} = Select
 

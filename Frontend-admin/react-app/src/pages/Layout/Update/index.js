@@ -39,6 +39,14 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 更新日志功能需要实现以下后端API:
+// - GET /api/update/list - 获取更新日志列表（支持类型筛选）
+// - GET /api/update/{id} - 获取更新日志详情
+// - POST /api/update - 发布新版本
+// - PUT /api/update/{id} - 更新日志内容
+// - DELETE /api/update/{id} - 删除日志
+
 const {Title, Text, Paragraph} = Typography
 const {Option} = Select
 const {TextArea} = InputAntd

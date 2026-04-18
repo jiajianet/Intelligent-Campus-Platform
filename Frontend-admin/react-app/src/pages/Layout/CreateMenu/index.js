@@ -28,6 +28,12 @@ import {
 import {Link, useNavigate} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 创建菜单功能需要实现以下后端API:
+// - POST /api/menu - 创建菜单（需校验menuKey唯一性）
+// - GET /api/menu/tree - 获取菜单树（用于父级菜单选择）
+// - GET /api/menu/{id} - 获取菜单详情（编辑时）
+
 const {Title, Text} = Typography
 const {Option} = Select
 const {TextArea} = Input

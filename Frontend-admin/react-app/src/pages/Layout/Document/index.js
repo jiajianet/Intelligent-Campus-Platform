@@ -32,6 +32,16 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 使用文档功能需要实现以下后端API:
+// - GET /api/doc/categories - 获取文档分类
+// - GET /api/doc/list - 获取文档列表（支持分类筛选）
+// - GET /api/doc/{id} - 获取文档详情
+// - POST /api/doc - 创建文档
+// - PUT /api/doc/{id} - 更新文档
+// - DELETE /api/doc/{id} - 删除文档
+// - GET /api/doc/search - 全文搜索文档
+
 const {Title, Text, Paragraph} = Typography
 const {Option} = Select
 

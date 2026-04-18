@@ -55,6 +55,15 @@ import {
 import {Link, useNavigate} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 菜单管理功能需要实现以下后端API:
+// - GET /api/menu/tree - 获取菜单树
+// - GET /api/menu/list - 获取菜单列表
+// - POST /api/menu - 创建菜单
+// - PUT /api/menu/{id} - 更新菜单
+// - DELETE /api/menu/{id} - 删除菜单（需处理子菜单）
+// - PUT /api/menu/sort - 排序菜单
+
 const {Title, Text} = Typography
 const {Option} = Select
 

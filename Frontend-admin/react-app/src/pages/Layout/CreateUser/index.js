@@ -28,6 +28,12 @@ import {
 import {Link, useNavigate} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 创建用户功能需要实现以下后端API:
+// - POST /api/user - 创建用户（需包含用户名唯一性校验）
+// - POST /api/upload/avatar - 头像上传
+// - GET /api/role/list - 获取角色列表（用于角色选择下拉）
+
 const {Title, Text} = Typography
 const {Option} = Select
 const {TextArea} = Input

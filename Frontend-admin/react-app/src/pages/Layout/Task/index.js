@@ -38,6 +38,17 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 定时任务功能需要实现以下后端API:
+// - GET /api/task/list - 获取任务列表
+// - POST /api/task - 创建任务
+// - PUT /api/task/{id} - 更新任务
+// - DELETE /api/task/{id} - 删除任务
+// - POST /api/task/{id}/execute - 手动执行任务
+// - PUT /api/task/{id}/status - 启用/暂停任务
+// - GET /api/task/{id}/logs - 获取任务执行日志
+// 后端需要集成Quartz调度框架实现真正的定时任务执行
+
 const {Title, Text} = Typography
 const {Option} = Select
 

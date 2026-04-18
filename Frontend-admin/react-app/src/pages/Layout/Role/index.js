@@ -36,6 +36,14 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 角色管理功能需要实现以下后端API:
+// - GET /api/role/list - 获取角色列表
+// - POST /api/role - 创建角色（需校验角色标识唯一性）
+// - PUT /api/role/{id} - 更新角色
+// - DELETE /api/role/{id} - 删除角色（需检查关联用户）
+// - PUT /api/role/{id}/permissions - 分配权限
+
 const {Title, Text} = Typography
 
 /**

@@ -5,6 +5,16 @@
  * @version 1.0.0
  */
 
+// TODO: 后端API未实现 - 扩展功能
+// 用户中心扩展功能需要实现以下后端API:
+// - PUT /api/user/profile - 更新个人信息（姓名、邮箱、手机）
+// - POST /api/user/avatar - 上传头像
+// - PUT /api/user/password - 修改密码（需校验旧密码）
+// - POST /api/user/email/bind - 绑定邮箱
+// - POST /api/user/phone/bind - 绑定手机
+// - GET /api/user/stats - 获取用户统计数据（文章数、阅读量等）
+// - GET /api/article/user/ranking - 文章数排名数据
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
     Card,

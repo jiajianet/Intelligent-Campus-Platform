@@ -33,6 +33,14 @@ import {
 import {Link} from 'react-router-dom'
 import './index.scss'
 
+// TODO: 后端API未实现
+// 日志管理功能需要实现以下后端API:
+// - GET /api/log/login - 获取登录日志列表（支持分页、筛选）
+// - GET /api/log/operation - 获取操作日志列表（支持分页、筛选）
+// - GET /api/log/{id} - 获取日志详情
+// - DELETE /api/log/clean - 清理日志（按时间范围）
+// - GET /api/log/export - 导出日志到Excel
+
 const {Title, Text} = Typography
 const {Option} = Select
 const {RangePicker} = DatePicker
